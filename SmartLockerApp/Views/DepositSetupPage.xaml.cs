@@ -109,47 +109,64 @@ public partial class DepositSetupPage : ContentPage
         }
     }
 
-    private async void ConfirmButton_Clicked(object sender, EventArgs e)
+    private string? GetSelectedDuration()
     {
+        return selectedDuration;
+    }
+
+    private async Task OnConfirmClicked(object sender, EventArgs e)
+    {
+        var selectedDuration = GetSelectedDuration();
+        if (selectedDuration == null) return;
+
         await AnimationService.ButtonPressAsync(ConfirmButton);
         
-        // Show loading state
-        ConfirmButton.Text = "Création de la session...";
+        ConfirmButton.Text = "Création en cours...";
         ConfirmButton.IsEnabled = false;
         
         try
         {
-            // Create new session
-            var lockerId = this.lockerId ?? "A1"; // Default if no locker specified
-            var success = await _appState.StartSessionAsync(lockerId, (int)selectedHours);
+            var lockerId = "A-12"; // Demo locker ID
             
-            if (success)
+            // Déterminer la durée en heures basée sur la sélection
+            double selectedHours = selectedDuration switch
+            {
+                "30min" => 0.5,
+                "1hour" => 1.0,
+                "2hours" => 2.0,
+                "4hours" => 4.0,
+                _ => 1.0
+            };
+            
+            // Créer une liste d'items vide pour l'instant, sera remplie dans DepositItemsPage
+            var result = await _appState.StartSessionWithItemsAsync(lockerId, (int)selectedHours, new List<string>());
+            
+            if (result.Success && result.Session != null)
             {
                 ConfirmButton.Text = "✓ Session créée";
                 await AnimationService.SuccessCheckmarkAsync(ConfirmButton);
-                await Shell.Current.GoToAsync("//UnlockInstructionsPage");
+                
+                // Naviguer vers la page de dépôt d'items avec l'ID de session
+                await Shell.Current.GoToAsync($"//DepositItemsPage?sessionId={result.Session.Id}");
             }
             else
             {
-                try
-                {
-                    // Handle error
-                    await DisplayAlert("Erreur", "Impossible de créer la session", "OK");
-                }
-                catch (Exception)
-                {
-                    await DisplayAlert("Erreur", "Impossible de créer la session. Veuillez réessayer.", "OK");
-                }
+                await DisplayAlert("Erreur", result.Message ?? "Impossible de créer la session", "OK");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await DisplayAlert("Erreur", "Une erreur s'est produite lors de la création de la session.", "OK");
+            await DisplayAlert("Erreur", $"Une erreur s'est produite : {ex.Message}", "OK");
         }
         finally
         {
             ConfirmButton.Text = "Confirmer";
             ConfirmButton.IsEnabled = true;
         }
+    }
+
+    private async void ConfirmButton_Clicked(object sender, EventArgs e)
+    {
+        await OnConfirmClicked(sender, e);
     }
 }

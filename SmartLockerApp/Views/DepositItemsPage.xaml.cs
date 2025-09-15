@@ -1,53 +1,102 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
-public partial class DepositItemsPage : ContentPage
+public partial class DepositItemsPage : ContentPage, IQueryAttributable
 {
+    private readonly List<CheckBox> _checkboxes = new();
+    private readonly AppStateService _appState = AppStateService.Instance;
+    private string? _sessionId;
+
     public DepositItemsPage()
     {
         InitializeComponent();
-        
+        SetupCheckboxes();
+    }
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.ContainsKey("sessionId"))
+        {
+            _sessionId = query["sessionId"].ToString();
+        }
+    }
+
+    private void SetupCheckboxes()
+    {
+        // Add checkboxes to list for easier management
+        var checkboxes = new[] { ItemsPlacedCheck, DoorClosedCheck, ConfirmDepositCheck };
+
+        // Désélectionner toutes les checkboxes
+        ItemsPlacedCheck.IsChecked = false;
+        DoorClosedCheck.IsChecked = false;
+        ConfirmDepositCheck.IsChecked = false;
+
         // Subscribe to checkbox events
         ItemsPlacedCheck.CheckedChanged += OnCheckboxChanged;
         DoorClosedCheck.CheckedChanged += OnCheckboxChanged;
         ConfirmDepositCheck.CheckedChanged += OnCheckboxChanged;
     }
 
-    private async void BackButton_Clicked(object sender, EventArgs e)
+    private void OnCheckboxChanged(object? sender, CheckedChangedEventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        UpdateConfirmButton();
     }
 
-    private void OnCheckboxChanged(object sender, CheckedChangedEventArgs e)
+    private void UpdateConfirmButton()
     {
-        // Enable confirm button only if all checkboxes are checked
-        ConfirmDepositButton.IsEnabled = ItemsPlacedCheck.IsChecked && 
-                                        DoorClosedCheck.IsChecked && 
-                                        ConfirmDepositCheck.IsChecked;
-        
-        // Update button color based on state
-        if (ConfirmDepositButton.IsEnabled)
-        {
-            ConfirmDepositButton.BackgroundColor = Color.FromArgb("#10B981");
-        }
-        else
-        {
-            ConfirmDepositButton.BackgroundColor = Color.FromArgb("#94A3B8");
-        }
+        var allChecked = ItemsPlacedCheck.IsChecked && DoorClosedCheck.IsChecked && ConfirmDepositCheck.IsChecked;
+        ConfirmDepositButton.IsEnabled = allChecked;
+        ConfirmDepositButton.BackgroundColor = allChecked ? Color.FromArgb("#10B981") : Color.FromArgb("#94A3B8");
     }
 
     private async void ConfirmDepositButton_Clicked(object sender, EventArgs e)
     {
-        // TODO: Implement deposit confirmation logic
-        await DisplayAlert("Dépôt confirmé", "Vos objets ont été déposés avec succès!", "OK");
-        await Shell.Current.GoToAsync("//ActiveSessionPage");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+
+        ConfirmDepositButton.Text = "Traitement...";
+        ConfirmDepositButton.IsEnabled = false;
+
+        try
+        {
+            var selectedItems = new List<string> { "Objets personnels" };
+
+            // Mettre à jour la session avec les items sélectionnés
+            if (!string.IsNullOrEmpty(_sessionId))
+            {
+                await _appState.UpdateSessionItemsAsync(_sessionId, selectedItems);
+                
+                ConfirmDepositButton.Text = "✓ Dépôt confirmé";
+                await AnimationService.SuccessCheckmarkAsync(ConfirmDepositButton);
+                
+                // Naviguer vers UnlockInstructionsPage
+                await Shell.Current.GoToAsync($"//UnlockInstructionsPage?sessionId={_sessionId}");
+            }
+            else
+            {
+                await DisplayAlert("Erreur", "Session non trouvée", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Erreur", $"Une erreur s'est produite : {ex.Message}", "OK");
+        }
+        finally
+        {
+            ConfirmDepositButton.Text = "Confirmer le dépôt";
+            ConfirmDepositButton.IsEnabled = true;
+        }
     }
 
     private async void CancelButton_Clicked(object sender, EventArgs e)
     {
-        bool result = await DisplayAlert("Annuler", "Êtes-vous sûr de vouloir annuler le dépôt?", "Oui", "Non");
-        if (result)
-        {
-            await Shell.Current.GoToAsync("..");
-        }
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        await Shell.Current.GoToAsync("..");
+    }
+
+    private async void BackButton_Clicked(object sender, EventArgs e)
+    {
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        await Shell.Current.GoToAsync("..");
     }
 }

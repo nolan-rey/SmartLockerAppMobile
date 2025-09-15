@@ -1,4 +1,5 @@
 using SmartLockerApp.Services;
+using SmartLockerApp.Models;
 
 namespace SmartLockerApp.Views;
 
@@ -24,10 +25,11 @@ public partial class LockerDetailPage : ContentPage
     private void LoadLockerData()
     {
         // Get first available locker for demo
-        _selectedLocker = _appState.AvailableLockers.FirstOrDefault(l => l.Status == LockerStatus.Available);
+        var locker = _appState.Lockers.FirstOrDefault();
         
-        if (_selectedLocker != null)
+        if (locker != null)
         {
+            _selectedLocker = locker;
             // Demo data since UI elements don't exist in XAML
             Title = $"Casier {_selectedLocker.Id}";
             

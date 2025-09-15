@@ -1,233 +1,185 @@
 using System.ComponentModel;
+using SmartLockerApp.Models;
 
 namespace SmartLockerApp.Services;
 
+/// <summary>
+/// Service global de gestion de l'état de l'application
+/// </summary>
 public class AppStateService : INotifyPropertyChanged
 {
     private static AppStateService? _instance;
     public static AppStateService Instance => _instance ??= new AppStateService();
 
-    private User? _currentUser;
-    private LockerSession? _activeSession;
-    private List<LockerSession> _sessionHistory = new();
-    private List<Locker> _availableLockers = new();
+    private readonly AuthenticationService _auth = AuthenticationService.Instance;
+    private readonly LockerManagementService _lockerService = LockerManagementService.Instance;
 
-    public User? CurrentUser
+    public User? CurrentUser => _auth.CurrentUser != null ? new User
     {
-        get => _currentUser;
-        set
-        {
-            _currentUser = value;
-            OnPropertyChanged();
-        }
-    }
+        Id = _auth.CurrentUser.Id,
+        FirstName = _auth.CurrentUser.FirstName,
+        LastName = _auth.CurrentUser.LastName,
+        Email = _auth.CurrentUser.Email
+    } : null;
 
-    public LockerSession? ActiveSession
-    {
-        get => _activeSession;
-        set
-        {
-            _activeSession = value;
-            OnPropertyChanged();
-        }
-    }
+    public List<Locker> Lockers => _lockerService.Lockers;
+    public List<LockerSession> SessionHistory => _lockerService.SessionHistory;
+    public LockerSession? ActiveSession => _lockerService.CurrentActiveSession;
+    public bool IsLoggedIn => _auth.IsAuthenticated;
 
-    public List<LockerSession> SessionHistory
-    {
-        get => _sessionHistory;
-        set
-        {
-            _sessionHistory = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public List<Locker> AvailableLockers
-    {
-        get => _availableLockers;
-        set
-        {
-            _availableLockers = value;
-            OnPropertyChanged();
-        }
-    }
+    public event PropertyChangedEventHandler? PropertyChanged;
 
     private AppStateService()
     {
-        InitializeDemoData();
+        // S'abonner aux changements des services
+        _lockerService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
     }
 
-    private void InitializeDemoData()
-    {
-        // Demo user
-        CurrentUser = new User
-        {
-            Id = "1",
-            Name = "John Doe",
-            Email = "john.doe@example.com",
-            Phone = "+33 6 12 34 56 78"
-        };
-
-        // Demo lockers
-        AvailableLockers = new List<Locker>
-        {
-            new() { Id = "A-12", Status = LockerStatus.Available, Size = "Medium", PricePerHour = 2.50m },
-            new() { Id = "B-05", Status = LockerStatus.Occupied, Size = "Large", PricePerHour = 3.50m },
-            new() { Id = "C-08", Status = LockerStatus.Available, Size = "Small", PricePerHour = 1.50m },
-            new() { Id = "D-15", Status = LockerStatus.Maintenance, Size = "Medium", PricePerHour = 2.50m },
-            new() { Id = "E-03", Status = LockerStatus.Available, Size = "Large", PricePerHour = 3.50m }
-        };
-
-        // Demo session history
-        SessionHistory = new List<LockerSession>
-        {
-            new() 
-            { 
-                Id = "1", 
-                LockerId = "A-12", 
-                StartTime = DateTime.Now.AddHours(-2), 
-                EndTime = DateTime.Now.AddMinutes(-30),
-                Status = SessionStatus.Completed,
-                TotalCost = 5.00m
-            },
-            new() 
-            { 
-                Id = "2", 
-                LockerId = "C-08", 
-                StartTime = DateTime.Now.AddDays(-1), 
-                EndTime = DateTime.Now.AddDays(-1).AddHours(1.5),
-                Status = SessionStatus.Completed,
-                TotalCost = 2.25m
-            }
-        };
-    }
-
+    /// <summary>
+    /// Connexion utilisateur
+    /// </summary>
     public async Task<bool> LoginAsync(string email, string password)
     {
-        // Simulate API call
-        await Task.Delay(1500);
-        
-        if (email.Contains("@") && password.Length >= 6)
+        var (success, message) = await _auth.LoginAsync(email, password);
+        if (success)
         {
-            CurrentUser = new User
-            {
-                Id = "1",
-                Name = "John Doe",
-                FirstName = "John",
-                Email = email,
-                Phone = "+33 6 12 34 56 78"
-            };
-            return true;
+            OnPropertyChanged(nameof(CurrentUser));
+            OnPropertyChanged(nameof(IsLoggedIn));
+            OnPropertyChanged(nameof(ActiveSession));
+            OnPropertyChanged(nameof(SessionHistory));
         }
-        return false;
+        return success;
     }
 
+    /// <summary>
+    /// Création de compte
+    /// </summary>
+    public async Task<(bool Success, string Message)> CreateAccountAsync(string email, string password, string firstName, string lastName)
+    {
+        return await _auth.CreateAccountAsync(email, password, firstName, lastName);
+    }
+
+    /// <summary>
+    /// Déconnexion
+    /// </summary>
+    public async Task LogoutAsync()
+    {
+        await _auth.LogoutAsync();
+        OnPropertyChanged(nameof(CurrentUser));
+        OnPropertyChanged(nameof(IsLoggedIn));
+        OnPropertyChanged(nameof(ActiveSession));
+        OnPropertyChanged(nameof(SessionHistory));
+    }
+
+    /// <summary>
+    /// Démarrer une nouvelle session
+    /// </summary>
     public async Task<bool> StartSessionAsync(string lockerId, int durationHours)
     {
-        try
+        var (success, message, session) = await _lockerService.StartSessionAsync(lockerId, durationHours, new List<string>());
+        if (success)
         {
-            // Simulate API call
-            await Task.Delay(1000);
-            
-            var locker = _availableLockers.FirstOrDefault(l => l.Id == lockerId);
-            if (locker == null || locker.Status != LockerStatus.Available)
-                return false;
-            
-            // Create new session
-            var session = new LockerSession
-            {
-                Id = Guid.NewGuid().ToString(),
-                LockerId = lockerId,
-                UserId = _currentUser?.Id ?? "demo-user",
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now.AddHours(durationHours),
-                Status = SessionStatus.Active,
-                TotalCost = locker.PricePerHour * (decimal)durationHours
-            };
-            
-            // Update locker status
-            locker.Status = LockerStatus.Occupied;
-            
-            // Set active session
-            ActiveSession = session;
-            
-            return true;
+            OnPropertyChanged(nameof(Lockers));
+            OnPropertyChanged(nameof(ActiveSession));
         }
-        catch
-        {
-            return false;
-        }
+        return success;
     }
 
+    /// <summary>
+    /// Démarrer une session avec items
+    /// </summary>
+    public async Task<(bool Success, string Message, LockerSession? Session)> StartSessionWithItemsAsync(string lockerId, int durationHours, List<string> items)
+    {
+        var result = await _lockerService.StartSessionAsync(lockerId, durationHours, items);
+        if (result.Success)
+        {
+            OnPropertyChanged(nameof(Lockers));
+            OnPropertyChanged(nameof(ActiveSession));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Verrouiller le casier
+    /// </summary>
+    public async Task<bool> LockLockerAsync(string sessionId)
+    {
+        var success = await _lockerService.LockLockerAsync(sessionId);
+        if (success)
+        {
+            OnPropertyChanged(nameof(ActiveSession));
+        }
+        return success;
+    }
+
+    /// <summary>
+    /// Terminer la session active
+    /// </summary>
     public async Task<bool> EndSessionAsync()
     {
         if (ActiveSession == null) return false;
 
-        await Task.Delay(1000);
-
-        ActiveSession.EndTime = DateTime.Now;
-        ActiveSession.Status = SessionStatus.Completed;
-
-        // Calculate final cost based on actual time
-        var actualDuration = (ActiveSession.EndTime - ActiveSession.StartTime).TotalHours;
-        var locker = AvailableLockers.FirstOrDefault(l => l.Id == ActiveSession.LockerId);
-        ActiveSession.TotalCost = (decimal)(actualDuration * (double)(locker?.PricePerHour ?? 2.50m));
-
-        SessionHistory.Insert(0, ActiveSession);
-        
-        if (locker != null)
-            locker.Status = LockerStatus.Available;
-
-        ActiveSession = null;
-        return true;
+        var (success, message) = await _lockerService.EndSessionAsync(ActiveSession.Id);
+        if (success)
+        {
+            OnPropertyChanged(nameof(Lockers));
+            OnPropertyChanged(nameof(ActiveSession));
+            OnPropertyChanged(nameof(SessionHistory));
+        }
+        return success;
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    /// <summary>
+    /// Terminer une session spécifique
+    /// </summary>
+    public async Task<(bool Success, string Message)> EndSessionAsync(string sessionId)
+    {
+        var result = await _lockerService.EndSessionAsync(sessionId);
+        if (result.Success)
+        {
+            OnPropertyChanged(nameof(Lockers));
+            OnPropertyChanged(nameof(ActiveSession));
+            OnPropertyChanged(nameof(SessionHistory));
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Obtenir les détails d'un casier
+    /// </summary>
+    public Locker? GetLockerDetails(string lockerId)
+    {
+        return _lockerService.GetLockerDetails(lockerId);
+    }
+
+    /// <summary>
+    /// Obtenir le temps restant pour la session active
+    /// </summary>
+    public TimeSpan GetRemainingTime()
+    {
+        if (ActiveSession == null) return TimeSpan.Zero;
+        return _lockerService.GetRemainingTime(ActiveSession);
+    }
+
+    /// <summary>
+    /// Obtenir les statistiques utilisateur
+    /// </summary>
+    public (int TotalSessions, decimal TotalSpent, TimeSpan TotalTime) GetUserStats()
+    {
+        return _lockerService.GetUserStats();
+    }
+
+    /// <summary>
+    /// Mettre à jour les items d'une session
+    /// </summary>
+    public async Task UpdateSessionItemsAsync(string sessionId, List<string> items)
+    {
+        await _lockerService.UpdateSessionItemsAsync(sessionId, items);
+        OnPropertyChanged(nameof(ActiveSession));
+    }
+
     protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
-}
-
-// Models
-public class User
-{
-    public string Id { get; set; } = "";
-    public string Name { get; set; } = "";
-    public string FirstName { get; set; } = "";
-    public string Email { get; set; } = "";
-    public string Phone { get; set; } = "";
-}
-
-public class Locker
-{
-    public string Id { get; set; } = "";
-    public LockerStatus Status { get; set; }
-    public string Size { get; set; } = "";
-    public decimal PricePerHour { get; set; }
-}
-
-public class LockerSession
-{
-    public string Id { get; set; } = "";
-    public string LockerId { get; set; } = "";
-    public string UserId { get; set; } = "";
-    public DateTime StartTime { get; set; }
-    public DateTime EndTime { get; set; }
-    public SessionStatus Status { get; set; }
-    public decimal TotalCost { get; set; }
-}
-
-public enum LockerStatus
-{
-    Available,
-    Occupied,
-    Maintenance
-}
-
-public enum SessionStatus
-{
-    Active,
-    Completed,
-    Expired
 }

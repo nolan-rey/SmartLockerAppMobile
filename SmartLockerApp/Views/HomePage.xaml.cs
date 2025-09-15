@@ -61,23 +61,26 @@ public partial class HomePage : ContentPage
 
     private void UpdateUI()
     {
-        var currentUser = _appState.CurrentUser;
-        if (currentUser != null)
-        {
-            WelcomeLabel.Text = $"Bonjour, {currentUser.FirstName}";
-        }
+        if (_appState.CurrentUser == null) return;
 
-        var activeSession = _appState.ActiveSession;
-        if (activeSession != null)
+        // Update welcome message
+        WelcomeLabel.Text = $"Bonjour, {_appState.CurrentUser.FirstName} !";
+
+        // Update active session info
+        if (_appState.ActiveSession != null)
         {
-            ActiveSessionCard.IsVisible = true;
-            SessionLockerLabel.Text = activeSession.LockerId;
-            SessionLocationLabel.Text = "Entrée principale"; // TODO: Get from locker data
+            ViewActiveSessionButton.IsVisible = true;
+            SessionLockerLabel.Text = $"Casier {_appState.ActiveSession.LockerId}";
+            SessionLocationLabel.Text = _appState.GetLockerDetails(_appState.ActiveSession.LockerId)?.Location ?? "Inconnu";
             
-            var timeRemaining = activeSession.EndTime - DateTime.Now;
-            if (timeRemaining.TotalMinutes > 0)
+            // Afficher le temps restant en temps réel
+            var remainingTime = _appState.GetRemainingTime();
+            if (remainingTime > TimeSpan.Zero)
             {
-                SessionTimeLabel.Text = $"Temps restant: {timeRemaining.Hours}h {timeRemaining.Minutes}min";
+                if (remainingTime.TotalHours >= 1)
+                    SessionTimeLabel.Text = $"Expire dans {remainingTime.Hours}h {remainingTime.Minutes}min";
+                else
+                    SessionTimeLabel.Text = $"Expire dans {remainingTime.Minutes}min";
             }
             else
             {
@@ -86,17 +89,19 @@ public partial class HomePage : ContentPage
         }
         else
         {
-            ActiveSessionCard.IsVisible = false;
+            ViewActiveSessionButton.IsVisible = false;
         }
 
-        // Update statistics
-        var availableCount = _appState.AvailableLockers.Count(l => l.Status == LockerStatus.Available);
-        AvailableLockersLabel.Text = availableCount.ToString();
-        
-        var sessionsCount = _appState.SessionHistory.Count;
-        SessionsCountLabel.Text = sessionsCount.ToString();
-        
-        var totalSpent = _appState.SessionHistory.Sum(s => s.TotalCost);
+        // Update statistics avec vraies données
+        var (totalSessions, totalSpent, totalTime) = _appState.GetUserStats();
+        // Update session count if label exists
+        try 
+        { 
+            var sessionCountLabel = this.FindByName<Label>("SessionCountLabel");
+            if (sessionCountLabel != null)
+                sessionCountLabel.Text = totalSessions.ToString();
+        } 
+        catch { }
         TotalSpentLabel.Text = $"€{totalSpent:F2}";
     }
 
