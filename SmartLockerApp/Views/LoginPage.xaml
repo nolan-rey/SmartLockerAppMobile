@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.LoginPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Connexion"
+             BackgroundColor="#F8FAFC">
+
+    <ScrollView>
+        <Grid Padding="20" RowDefinitions="*,Auto,*">
+            
+            <!-- Main Card -->
+            <Border Grid.Row="1" 
+                    BackgroundColor="White" 
+                    StrokeThickness="0"
+                    MaximumWidthRequest="400"
+                    HorizontalOptions="Center">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,0"/>
+                </Border.Shadow>
+                
+                <StackLayout Padding="32" Spacing="24">
+                    
+                    <!-- Logo Section -->
+                    <StackLayout HorizontalOptions="Center" Spacing="16">
+                        <Border BackgroundColor="#F0F8FF" 
+                                StrokeThickness="0"
+                                WidthRequest="80" 
+                                HeightRequest="80" 
+                                HorizontalOptions="Center">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16"/>
+                            </Border.StrokeShape>
+                            <Image Source="dotnet_bot.png" 
+                                   WidthRequest="60" 
+                                   HeightRequest="60"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"/>
+                        </Border>
+                        <StackLayout HorizontalOptions="Center" Spacing="8">
+                            <Label Text="Connexion" 
+                                   FontSize="28" 
+                                   FontAttributes="Bold" 
+                                   HorizontalOptions="Center"
+                                   TextColor="Black"/>
+                            <Label Text="Accédez à votre compte SmartLocker" 
+                                   FontSize="16" 
+                                   TextColor="Gray" 
+                                   HorizontalOptions="Center"/>
+                        </StackLayout>
+                    </StackLayout>
+                    
+                    <!-- Error Message -->
+                    <Border x:Name="ErrorBorder" 
+                            BackgroundColor="#FEF2F2" 
+                            Stroke="#FCA5A5" 
+                            StrokeThickness="1" 
+                            Padding="12"
+                            IsVisible="False">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="8"/>
+                        </Border.StrokeShape>
+                        <StackLayout Orientation="Horizontal" Spacing="8">
+                            <Label Text="⚠" FontSize="16" TextColor="#DC2626"/>
+                            <Label x:Name="ErrorText" Text="" FontSize="14" TextColor="#DC2626"/>
+                        </StackLayout>
+                    </Border>
+                    
+                    <!-- Login Form -->
+                    <StackLayout Spacing="20">
+                        
+                        <!-- Email Field -->
+                        <StackLayout Spacing="8">
+                            <Label Text="Adresse email" FontSize="14" FontAttributes="Bold"/>
+                            <Entry x:Name="EmailEntry" 
+                                   Placeholder="votre@email.com"
+                                   FontSize="16"
+                                   BackgroundColor="White"
+                                   HeightRequest="48"
+                                   Keyboard="Email"/>
+                        </StackLayout>
+                        
+                        <!-- Password Field -->
+                        <StackLayout Spacing="8">
+                            <Label Text="Mot de passe" FontSize="14" FontAttributes="Bold"/>
+                            <Grid>
+                                <Entry x:Name="PasswordEntry" 
+                                       Placeholder="••••••••"
+                                       FontSize="16"
+                                       BackgroundColor="White"
+                                       HeightRequest="48"
+                                       IsPassword="True"/>
+                                <Button x:Name="ShowPasswordButton" 
+                                        HorizontalOptions="End" 
+                                        VerticalOptions="Center"
+                                        Margin="0,0,12,0"
+                                        BackgroundColor="Transparent"
+                                        Text="👁"
+                                        FontSize="16"
+                                        BorderWidth="0"
+                                        Clicked="ShowPasswordButton_Clicked"/>
+                            </Grid>
+                        </StackLayout>
+                        
+                        <!-- Forgot Password Link -->
+                        <Button x:Name="ForgotPasswordButton" 
+                                Text="Mot de passe oublié ?" 
+                                HorizontalOptions="End"
+                                FontSize="14"
+                                TextColor="#2563EB"
+                                BackgroundColor="Transparent"
+                                BorderWidth="0"
+                                Clicked="ForgotPasswordButton_Clicked"/>
+                        
+                        <!-- Login Button -->
+                        <Button x:Name="LoginButton" 
+                                Text="Se connecter"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                BackgroundColor="#2563EB"
+                                TextColor="White"
+                                HeightRequest="48"
+                                CornerRadius="8"
+                                Clicked="LoginButton_Clicked">
+                            <Button.Shadow>
+                                <Shadow Brush="#2563EB" Opacity="0.2" Radius="8" Offset="0,2"/>
+                            </Button.Shadow>
+                        </Button>
+                        
+                    </StackLayout>
+                    
+                    <!-- Signup Link -->
+                    <StackLayout>
+                        <BoxView BackgroundColor="#E5E7EB" HeightRequest="1" Margin="0,16,0,16"/>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="4">
+                            <Label Text="Pas encore de compte ?" FontSize="14" TextColor="Gray"/>
+                            <Button x:Name="SignupButton" 
+                                    Text="Créer un compte" 
+                                    FontSize="14"
+                                    TextColor="#2563EB"
+                                    BackgroundColor="Transparent"
+                                    BorderWidth="0"
+                                    Clicked="SignupButton_Clicked"/>
+                        </StackLayout>
+                    </StackLayout>
+                    
+                </StackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+</ContentPage>

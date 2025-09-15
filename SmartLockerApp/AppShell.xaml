@@ -4,8 +4,26 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:SmartLockerApp"
+    xmlns:views="clr-namespace:SmartLockerApp.Views"
     Title="SmartLockerApp">
 
+    <!-- Authentication Pages -->
+    <ShellContent
+        Title="Login"
+        ContentTemplate="{DataTemplate views:LoginPage}"
+        Route="LoginPage" />
+        
+    <ShellContent
+        Title="Signup"
+        ContentTemplate="{DataTemplate views:SignupPage}"
+        Route="SignupPage" />
+        
+    <ShellContent
+        Title="ForgotPassword"
+        ContentTemplate="{DataTemplate views:ForgotPasswordPage}"
+        Route="ForgotPasswordPage" />
+
+    <!-- Main App Pages -->
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"

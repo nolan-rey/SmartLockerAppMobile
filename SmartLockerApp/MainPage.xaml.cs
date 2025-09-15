@@ -1,24 +1,25 @@
-﻿namespace SmartLockerApp
+namespace SmartLockerApp
 {
     public partial class MainPage : ContentPage
     {
-        int count = 0;
-
         public MainPage()
         {
             InitializeComponent();
         }
 
-        private void OnCounterClicked(object? sender, EventArgs e)
+        private async void OnLoginClicked(object sender, EventArgs e)
         {
-            count++;
+            await Shell.Current.GoToAsync("//LoginPage");
+        }
 
-            if (count == 1)
-                CounterBtn.Text = $"Clicked {count} time";
-            else
-                CounterBtn.Text = $"Clicked {count} times";
+        private async void OnSignupClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//SignupPage");
+        }
 
-            SemanticScreenReader.Announce(CounterBtn.Text);
+        private async void OnForgotPasswordClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//ForgotPasswordPage");
         }
     }
 }
