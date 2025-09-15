@@ -38,11 +38,7 @@
         Title="LockerDetail"
         ContentTemplate="{DataTemplate views:LockerDetailPage}"
         Route="LockerDetailPage" />
-        
-    <ShellContent
-        Title="DepositSetup"
-        ContentTemplate="{DataTemplate views:DepositSetupPage}"
-        Route="DepositSetupPage" />
+        <ShellContent Title="DepositSetup" ContentTemplate="{DataTemplate local:DepositSetupPage}" Route="DepositSetupPage" />
         
     <ShellContent
         Title="LockInstructions"

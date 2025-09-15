@@ -1,14 +1,139 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+<?xml version = "1.0" encoding = "UTF-8" ?>
+<Application x:Class="SmartLockerApp.App"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:SmartLockerApp"
-             x:Class="SmartLockerApp.App">
+             xmlns:local="clr-namespace:SmartLockerApp">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
+            <!-- Global Animations -->
+            <Style x:Key="FadeInAnimation" TargetType="ContentPage">
+                <Setter Property="VisualStateManager.VisualStateGroups">
+                    <VisualStateGroupList>
+                        <VisualStateGroup x:Name="CommonStates">
+                            <VisualState x:Name="Normal">
+                                <VisualState.Setters>
+                                    <Setter Property="Opacity" Value="1" />
+                                </VisualState.Setters>
+                            </VisualState>
+                        </VisualStateGroup>
+                    </VisualStateGroupList>
+                </Setter>
+            </Style>
+            
+            <!-- Enhanced Button Styles -->
+            <Style x:Key="PrimaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="#2563EB" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="HeightRequest" Value="56" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+                <Setter Property="BorderWidth" Value="0" />
+                <Setter Property="Margin" Value="0,8" />
+                <Setter Property="Shadow">
+                    <Shadow Brush="#2563EB" Opacity="0.3" Radius="10" Offset="0,4"/>
+                </Setter>
+            </Style>
+            
+            <Style x:Key="SecondaryButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="#2563EB" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="BorderWidth" Value="1" />
+                <Setter Property="BorderColor" Value="#E2E8F0" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="MinimumHeightRequest" Value="44" />
+                <Setter Property="Margin" Value="0,4" />
+                <Setter Property="Shadow">
+                    <Shadow Brush="Black" Opacity="0.05" Radius="8" Offset="0,2"/>
+                </Setter>
+            </Style>
+            
+            <!-- Card Styles -->
+            <Style x:Key="Card" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="Padding" Value="20" />
+                <Setter Property="Margin" Value="0,8" />
+                <Setter Property="Shadow">
+                    <Shadow Brush="Black" Opacity="0.08" Radius="15" Offset="0,3"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="16"/>
+                </Setter>
+            </Style>
+            
+            <Style x:Key="CompactCard" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="Margin" Value="0,6" />
+                <Setter Property="Shadow">
+                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="12"/>
+                </Setter>
+            </Style>
+            
+            <!-- Mobile-optimized Entry Style -->
+            <Style x:Key="MobileEntry" TargetType="Entry">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="HeightRequest" Value="48" />
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="PlaceholderColor" Value="Gray" />
+            </Style>
+            
+            <!-- Touch-friendly Label Styles -->
+            <Style x:Key="HeaderLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="Margin" Value="0,8" />
+            </Style>
+            
+            <Style x:Key="SubHeaderLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="FontAttributes" Value="Bold" />
+                <Setter Property="TextColor" Value="Black" />
+                <Setter Property="Margin" Value="0,6" />
+            </Style>
+            
+            <Style x:Key="BodyLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="TextColor" Value="#374151" />
+                <Setter Property="LineHeight" Value="1.4" />
+            </Style>
+            
+            <Style x:Key="CaptionLabel" TargetType="Label">
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="TextColor" Value="#6B7280" />
+            </Style>
+            
+            
+            <!-- Mobile Gesture Styles -->
+            <Style x:Key="SwipeableCard" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="Padding" Value="16" />
+                <Setter Property="Margin" Value="0,6" />
+                <Setter Property="Shadow">
+                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                </Setter>
+                <Setter Property="StrokeShape">
+                    <RoundRectangle CornerRadius="12"/>
+                </Setter>
+            </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

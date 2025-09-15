@@ -1,16 +1,35 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
 public partial class DepositSetupPage : ContentPage
 {
+    private readonly AppStateService _appState = AppStateService.Instance;
     private string selectedDuration = "1 heure";
     private string selectedPrice = "4,00€";
+    private double selectedHours = 1.0;
+    private string? lockerId;
 
     public DepositSetupPage()
     {
         InitializeComponent();
         
         // Set default selection (1 hour)
-        UpdateSelection("1 heure", "4,00€");
+        UpdateSelection("1 heure", "4,00€", 1.0);
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await AnimationService.FadeInAsync(this);
+        await AnimationService.SlideInFromBottomAsync(this.Content, 400);
+        
+        // Get locker ID from query parameters if available
+        var uri = Shell.Current.CurrentState.Location.ToString();
+        if (uri.Contains("lockerId="))
+        {
+            lockerId = uri.Split("lockerId=")[1].Split('&')[0];
+        }
     }
 
     private async void BackButton_Clicked(object sender, EventArgs e)
@@ -18,34 +37,39 @@ public partial class DepositSetupPage : ContentPage
         await Shell.Current.GoToAsync("..");
     }
 
-    private void OnOption30MinTapped(object sender, EventArgs e)
+    private async void OnOption30MinTapped(object sender, EventArgs e)
     {
-        UpdateSelection("30 minutes", "2,50€");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        UpdateSelection("30 minutes", "2,50€", 0.5);
         UpdateRadioButtons("30min");
     }
 
-    private void OnOption1HourTapped(object sender, EventArgs e)
+    private async void OnOption1HourTapped(object sender, EventArgs e)
     {
-        UpdateSelection("1 heure", "4,00€");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        UpdateSelection("1 heure", "4,00€", 1.0);
         UpdateRadioButtons("1hour");
     }
 
-    private void OnOption2HoursTapped(object sender, EventArgs e)
+    private async void OnOption2HoursTapped(object sender, EventArgs e)
     {
-        UpdateSelection("2 heures", "7,00€");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        UpdateSelection("2 heures", "7,00€", 2.0);
         UpdateRadioButtons("2hours");
     }
 
-    private void OnOption4HoursTapped(object sender, EventArgs e)
+    private async void OnOption4HoursTapped(object sender, EventArgs e)
     {
-        UpdateSelection("4 heures", "12,00€");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        UpdateSelection("4 heures", "12,00€", 4.0);
         UpdateRadioButtons("4hours");
     }
 
-    private void UpdateSelection(string duration, string price)
+    private void UpdateSelection(string duration, string price, double hours)
     {
         selectedDuration = duration;
         selectedPrice = price;
+        selectedHours = hours;
         SelectedDurationText.Text = duration;
         SelectedPriceText.Text = price;
     }
@@ -87,6 +111,37 @@ public partial class DepositSetupPage : ContentPage
 
     private async void ConfirmButton_Clicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//LockInstructionsPage");
+        await AnimationService.ButtonPressAsync(ConfirmButton);
+        
+        // Show loading state
+        ConfirmButton.Text = "Création de la session...";
+        ConfirmButton.IsEnabled = false;
+        
+        try
+        {
+            // Create new session
+            var lockerId = this.lockerId ?? "A1"; // Default if no locker specified
+            var success = await _appState.StartSessionAsync(lockerId, selectedHours);
+            
+            if (success)
+            {
+                ConfirmButton.Text = "✓ Session créée";
+                await AnimationService.SuccessCheckmarkAsync(ConfirmButton);
+                await Shell.Current.GoToAsync("//UnlockInstructionsPage");
+            }
+            else
+            {
+                await DisplayAlert("Erreur", "Impossible de créer la session. Veuillez réessayer.", "OK");
+            }
+        }
+        catch (Exception ex)
+        {
+            await DisplayAlert("Erreur", "Une erreur s'est produite lors de la création de la session.", "OK");
+        }
+        finally
+        {
+            ConfirmButton.Text = "Confirmer";
+            ConfirmButton.IsEnabled = true;
+        }
     }
 }

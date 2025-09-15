@@ -21,7 +21,7 @@
                     <Image Source="dotnet_bot.png" WidthRequest="40" HeightRequest="40"/>
                     <StackLayout VerticalOptions="Center">
                         <Label Text="SmartLocker" FontSize="20" FontAttributes="Bold" TextColor="Black"/>
-                        <Label Text="Bonjour, Jean" FontSize="14" TextColor="Gray"/>
+                        <Label x:Name="WelcomeLabel" Text="Bonjour, Jean" FontSize="14" TextColor="Gray"/>
                     </StackLayout>
                 </StackLayout>
                 
@@ -32,15 +32,15 @@
                         BorderWidth="0"
                         Text="⚙"
                         FontSize="20"
-                        Clicked="SettingsButton_Clicked"/>
+                        Clicked="OnSettingsClicked"/>
             </Grid>
         </Border>
         
         <!-- Content -->
-        <ScrollView Margin="0,80,0,0">
+        <ScrollView x:Name="MainScrollView" Margin="0,80,0,0">
             <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20">
                 
-                <StackLayout Spacing="20">
+                <StackLayout x:Name="WelcomeSection" Spacing="20">
                     
                     <!-- Active Session Card (Visible when session is active) -->
                     <Border x:Name="ActiveSessionCard" 
@@ -62,9 +62,9 @@
                             </StackLayout>
                             
                             <StackLayout Spacing="4">
-                                <Label x:Name="ActiveSessionTitle" Text="Casier A1" FontSize="20" FontAttributes="Bold" TextColor="White"/>
-                                <Label x:Name="ActiveSessionLocation" Text="Entrée principale" FontSize="14" TextColor="#BFDBFE"/>
-                                <Label x:Name="ActiveSessionTime" Text="Temps restant: 1h 23min" FontSize="14" TextColor="#BFDBFE"/>
+                                <Label x:Name="SessionLockerLabel" Text="Casier A1" FontSize="20" FontAttributes="Bold" TextColor="White"/>
+                                <Label x:Name="SessionLocationLabel" Text="Entrée principale" FontSize="14" TextColor="#BFDBFE"/>
+                                <Label x:Name="SessionTimeLabel" Text="Temps restant: 1h 23min" FontSize="14" TextColor="#BFDBFE"/>
                             </StackLayout>
                             
                             <Button x:Name="ViewActiveSessionButton" 
@@ -74,7 +74,7 @@
                                     HeightRequest="36"
                                     CornerRadius="8"
                                     FontAttributes="Bold"
-                                    Clicked="ViewActiveSessionButton_Clicked"/>
+                                    Clicked="OnActiveSessionClicked"/>
                         </StackLayout>
                     </Border>
                     
@@ -100,7 +100,8 @@
                     </Border>
                     
                     <!-- Quick Stats -->
-                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                    <StackLayout x:Name="QuickStatsSection">
+                    <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
                         
                         <Border Grid.Column="0" 
                                 BackgroundColor="White" 
@@ -114,12 +115,29 @@
                                 <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                             </Border.Shadow>
                             <StackLayout HorizontalOptions="Center" Spacing="4">
-                                <Label Text="12" FontSize="24" FontAttributes="Bold" TextColor="#10B981" HorizontalOptions="Center"/>
+                                <Label x:Name="AvailableLockersLabel" Text="12" FontSize="24" FontAttributes="Bold" TextColor="#10B981" HorizontalOptions="Center"/>
                                 <Label Text="Disponibles" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
                             </StackLayout>
                         </Border>
                         
                         <Border Grid.Column="1" 
+                                BackgroundColor="White" 
+                                StrokeThickness="0"
+                                Padding="16" 
+                                Margin="4,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <StackLayout HorizontalOptions="Center" Spacing="4">
+                                <Label x:Name="SessionsCountLabel" Text="3" FontSize="24" FontAttributes="Bold" TextColor="#F59E0B" HorizontalOptions="Center"/>
+                                <Label Text="Sessions" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                            </StackLayout>
+                        </Border>
+                        
+                        <Border Grid.Column="2" 
                                 BackgroundColor="White" 
                                 StrokeThickness="0"
                                 Padding="16" 
@@ -131,15 +149,30 @@
                                 <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                             </Border.Shadow>
                             <StackLayout HorizontalOptions="Center" Spacing="4">
-                                <Label Text="3" FontSize="24" FontAttributes="Bold" TextColor="#F59E0B" HorizontalOptions="Center"/>
-                                <Label Text="Occupés" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                                <Label x:Name="TotalSpentLabel" Text="€24.50" FontSize="24" FontAttributes="Bold" TextColor="#2563EB" HorizontalOptions="Center"/>
+                                <Label Text="Dépensé" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
                             </StackLayout>
                         </Border>
                     </Grid>
+                    </StackLayout>
                     
                     <!-- Lockers List -->
-                    <StackLayout Spacing="12">
+                    <StackLayout x:Name="LockersSection" Spacing="12">
                         <Label Text="Casiers disponibles" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                        
+                        <!-- Quick Actions -->
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="0,0,0,12">
+                            <Button Grid.Column="0" 
+                                    Text="📊 Historique"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Margin="0,0,6,0"
+                                    Clicked="OnHistoryClicked"/>
+                            <Button Grid.Column="1" 
+                                    Text="⚙️ Paramètres"
+                                    Style="{StaticResource SecondaryButton}"
+                                    Margin="6,0,0,0"
+                                    Clicked="OnSettingsClicked"/>
+                        </Grid>
                         
                         <!-- Static Locker Items for demo -->
                         <StackLayout x:Name="LockersContainer" Spacing="8">

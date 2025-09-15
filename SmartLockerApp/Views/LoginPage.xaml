@@ -9,7 +9,8 @@
         <Grid Padding="20" RowDefinitions="*,Auto,*">
             
             <!-- Main Card -->
-            <Border Grid.Row="1" 
+            <Border x:Name="LoginCard"
+                    Grid.Row="1" 
                     BackgroundColor="White" 
                     StrokeThickness="0"
                     MaximumWidthRequest="400"
