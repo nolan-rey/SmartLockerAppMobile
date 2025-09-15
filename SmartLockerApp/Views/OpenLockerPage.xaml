@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.OpenLockerPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Ouverture du casier"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Button x:Name="BackButton" 
+                        HorizontalOptions="Start" 
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="←"
+                        FontSize="20"
+                        TextColor="#64748B"
+                        Clicked="BackButton_Clicked"/>
+                
+                <Label Text="Ouverture du casier" 
+                       FontSize="18" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <StackLayout MaximumWidthRequest="400" 
+                     HorizontalOptions="Center" 
+                     VerticalOptions="Center" 
+                     Margin="20">
+            
+            <!-- Status Icon -->
+            <Border BackgroundColor="#DBEAFE" 
+                    WidthRequest="100" 
+                    HeightRequest="100" 
+                    StrokeThickness="0"
+                    HorizontalOptions="Center" 
+                    Margin="0,0,0,24">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="50"/>
+                </Border.StrokeShape>
+                
+                <Label x:Name="StatusIcon"
+                       Text="🔓" 
+                       FontSize="50" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"/>
+            </Border>
+            
+            <!-- Status Message -->
+            <Border BackgroundColor="White" 
+                    StrokeThickness="0"
+                    Padding="24" 
+                    Margin="0,0,0,32">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                </Border.Shadow>
+                
+                <StackLayout>
+                    <Label x:Name="StatusTitle"
+                           Text="Ouverture en cours..." 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#2563EB" 
+                           Margin="0,0,0,12"/>
+                    
+                    <Label x:Name="StatusMessage"
+                           Text="Veuillez patienter pendant l'ouverture du casier A-12"
+                           FontSize="16" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#64748B" 
+                           Margin="0,0,0,16"/>
+                    
+                    <!-- Progress Indicator -->
+                    <StackLayout x:Name="ProgressContainer" HorizontalOptions="Center">
+                        <ActivityIndicator x:Name="LoadingIndicator" 
+                                         IsRunning="True" 
+                                         Color="#2563EB" 
+                                         WidthRequest="30" 
+                                         HeightRequest="30"/>
+                    </StackLayout>
+                </StackLayout>
+            </Border>
+            
+            <!-- Instructions -->
+            <Border x:Name="InstructionsContainer"
+                    BackgroundColor="White" 
+                    StrokeThickness="0"
+                    Padding="20" 
+                    Margin="0,0,0,32"
+                    IsVisible="False">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                </Border.Shadow>
+                
+                <StackLayout>
+                    <Label Text="Instructions" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           TextColor="#1E293B" 
+                           Margin="0,0,0,12"/>
+                    
+                    <Label Text="• Le casier est maintenant ouvert" 
+                           FontSize="14" 
+                           TextColor="#64748B" 
+                           Margin="0,0,0,6"/>
+                    
+                    <Label Text="• Récupérez vos affaires" 
+                           FontSize="14" 
+                           TextColor="#64748B" 
+                           Margin="0,0,0,6"/>
+                    
+                    <Label Text="• Fermez la porte du casier" 
+                           FontSize="14" 
+                           TextColor="#64748B" 
+                           Margin="0,0,0,6"/>
+                    
+                    <Label Text="• Votre session se terminera automatiquement" 
+                           FontSize="14" 
+                           TextColor="#64748B"/>
+                </StackLayout>
+            </Border>
+            
+            <!-- Actions -->
+            <StackLayout x:Name="ActionContainer" IsVisible="False">
+                <!-- Confirm Retrieval Button -->
+                <Button x:Name="ConfirmRetrievalButton" 
+                        Text="J'ai récupéré mes affaires"
+                        BackgroundColor="#10B981" 
+                        TextColor="White" 
+                        FontSize="18" 
+                        FontAttributes="Bold"
+                        HeightRequest="56" 
+                        CornerRadius="12" 
+                        BorderWidth="0" 
+                        Margin="0,0,0,12" 
+                        Clicked="ConfirmRetrievalButton_Clicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#10B981" Opacity="0.3" Radius="10" Offset="0,4"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <!-- Need Help Button -->
+                <Button x:Name="NeedHelpButton" 
+                        Text="J'ai besoin d'aide"
+                        BackgroundColor="Transparent" 
+                        TextColor="#F59E0B" 
+                        FontSize="16" 
+                        HeightRequest="48" 
+                        BorderWidth="1" 
+                        BorderColor="#FEF3C7"
+                        CornerRadius="8" 
+                        Clicked="NeedHelpButton_Clicked"/>
+            </StackLayout>
+        </StackLayout>
+    </Grid>
+</ContentPage>

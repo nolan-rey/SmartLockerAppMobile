@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.PaymentPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Paiement"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Button x:Name="BackButton" 
+                        HorizontalOptions="Start" 
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="←"
+                        FontSize="20"
+                        TextColor="#64748B"
+                        Clicked="BackButton_Clicked"/>
+                
+                <Label Text="Paiement" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="20,100,20,20">
+            <StackLayout MaximumWidthRequest="400" HorizontalOptions="Center">
+                
+                <!-- Session Summary -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout>
+                        <Label Text="Résumé de la session" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#1E293B" 
+                               Margin="0,0,0,16"/>
+                        
+                        <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                            
+                            <Label Grid.Row="0" Grid.Column="0" Text="Casier :" FontSize="14" TextColor="#64748B"/>
+                            <Label Grid.Row="0" Grid.Column="1" Text="A-12" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            
+                            <Label Grid.Row="1" Grid.Column="0" Text="Durée :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="1" Grid.Column="1" Text="2h 15min" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            
+                            <Label Grid.Row="2" Grid.Column="0" Text="Tarif de base :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="1" Text="€5.00" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            
+                            <Label Grid.Row="3" Grid.Column="0" Text="Temps supplémentaire :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="3" Grid.Column="1" Text="€0.75" FontSize="14" FontAttributes="Bold" TextColor="#F59E0B" Margin="0,8,0,0"/>
+                        </Grid>
+                        
+                        <Border BackgroundColor="#F8FAFC" 
+                                StrokeThickness="0"
+                                Padding="16" 
+                                Margin="0,16,0,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="Total à payer :" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                <Label Grid.Column="1" Text="€5.75" FontSize="18" FontAttributes="Bold" TextColor="#2563EB"/>
+                            </Grid>
+                        </Border>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Payment Methods -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout>
+                        <Label Text="Méthode de paiement" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#1E293B" 
+                               Margin="0,0,0,16"/>
+                        
+                        <!-- Credit Card Option -->
+                        <Border x:Name="CreditCardOption"
+                                BackgroundColor="#F8FAFC" 
+                                StrokeThickness="2"
+                                Stroke="#2563EB"
+                                Padding="16" 
+                                Margin="0,0,0,12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="PaymentMethod_Tapped"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" 
+                                        BackgroundColor="#2563EB" 
+                                        WidthRequest="12" 
+                                        HeightRequest="12" 
+                                        StrokeThickness="0"
+                                        VerticalOptions="Center"
+                                        Margin="0,0,12,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1">
+                                    <Label Text="Carte bancaire" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                    <Label Text="**** **** **** 1234" FontSize="14" TextColor="#64748B"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="💳" FontSize="24" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- PayPal Option -->
+                        <Border x:Name="PayPalOption"
+                                BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E2E8F0"
+                                Padding="16" 
+                                Margin="0,0,0,12">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="PaymentMethod_Tapped"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" 
+                                        BackgroundColor="Transparent" 
+                                        WidthRequest="12" 
+                                        HeightRequest="12" 
+                                        StrokeThickness="1"
+                                        Stroke="#E2E8F0"
+                                        VerticalOptions="Center"
+                                        Margin="0,0,12,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1">
+                                    <Label Text="PayPal" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                    <Label Text="user@example.com" FontSize="14" TextColor="#64748B"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="🅿️" FontSize="24" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Apple Pay Option -->
+                        <Border x:Name="ApplePayOption"
+                                BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E2E8F0"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="8"/>
+                            </Border.StrokeShape>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="PaymentMethod_Tapped"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Border Grid.Column="0" 
+                                        BackgroundColor="Transparent" 
+                                        WidthRequest="12" 
+                                        HeightRequest="12" 
+                                        StrokeThickness="1"
+                                        Stroke="#E2E8F0"
+                                        VerticalOptions="Center"
+                                        Margin="0,0,12,0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="6"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1">
+                                    <Label Text="Apple Pay" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                    <Label Text="Touch ID ou Face ID" FontSize="14" TextColor="#64748B"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="🍎" FontSize="24" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Actions -->
+                <StackLayout>
+                    <!-- Pay Button -->
+                    <Button x:Name="PayButton" 
+                            Text="Payer €5.75"
+                            BackgroundColor="#10B981" 
+                            TextColor="White" 
+                            FontSize="18" 
+                            FontAttributes="Bold"
+                            HeightRequest="56" 
+                            CornerRadius="12" 
+                            BorderWidth="0" 
+                            Margin="0,0,0,12" 
+                            Clicked="PayButton_Clicked">
+                        <Button.Shadow>
+                            <Shadow Brush="#10B981" Opacity="0.3" Radius="10" Offset="0,4"/>
+                        </Button.Shadow>
+                    </Button>
+                    
+                    <!-- Cancel Button -->
+                    <Button x:Name="CancelButton" 
+                            Text="Annuler"
+                            BackgroundColor="Transparent" 
+                            TextColor="#EF4444" 
+                            FontSize="16" 
+                            HeightRequest="48" 
+                            BorderWidth="1" 
+                            BorderColor="#FEE2E2"
+                            CornerRadius="8" 
+                            Clicked="CancelButton_Clicked"/>
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

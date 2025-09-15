@@ -36,5 +36,25 @@ namespace SmartLockerApp
         {
             await Shell.Current.GoToAsync("//HelpTutorialPage");
         }
+
+        private async void OnActiveSessionClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//ActiveSessionPage");
+        }
+
+        private async void OnHistoryClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//HistoryPage");
+        }
+
+        private async void OnSettingsClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//SettingsPage");
+        }
+
+        private async void OnPaymentClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//PaymentPage");
+        }
     }
 }

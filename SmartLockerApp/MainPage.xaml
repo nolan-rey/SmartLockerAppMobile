@@ -139,6 +139,71 @@
                     </Button.Shadow>
                 </Button>
                 
+                <!-- New Pages Buttons -->
+                <Button
+                    x:Name="ActiveSessionBtn"
+                    Text="Session Active" 
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#10B981"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    Clicked="OnActiveSessionClicked"
+                    HorizontalOptions="Fill">
+                    <Button.Shadow>
+                        <Shadow Brush="#10B981" Opacity="0.2" Radius="8" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <Button
+                    x:Name="HistoryBtn"
+                    Text="Historique" 
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#8B5CF6"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    Clicked="OnHistoryClicked"
+                    HorizontalOptions="Fill">
+                    <Button.Shadow>
+                        <Shadow Brush="#8B5CF6" Opacity="0.2" Radius="8" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <Button
+                    x:Name="SettingsBtn"
+                    Text="Paramètres" 
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#64748B"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    Clicked="OnSettingsClicked"
+                    HorizontalOptions="Fill">
+                    <Button.Shadow>
+                        <Shadow Brush="#64748B" Opacity="0.2" Radius="8" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <Button
+                    x:Name="PaymentBtn"
+                    Text="Paiement" 
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#F59E0B"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    Clicked="OnPaymentClicked"
+                    HorizontalOptions="Fill">
+                    <Button.Shadow>
+                        <Shadow Brush="#F59E0B" Opacity="0.2" Radius="8" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+                
             </StackLayout>
             
         </VerticalStackLayout>

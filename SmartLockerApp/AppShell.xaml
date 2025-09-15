@@ -58,5 +58,51 @@
         Title="HelpTutorial"
         ContentTemplate="{DataTemplate views:HelpTutorialPage}"
         Route="HelpTutorialPage" />
+        
+    <!-- New Pages -->
+    <ShellContent
+        Title="ActiveSession"
+        ContentTemplate="{DataTemplate views:ActiveSessionPage}"
+        Route="ActiveSessionPage" />
+        
+    <ShellContent
+        Title="AuthError"
+        ContentTemplate="{DataTemplate views:AuthErrorPage}"
+        Route="AuthErrorPage" />
+        
+    <ShellContent
+        Title="DepositItems"
+        ContentTemplate="{DataTemplate views:DepositItemsPage}"
+        Route="DepositItemsPage" />
+        
+    <ShellContent
+        Title="History"
+        ContentTemplate="{DataTemplate views:HistoryPage}"
+        Route="HistoryPage" />
+        
+    <ShellContent
+        Title="OpenLocker"
+        ContentTemplate="{DataTemplate views:OpenLockerPage}"
+        Route="OpenLockerPage" />
+        
+    <ShellContent
+        Title="Payment"
+        ContentTemplate="{DataTemplate views:PaymentPage}"
+        Route="PaymentPage" />
+        
+    <ShellContent
+        Title="Settings"
+        ContentTemplate="{DataTemplate views:SettingsPage}"
+        Route="SettingsPage" />
+        
+    <ShellContent
+        Title="UnlockConfirmation"
+        ContentTemplate="{DataTemplate views:UnlockConfirmationPage}"
+        Route="UnlockConfirmationPage" />
+        
+    <ShellContent
+        Title="UnlockInstructions"
+        ContentTemplate="{DataTemplate views:UnlockInstructionsPage}"
+        Route="UnlockInstructionsPage" />
 
 </Shell>

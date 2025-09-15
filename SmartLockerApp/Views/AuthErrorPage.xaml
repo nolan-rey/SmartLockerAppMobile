@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.AuthErrorPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Erreur d'authentification"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Button x:Name="BackButton" 
+                        HorizontalOptions="Start" 
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="←"
+                        FontSize="20"
+                        TextColor="#64748B"
+                        Clicked="BackButton_Clicked"/>
+                
+                <Label Text="Erreur d'authentification" 
+                       FontSize="18" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <StackLayout MaximumWidthRequest="400" 
+                     HorizontalOptions="Center" 
+                     VerticalOptions="Center" 
+                     Margin="20">
+            
+            <!-- Error Icon -->
+            <Border BackgroundColor="#FEE2E2" 
+                    WidthRequest="80" 
+                    HeightRequest="80" 
+                    StrokeThickness="0"
+                    HorizontalOptions="Center" 
+                    Margin="0,0,0,24">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="40"/>
+                </Border.StrokeShape>
+                
+                <Label Text="⚠️" 
+                       FontSize="40" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"/>
+            </Border>
+            
+            <!-- Error Message -->
+            <Border BackgroundColor="White" 
+                    StrokeThickness="0"
+                    Padding="24" 
+                    Margin="0,0,0,32">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                </Border.Shadow>
+                
+                <StackLayout>
+                    <Label Text="Authentification échouée" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#EF4444" 
+                           Margin="0,0,0,12"/>
+                    
+                    <Label x:Name="ErrorMessageLabel"
+                           Text="Identifiants incorrects. Veuillez vérifier votre email et mot de passe."
+                           FontSize="16" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#64748B" 
+                           Margin="0,0,0,16"/>
+                    
+                    <Label Text="Code d'erreur: AUTH_001" 
+                           FontSize="12" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#94A3B8"/>
+                </StackLayout>
+            </Border>
+            
+            <!-- Actions -->
+            <StackLayout>
+                <!-- Retry Button -->
+                <Button x:Name="RetryButton" 
+                        Text="Réessayer"
+                        BackgroundColor="#2563EB" 
+                        TextColor="White" 
+                        FontSize="18" 
+                        FontAttributes="Bold"
+                        HeightRequest="56" 
+                        CornerRadius="12" 
+                        BorderWidth="0" 
+                        Margin="0,0,0,12" 
+                        Clicked="RetryButton_Clicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#2563EB" Opacity="0.3" Radius="10" Offset="0,4"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <!-- Forgot Password Button -->
+                <Button x:Name="ForgotPasswordButton" 
+                        Text="Mot de passe oublié ?"
+                        BackgroundColor="Transparent" 
+                        TextColor="#2563EB" 
+                        FontSize="16" 
+                        HeightRequest="48" 
+                        BorderWidth="0" 
+                        Clicked="ForgotPasswordButton_Clicked"/>
+                
+                <!-- Back to Login Button -->
+                <Button x:Name="BackToLoginButton" 
+                        Text="Retour à la connexion"
+                        BackgroundColor="Transparent" 
+                        TextColor="#64748B" 
+                        FontSize="14" 
+                        HeightRequest="40" 
+                        BorderWidth="0" 
+                        Margin="0,8,0,0"
+                        Clicked="BackToLoginButton_Clicked"/>
+            </StackLayout>
+        </StackLayout>
+    </Grid>
+</ContentPage>

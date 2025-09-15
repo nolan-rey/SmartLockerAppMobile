@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.UnlockInstructionsPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Instructions de déverrouillage"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Button x:Name="BackButton" 
+                        HorizontalOptions="Start" 
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="←"
+                        FontSize="20"
+                        TextColor="#64748B"
+                        Clicked="BackButton_Clicked"/>
+                
+                <Label Text="Déverrouillage" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="20,100,20,20">
+            <StackLayout MaximumWidthRequest="400" HorizontalOptions="Center">
+                
+                <!-- Instructions -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout>
+                        <Label Text="Choisissez votre méthode" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               HorizontalTextAlignment="Center" 
+                               TextColor="#1E293B" 
+                               Margin="0,0,0,12"/>
+                        
+                        <Label Text="Sélectionnez la méthode que vous souhaitez utiliser pour déverrouiller votre casier A-12"
+                               FontSize="16" 
+                               HorizontalTextAlignment="Center" 
+                               TextColor="#64748B" 
+                               Margin="0,0,0,20"/>
+                    </StackLayout>
+                </Border>
+                
+                <!-- RFID Option -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="2"
+                        Stroke="#E2E8F0"
+                        Padding="24" 
+                        Margin="0,0,0,16">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="RfidOption_Tapped"/>
+                    </Border.GestureRecognizers>
+                    
+                    <StackLayout>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="0,0,0,16">
+                            <Border BackgroundColor="#3B82F6" 
+                                    WidthRequest="60" 
+                                    HeightRequest="60" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="30"/>
+                                </Border.StrokeShape>
+                                <Label Text="📱" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            
+                            <StackLayout VerticalOptions="Center">
+                                <Label Text="Carte RFID" FontSize="18" FontAttributes="Bold" TextColor="#1E293B"/>
+                                <Label Text="Rapide et sécurisé" FontSize="14" TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <Label Text="Approchez votre carte RFID du lecteur situé sur le casier pour le déverrouiller automatiquement."
+                               FontSize="14" 
+                               HorizontalTextAlignment="Center" 
+                               TextColor="#64748B"/>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Fingerprint Option -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="2"
+                        Stroke="#E2E8F0"
+                        Padding="24" 
+                        Margin="0,0,0,32">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                    </Border.Shadow>
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="FingerprintOption_Tapped"/>
+                    </Border.GestureRecognizers>
+                    
+                    <StackLayout>
+                        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Margin="0,0,0,16">
+                            <Border BackgroundColor="#10B981" 
+                                    WidthRequest="60" 
+                                    HeightRequest="60" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="30"/>
+                                </Border.StrokeShape>
+                                <Label Text="👆" FontSize="30" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            
+                            <StackLayout VerticalOptions="Center">
+                                <Label Text="Empreinte digitale" FontSize="18" FontAttributes="Bold" TextColor="#1E293B"/>
+                                <Label Text="Authentification biométrique" FontSize="14" TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <Label Text="Placez votre doigt sur le capteur d'empreintes digitales pour une authentification sécurisée."
+                               FontSize="14" 
+                               HorizontalTextAlignment="Center" 
+                               TextColor="#64748B"/>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Alternative Options -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="20" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout>
+                        <Label Text="Autres options" 
+                               FontSize="16" 
+                               FontAttributes="Bold" 
+                               TextColor="#1E293B" 
+                               Margin="0,0,0,12"/>
+                        
+                        <!-- Remote Unlock -->
+                        <Border BackgroundColor="Transparent" 
+                                StrokeThickness="0"
+                                Padding="0,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="RemoteUnlock_Tapped"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="Déverrouillage à distance" FontSize="14" TextColor="#2563EB" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text=">" FontSize="16" TextColor="#64748B" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Need Help -->
+                        <Border BackgroundColor="Transparent" 
+                                StrokeThickness="0"
+                                Padding="0,8">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="NeedHelp_Tapped"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="*,Auto">
+                                <Label Grid.Column="0" Text="J'ai besoin d'aide" FontSize="14" TextColor="#F59E0B" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" Text=">" FontSize="16" TextColor="#64748B" VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Cancel Button -->
+                <Button x:Name="CancelButton" 
+                        Text="Annuler"
+                        BackgroundColor="Transparent" 
+                        TextColor="#EF4444" 
+                        FontSize="16" 
+                        HeightRequest="48" 
+                        BorderWidth="1" 
+                        BorderColor="#FEE2E2"
+                        CornerRadius="8" 
+                        Clicked="CancelButton_Clicked"/>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

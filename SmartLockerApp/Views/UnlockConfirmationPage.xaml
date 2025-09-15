@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.UnlockConfirmationPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Confirmation de déverrouillage"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Button x:Name="BackButton" 
+                        HorizontalOptions="Start" 
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="←"
+                        FontSize="20"
+                        TextColor="#64748B"
+                        Clicked="BackButton_Clicked"/>
+                
+                <Label Text="Déverrouillage confirmé" 
+                       FontSize="18" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <StackLayout MaximumWidthRequest="400" 
+                     HorizontalOptions="Center" 
+                     VerticalOptions="Center" 
+                     Margin="20">
+            
+            <!-- Success Icon -->
+            <Border BackgroundColor="#DCFCE7" 
+                    WidthRequest="100" 
+                    HeightRequest="100" 
+                    StrokeThickness="0"
+                    HorizontalOptions="Center" 
+                    Margin="0,0,0,24">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="50"/>
+                </Border.StrokeShape>
+                
+                <Label Text="✅" 
+                       FontSize="50" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center"/>
+            </Border>
+            
+            <!-- Success Message -->
+            <Border BackgroundColor="White" 
+                    StrokeThickness="0"
+                    Padding="24" 
+                    Margin="0,0,0,32">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                </Border.Shadow>
+                
+                <StackLayout>
+                    <Label Text="Déverrouillage réussi !" 
+                           FontSize="20" 
+                           FontAttributes="Bold" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#10B981" 
+                           Margin="0,0,0,12"/>
+                    
+                    <Label Text="Le casier A-12 a été déverrouillé avec succès. Vous pouvez maintenant récupérer vos affaires."
+                           FontSize="16" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#64748B" 
+                           Margin="0,0,0,16"/>
+                    
+                    <Label Text="N'oubliez pas de fermer la porte du casier après avoir récupéré vos affaires." 
+                           FontSize="14" 
+                           HorizontalTextAlignment="Center" 
+                           TextColor="#F59E0B" 
+                           FontAttributes="Italic"/>
+                </StackLayout>
+            </Border>
+            
+            <!-- Session Details -->
+            <Border BackgroundColor="White" 
+                    StrokeThickness="0"
+                    Padding="20" 
+                    Margin="0,0,0,32">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="12"/>
+                </Border.StrokeShape>
+                <Border.Shadow>
+                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                </Border.Shadow>
+                
+                <StackLayout>
+                    <Label Text="Détails de la session" 
+                           FontSize="16" 
+                           FontAttributes="Bold" 
+                           TextColor="#1E293B" 
+                           Margin="0,0,0,12"/>
+                    
+                    <Grid RowDefinitions="Auto,Auto,Auto" ColumnDefinitions="*,Auto">
+                        
+                        <Label Grid.Row="0" Grid.Column="0" Text="Casier :" FontSize="14" TextColor="#64748B"/>
+                        <Label Grid.Row="0" Grid.Column="1" Text="A-12" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                        
+                        <Label Grid.Row="1" Grid.Column="0" Text="Heure de déverrouillage :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                        <Label Grid.Row="1" Grid.Column="1" Text="16:25" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                        
+                        <Label Grid.Row="2" Grid.Column="0" Text="Temps restant :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                        <Label Grid.Row="2" Grid.Column="1" Text="5 minutes" FontSize="14" FontAttributes="Bold" TextColor="#EF4444" Margin="0,8,0,0"/>
+                    </Grid>
+                </StackLayout>
+            </Border>
+            
+            <!-- Actions -->
+            <StackLayout>
+                <!-- Continue to Locker Button -->
+                <Button x:Name="ContinueButton" 
+                        Text="Aller au casier"
+                        BackgroundColor="#2563EB" 
+                        TextColor="White" 
+                        FontSize="18" 
+                        FontAttributes="Bold"
+                        HeightRequest="56" 
+                        CornerRadius="12" 
+                        BorderWidth="0" 
+                        Margin="0,0,0,12" 
+                        Clicked="ContinueButton_Clicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#2563EB" Opacity="0.3" Radius="10" Offset="0,4"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <!-- View Session Button -->
+                <Button x:Name="ViewSessionButton" 
+                        Text="Voir ma session"
+                        BackgroundColor="Transparent" 
+                        TextColor="#2563EB" 
+                        FontSize="16" 
+                        HeightRequest="48" 
+                        BorderWidth="1" 
+                        BorderColor="#E2E8F0"
+                        CornerRadius="8" 
+                        Margin="0,0,0,12"
+                        Clicked="ViewSessionButton_Clicked"/>
+                
+                <!-- Back to Home Button -->
+                <Button x:Name="BackToHomeButton" 
+                        Text="Retour à l'accueil"
+                        BackgroundColor="Transparent" 
+                        TextColor="#64748B" 
+                        FontSize="14" 
+                        HeightRequest="40" 
+                        BorderWidth="0" 
+                        Clicked="BackToHomeButton_Clicked"/>
+            </StackLayout>
+        </StackLayout>
+    </Grid>
+</ContentPage>
