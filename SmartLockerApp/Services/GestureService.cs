@@ -91,7 +91,7 @@ public static class GestureService
     /// <summary>
     /// Adds tap gesture with visual feedback
     /// </summary>
-    public static void AddTapWithFeedback(View view, Func<Task> onTap)
+    public static Task AddTapWithFeedbackAsync(View view, Func<Task> onTapped)
     {
         var tapGesture = new TapGestureRecognizer();
         tapGesture.Tapped += async (s, e) =>
@@ -102,14 +102,18 @@ public static class GestureService
             // Haptic feedback
             try
             {
+#if ANDROID || IOS
                 HapticFeedback.Default.Perform(HapticFeedbackType.Click);
+#endif
             }
             catch { }
             
-            await onTap();
+            // Execute callback
+            await onTapped();
         };
         
         view.GestureRecognizers.Add(tapGesture);
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -150,7 +154,7 @@ public static class GestureService
     /// <summary>
     /// Adds edge swipe gesture for navigation
     /// </summary>
-    public static void AddEdgeSwipe(ContentPage page, Func<Task>? onBackSwipe = null)
+    public static void AddEdgeSwipe(View view, Func<Task>? onBackSwipe = null)
     {
         if (onBackSwipe == null) return;
 
@@ -162,14 +166,9 @@ public static class GestureService
         
         swipeGesture.Swiped += async (s, e) =>
         {
-            // Only trigger if swipe starts from left edge (first 50 pixels)
-            var startX = e.Parameter as double? ?? 0;
-            if (startX <= 50)
-            {
-                await onBackSwipe();
-            }
+            await onBackSwipe();
         };
         
-        page.GestureRecognizers.Add(swipeGesture);
+        view.GestureRecognizers.Add(swipeGesture);
     }
 }

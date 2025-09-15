@@ -121,7 +121,7 @@ public partial class DepositSetupPage : ContentPage
         {
             // Create new session
             var lockerId = this.lockerId ?? "A1"; // Default if no locker specified
-            var success = await _appState.StartSessionAsync(lockerId, selectedHours);
+            var success = await _appState.StartSessionAsync(lockerId, (int)selectedHours);
             
             if (success)
             {
@@ -131,10 +131,18 @@ public partial class DepositSetupPage : ContentPage
             }
             else
             {
-                await DisplayAlert("Erreur", "Impossible de créer la session. Veuillez réessayer.", "OK");
+                try
+                {
+                    // Handle error
+                    await DisplayAlert("Erreur", "Impossible de créer la session", "OK");
+                }
+                catch (Exception)
+                {
+                    await DisplayAlert("Erreur", "Impossible de créer la session. Veuillez réessayer.", "OK");
+                }
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             await DisplayAlert("Erreur", "Une erreur s'est produite lors de la création de la session.", "OK");
         }

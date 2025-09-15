@@ -113,6 +113,7 @@ public class AppStateService : INotifyPropertyChanged
             {
                 Id = "1",
                 Name = "John Doe",
+                FirstName = "John",
                 Email = email,
                 Phone = "+33 6 12 34 56 78"
             };
@@ -121,27 +122,41 @@ public class AppStateService : INotifyPropertyChanged
         return false;
     }
 
-    public async Task<LockerSession> StartSessionAsync(string lockerId, int durationHours)
+    public async Task<bool> StartSessionAsync(string lockerId, int durationHours)
     {
-        await Task.Delay(1000);
-        
-        var locker = AvailableLockers.FirstOrDefault(l => l.Id == lockerId);
-        if (locker == null) throw new Exception("Casier non trouvé");
-
-        var session = new LockerSession
+        try
         {
-            Id = Guid.NewGuid().ToString(),
-            LockerId = lockerId,
-            StartTime = DateTime.Now,
-            PlannedEndTime = DateTime.Now.AddHours(durationHours),
-            Status = SessionStatus.Active,
-            EstimatedCost = locker.PricePerHour * durationHours
-        };
-
-        ActiveSession = session;
-        locker.Status = LockerStatus.Occupied;
-        
-        return session;
+            // Simulate API call
+            await Task.Delay(1000);
+            
+            var locker = _availableLockers.FirstOrDefault(l => l.Id == lockerId);
+            if (locker == null || locker.Status != LockerStatus.Available)
+                return false;
+            
+            // Create new session
+            var session = new LockerSession
+            {
+                Id = Guid.NewGuid().ToString(),
+                LockerId = lockerId,
+                UserId = _currentUser?.Id ?? "demo-user",
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now.AddHours(durationHours),
+                Status = SessionStatus.Active,
+                TotalCost = locker.PricePerHour * (decimal)durationHours
+            };
+            
+            // Update locker status
+            locker.Status = LockerStatus.Occupied;
+            
+            // Set active session
+            ActiveSession = session;
+            
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 
     public async Task<bool> EndSessionAsync()
@@ -152,10 +167,11 @@ public class AppStateService : INotifyPropertyChanged
 
         ActiveSession.EndTime = DateTime.Now;
         ActiveSession.Status = SessionStatus.Completed;
-        
-        var duration = (ActiveSession.EndTime.Value - ActiveSession.StartTime).TotalHours;
+
+        // Calculate final cost based on actual time
+        var actualDuration = (ActiveSession.EndTime - ActiveSession.StartTime).TotalHours;
         var locker = AvailableLockers.FirstOrDefault(l => l.Id == ActiveSession.LockerId);
-        ActiveSession.TotalCost = (decimal)(duration * (double)(locker?.PricePerHour ?? 2.50m));
+        ActiveSession.TotalCost = (decimal)(actualDuration * (double)(locker?.PricePerHour ?? 2.50m));
 
         SessionHistory.Insert(0, ActiveSession);
         
@@ -178,6 +194,7 @@ public class User
 {
     public string Id { get; set; } = "";
     public string Name { get; set; } = "";
+    public string FirstName { get; set; } = "";
     public string Email { get; set; } = "";
     public string Phone { get; set; } = "";
 }
@@ -194,11 +211,10 @@ public class LockerSession
 {
     public string Id { get; set; } = "";
     public string LockerId { get; set; } = "";
+    public string UserId { get; set; } = "";
     public DateTime StartTime { get; set; }
-    public DateTime? EndTime { get; set; }
-    public DateTime? PlannedEndTime { get; set; }
+    public DateTime EndTime { get; set; }
     public SessionStatus Status { get; set; }
-    public decimal EstimatedCost { get; set; }
     public decimal TotalCost { get; set; }
 }
 

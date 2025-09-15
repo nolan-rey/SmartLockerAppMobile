@@ -32,12 +32,12 @@ public partial class LoginPage : ContentPage
         if (string.IsNullOrWhiteSpace(EmailEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
         {
             ErrorLabel.Text = "Veuillez remplir tous les champs";
-            ErrorLabel.IsVisible = true;
-            await AnimationService.ShakeAsync(ErrorLabel);
+            ErrorBorder.IsVisible = true;
+            await AnimationService.ShakeAsync(ErrorBorder);
             return;
         }
 
-        ErrorLabel.IsVisible = false;
+        ErrorBorder.IsVisible = false;
         
         // Show loading state
         LoginButton.Text = "Connexion...";
@@ -58,11 +58,11 @@ public partial class LoginPage : ContentPage
                 await Shell.Current.GoToAsync("//AuthErrorPage");
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             ErrorLabel.Text = "Erreur de connexion. Veuillez réessayer.";
-            ErrorLabel.IsVisible = true;
-            await AnimationService.ShakeAsync(ErrorLabel);
+            ErrorBorder.IsVisible = true;
+            await AnimationService.ShakeAsync(ErrorBorder);
         }
         finally
         {
@@ -73,13 +73,35 @@ public partial class LoginPage : ContentPage
 
     private async void OnSignupClicked(object sender, EventArgs e)
     {
-        await AnimationService.ButtonPressAsync(SignupButton);
-        await Shell.Current.GoToAsync("//SignupPage");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        await DisplayAlert("Inscription", "Fonctionnalité d'inscription à venir", "OK");
+    }
+
+    private void ShowPasswordButton_Clicked(object sender, EventArgs e)
+    {
+        PasswordEntry.IsPassword = !PasswordEntry.IsPassword;
+        var button = (Button)sender;
+        button.Text = PasswordEntry.IsPassword ? "👁" : "🙈";
     }
 
     private async void OnForgotPasswordClicked(object sender, EventArgs e)
     {
-        await AnimationService.ButtonPressAsync(ForgotPasswordButton);
-        await Shell.Current.GoToAsync("//ForgotPasswordPage");
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
+        await DisplayAlert("Mot de passe oublié", "Fonctionnalité de récupération à venir", "OK");
+    }
+
+    private void ForgotPasswordButton_Clicked(object sender, EventArgs e)
+    {
+        OnForgotPasswordClicked(sender, e);
+    }
+
+    private void LoginButton_Clicked(object sender, EventArgs e)
+    {
+        OnLoginClicked(sender, e);
+    }
+
+    private void SignupButton_Clicked(object sender, EventArgs e)
+    {
+        OnSignupClicked(sender, e);
     }
 }

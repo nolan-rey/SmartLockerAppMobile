@@ -12,28 +12,15 @@ public partial class HomePage : ContentPage
         _appState.PropertyChanged += OnAppStateChanged;
         
         // Add mobile gestures
-        SetupMobileGestures();
+        SetupGestures();
     }
     
-    private void SetupMobileGestures()
+    private void SetupGestures()
     {
-        // Add pull-to-refresh for updating data
-        GestureService.AddPullToRefresh(this.FindByName<ScrollView>("MainScrollView") ?? new ScrollView(), 
-            async () => await RefreshData());
-        
         // Add swipe gestures for navigation
-        GestureService.AddSwipeGestures(this,
+        GestureService.AddSwipeGestures(WelcomeSection,
             onSwipeLeft: async () => await Shell.Current.GoToAsync("//HistoryPage"),
             onSwipeRight: async () => await Shell.Current.GoToAsync("//SettingsPage"));
-        
-        // Add tap with feedback to locker cards
-        foreach (var child in LockersContainer.Children)
-        {
-            if (child is Border border)
-            {
-                GestureService.AddTapWithFeedback(border, async () => await OnLockerClicked(border, EventArgs.Empty));
-            }
-        }
     }
     
     private async Task RefreshData()
@@ -59,6 +46,8 @@ public partial class HomePage : ContentPage
         if (_appState.ActiveSession != null)
         {
             ActiveSessionCard.IsVisible = true;
+        }
+        
         UpdateUI();
     }
 

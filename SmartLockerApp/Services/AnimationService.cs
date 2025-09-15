@@ -65,16 +65,11 @@ public static class AnimationService
 
     public static async Task ShakeAsync(VisualElement element, uint duration = 500)
     {
-        var tasks = new[]
-        {
-            element.TranslateTo(-10, 0, 50),
-            Task.Delay(50).ContinueWith(_ => element.TranslateTo(10, 0, 50)),
-            Task.Delay(100).ContinueWith(_ => element.TranslateTo(-10, 0, 50)),
-            Task.Delay(150).ContinueWith(_ => element.TranslateTo(10, 0, 50)),
-            Task.Delay(200).ContinueWith(_ => element.TranslateTo(0, 0, 50))
-        };
-        
-        await Task.WhenAll(tasks);
+        await element.TranslateTo(-10, 0, 50);
+        await element.TranslateTo(10, 0, 50);
+        await element.TranslateTo(-10, 0, 50);
+        await element.TranslateTo(10, 0, 50);
+        await element.TranslateTo(0, 0, 50);
     }
 
     public static async Task LoadingPulseAsync(VisualElement element, CancellationToken cancellationToken)
@@ -89,8 +84,8 @@ public static class AnimationService
 
     public static async Task ButtonPressAsync(VisualElement element)
     {
-        await element.ScaleTo(0.95, 100, Easing.CubicOut);
-        await element.ScaleTo(1, 100, Easing.CubicOut);
+        await element.ScaleTo(0.95, 100u);
+        await element.ScaleTo(1.0, 100u, Easing.CubicOut);
     }
 
     public static async Task CardFlipAsync(VisualElement element, uint duration = 600)
@@ -105,13 +100,11 @@ public static class AnimationService
         element.Rotation = -45;
         element.IsVisible = true;
         
-        var tasks = new[]
-        {
-            element.ScaleTo(1.2, duration * 0.6, Easing.SpringOut),
-            element.RotateTo(0, duration * 0.6, Easing.SpringOut)
-        };
+        await Task.WhenAll(
+            element.FadeTo(0.8, 100),
+            element.ScaleTo(0.95, 100)
+        );
         
-        await Task.WhenAll(tasks);
-        await element.ScaleTo(1, duration * 0.4, Easing.CubicOut);
+        await element.ScaleTo(1, (uint)(duration * 0.4), Easing.CubicOut);
     }
 }

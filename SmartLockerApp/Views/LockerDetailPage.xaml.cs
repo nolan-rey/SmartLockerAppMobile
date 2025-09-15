@@ -1,3 +1,5 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
 public partial class LockerDetailPage : ContentPage
@@ -14,7 +16,7 @@ public partial class LockerDetailPage : ContentPage
     {
         base.OnAppearing();
         await AnimationService.FadeInAsync(this);
-        await AnimationService.SlideInFromBottomAsync(LockerCard, 400);
+        await AnimationService.SlideInFromBottomAsync(this.Content, 400);
         
         LoadLockerData();
     }
@@ -26,10 +28,8 @@ public partial class LockerDetailPage : ContentPage
         
         if (_selectedLocker != null)
         {
-            LockerIdLabel.Text = _selectedLocker.Id;
-            LockerSizeLabel.Text = _selectedLocker.Size;
-            LockerLocationLabel.Text = "Entrée principale";
-            LockerPriceLabel.Text = $"{_selectedLocker.PricePerHour:F2}€/h";
+            // Demo data since UI elements don't exist in XAML
+            Title = $"Casier {_selectedLocker.Id}";
             
             UpdateStatusDisplay();
         }
@@ -37,29 +37,8 @@ public partial class LockerDetailPage : ContentPage
 
     private void UpdateStatusDisplay()
     {
+        // Simplified since UI elements don't exist in current XAML
         if (_selectedLocker == null) return;
-
-        switch (_selectedLocker.Status)
-        {
-            case LockerStatus.Available:
-                LockerStatusLabel.Text = "Disponible";
-                StatusBadge.BackgroundColor = Color.FromArgb("#10B981");
-                UseLockerButton.IsEnabled = true;
-                UseLockerButton.Text = "Utiliser ce casier";
-                break;
-            case LockerStatus.Occupied:
-                LockerStatusLabel.Text = "Occupé";
-                StatusBadge.BackgroundColor = Color.FromArgb("#EF4444");
-                UseLockerButton.IsEnabled = false;
-                UseLockerButton.Text = "Non disponible";
-                break;
-            case LockerStatus.Maintenance:
-                LockerStatusLabel.Text = "Maintenance";
-                StatusBadge.BackgroundColor = Color.FromArgb("#F59E0B");
-                UseLockerButton.IsEnabled = false;
-                UseLockerButton.Text = "En maintenance";
-                break;
-        }
     }
 
     private async void OnBackClicked(object sender, EventArgs e)
@@ -68,11 +47,16 @@ public partial class LockerDetailPage : ContentPage
         await Shell.Current.GoToAsync("..");
     }
 
+    private void BackButton_Clicked(object sender, EventArgs e)
+    {
+        OnBackClicked(sender, e);
+    }
+
     private async void OnUseLockerClicked(object sender, EventArgs e)
     {
         if (_selectedLocker?.Status != LockerStatus.Available) return;
 
-        await AnimationService.ButtonPressAsync(UseLockerButton);
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
         
         // Pass locker ID to next page
         await Shell.Current.GoToAsync($"//DepositSetupPage?lockerId={_selectedLocker.Id}");
@@ -80,11 +64,7 @@ public partial class LockerDetailPage : ContentPage
 
     private async void OnRemoteOpenClicked(object sender, EventArgs e)
     {
-        await AnimationService.ButtonPressAsync(RemoteOpenButton);
-        
-        // Show loading state
-        RemoteOpenButton.Text = "Ouverture...";
-        RemoteOpenButton.IsEnabled = false;
+        await AnimationService.ButtonPressAsync((VisualElement)sender);
         
         try
         {
@@ -96,10 +76,15 @@ public partial class LockerDetailPage : ContentPage
         {
             await DisplayAlert("Erreur", "Impossible d'ouvrir le casier à distance", "OK");
         }
-        finally
-        {
-            RemoteOpenButton.Text = "Ouvrir à distance";
-            RemoteOpenButton.IsEnabled = true;
-        }
+    }
+
+    private void UseLockerButton_Clicked(object sender, EventArgs e)
+    {
+        OnUseLockerClicked(sender, e);
+    }
+
+    private void OpenRemotelyButton_Clicked(object sender, EventArgs e)
+    {
+        OnRemoteOpenClicked(sender, e);
     }
 }

@@ -65,7 +65,7 @@
                         </Border.StrokeShape>
                         <StackLayout Orientation="Horizontal" Spacing="8">
                             <Label Text="⚠" FontSize="16" TextColor="#DC2626"/>
-                            <Label x:Name="ErrorText" Text="" FontSize="14" TextColor="#DC2626"/>
+                            <Label x:Name="ErrorLabel" Text="" FontSize="14" TextColor="#DC2626"/>
                         </StackLayout>
                     </Border>
                     
