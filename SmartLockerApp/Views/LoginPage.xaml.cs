@@ -15,8 +15,20 @@ public partial class LoginPage : ContentPage
 
     private async void LoginButton_Clicked(object sender, EventArgs e)
     {
-        // TODO: Implement login logic
-        await DisplayAlert("Login", "Fonctionnalité de connexion à implémenter", "OK");
+        // Basic validation
+        if (string.IsNullOrWhiteSpace(EmailEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
+        {
+            ErrorBorder.IsVisible = true;
+            ErrorText.Text = "Veuillez remplir tous les champs";
+            return;
+        }
+
+        // Hide error message
+        ErrorBorder.IsVisible = false;
+
+        // TODO: Implement real authentication logic
+        // For now, simulate successful login and navigate to HomePage
+        await Shell.Current.GoToAsync("//HomePage");
     }
 
     private async void ForgotPasswordButton_Clicked(object sender, EventArgs e)

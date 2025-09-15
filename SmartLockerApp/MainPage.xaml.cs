@@ -21,5 +21,10 @@ namespace SmartLockerApp
         {
             await Shell.Current.GoToAsync("//ForgotPasswordPage");
         }
+
+        private async void OnHomePageClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("//HomePage");
+        }
     }
 }

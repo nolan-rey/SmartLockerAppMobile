@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.HomePage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Accueil"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="12">
+                    <Image Source="dotnet_bot.png" WidthRequest="40" HeightRequest="40"/>
+                    <StackLayout VerticalOptions="Center">
+                        <Label Text="SmartLocker" FontSize="20" FontAttributes="Bold" TextColor="Black"/>
+                        <Label Text="Bonjour, Jean" FontSize="14" TextColor="Gray"/>
+                    </StackLayout>
+                </StackLayout>
+                
+                <Button x:Name="SettingsButton" 
+                        HorizontalOptions="End" 
+                        VerticalOptions="Center"
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="⚙"
+                        FontSize="20"
+                        Clicked="SettingsButton_Clicked"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="0,80,0,0">
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20">
+                
+                <StackLayout Spacing="20">
+                    
+                    <!-- Active Session Card (Visible when session is active) -->
+                    <Border x:Name="ActiveSessionCard" 
+                            BackgroundColor="#3B82F6"
+                            StrokeThickness="0"
+                            Padding="20"
+                            IsVisible="False">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16"/>
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="#3B82F6" Opacity="0.3" Radius="15" Offset="0,0"/>
+                        </Border.Shadow>
+                        
+                        <StackLayout Spacing="12">
+                            <StackLayout Orientation="Horizontal" Spacing="8">
+                                <Label Text="🔒" FontSize="16"/>
+                                <Label Text="Session en cours" FontSize="16" FontAttributes="Bold" TextColor="White"/>
+                            </StackLayout>
+                            
+                            <StackLayout Spacing="4">
+                                <Label x:Name="ActiveSessionTitle" Text="Casier A1" FontSize="20" FontAttributes="Bold" TextColor="White"/>
+                                <Label x:Name="ActiveSessionLocation" Text="Entrée principale" FontSize="14" TextColor="#BFDBFE"/>
+                                <Label x:Name="ActiveSessionTime" Text="Temps restant: 1h 23min" FontSize="14" TextColor="#BFDBFE"/>
+                            </StackLayout>
+                            
+                            <Button x:Name="ViewActiveSessionButton" 
+                                    Text="Voir les détails"
+                                    BackgroundColor="White"
+                                    TextColor="#3B82F6"
+                                    HeightRequest="36"
+                                    CornerRadius="8"
+                                    FontAttributes="Bold"
+                                    Clicked="ViewActiveSessionButton_Clicked"/>
+                        </StackLayout>
+                    </Border>
+                    
+                    <!-- Search Bar -->
+                    <Border BackgroundColor="White" 
+                            StrokeThickness="0"
+                            Padding="16">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                        </Border.Shadow>
+                        
+                        <Grid>
+                            <Entry x:Name="SearchEntry" 
+                                   Placeholder="Rechercher un casier..."
+                                   BackgroundColor="Transparent"
+                                   FontSize="16"
+                                   Margin="40,0,0,0"/>
+                            <Label Text="🔍" FontSize="16" VerticalOptions="Center" Margin="12,0,0,0" TextColor="Gray"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Quick Stats -->
+                    <Grid ColumnDefinitions="*,*" RowDefinitions="Auto">
+                        
+                        <Border Grid.Column="0" 
+                                BackgroundColor="White" 
+                                StrokeThickness="0"
+                                Padding="16" 
+                                Margin="0,0,8,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <StackLayout HorizontalOptions="Center" Spacing="4">
+                                <Label Text="12" FontSize="24" FontAttributes="Bold" TextColor="#10B981" HorizontalOptions="Center"/>
+                                <Label Text="Disponibles" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                            </StackLayout>
+                        </Border>
+                        
+                        <Border Grid.Column="1" 
+                                BackgroundColor="White" 
+                                StrokeThickness="0"
+                                Padding="16" 
+                                Margin="8,0,0,0">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <StackLayout HorizontalOptions="Center" Spacing="4">
+                                <Label Text="3" FontSize="24" FontAttributes="Bold" TextColor="#F59E0B" HorizontalOptions="Center"/>
+                                <Label Text="Occupés" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
+                            </StackLayout>
+                        </Border>
+                    </Grid>
+                    
+                    <!-- Lockers List -->
+                    <StackLayout Spacing="12">
+                        <Label Text="Casiers disponibles" FontSize="18" FontAttributes="Bold" TextColor="Black"/>
+                        
+                        <!-- Static Locker Items for demo -->
+                        <StackLayout x:Name="LockersContainer" Spacing="8">
+                            
+                            <!-- Locker Item 1 -->
+                            <Border BackgroundColor="White" 
+                                    StrokeThickness="0"
+                                    Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                                </Border.Shadow>
+                                
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    
+                                    <!-- Status Icon -->
+                                    <Border Grid.Column="0" 
+                                            BackgroundColor="#F0FDF4" 
+                                            StrokeThickness="0"
+                                            WidthRequest="40" 
+                                            HeightRequest="40" 
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="🔓" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+                                    
+                                    <!-- Locker Info -->
+                                    <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                        <Label Text="Casier A1" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                        <StackLayout Orientation="Horizontal" Spacing="4">
+                                            <Label Text="📍" FontSize="12"/>
+                                            <Label Text="Entrée principale" FontSize="12" TextColor="Gray"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                    
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="2" 
+                                            BackgroundColor="#DCFCE7" 
+                                            StrokeThickness="0"
+                                            Padding="8,4"
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="12"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="Disponible" FontSize="12" FontAttributes="Bold" TextColor="#16A34A"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Locker Item 2 -->
+                            <Border BackgroundColor="White" 
+                                    StrokeThickness="0"
+                                    Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                                </Border.Shadow>
+                                
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    
+                                    <!-- Status Icon -->
+                                    <Border Grid.Column="0" 
+                                            BackgroundColor="#F0FDF4" 
+                                            StrokeThickness="0"
+                                            WidthRequest="40" 
+                                            HeightRequest="40" 
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="🔓" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+                                    
+                                    <!-- Locker Info -->
+                                    <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                        <Label Text="Casier B2" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                        <StackLayout Orientation="Horizontal" Spacing="4">
+                                            <Label Text="📍" FontSize="12"/>
+                                            <Label Text="Hall principal" FontSize="12" TextColor="Gray"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                    
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="2" 
+                                            BackgroundColor="#DCFCE7" 
+                                            StrokeThickness="0"
+                                            Padding="8,4"
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="12"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="Disponible" FontSize="12" FontAttributes="Bold" TextColor="#16A34A"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            
+                            <!-- Locker Item 3 -->
+                            <Border BackgroundColor="White" 
+                                    StrokeThickness="0"
+                                    Padding="16">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Border.Shadow>
+                                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                                </Border.Shadow>
+                                
+                                <Grid ColumnDefinitions="Auto,*,Auto">
+                                    
+                                    <!-- Status Icon -->
+                                    <Border Grid.Column="0" 
+                                            BackgroundColor="#FEF3C7" 
+                                            StrokeThickness="0"
+                                            WidthRequest="40" 
+                                            HeightRequest="40" 
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="8"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="🔒" FontSize="16" HorizontalOptions="Center" VerticalOptions="Center"/>
+                                    </Border>
+                                    
+                                    <!-- Locker Info -->
+                                    <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                        <Label Text="Casier C3" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                        <StackLayout Orientation="Horizontal" Spacing="4">
+                                            <Label Text="📍" FontSize="12"/>
+                                            <Label Text="Zone sécurisée" FontSize="12" TextColor="Gray"/>
+                                        </StackLayout>
+                                    </StackLayout>
+                                    
+                                    <!-- Status Badge -->
+                                    <Border Grid.Column="2" 
+                                            BackgroundColor="#FEF3C7" 
+                                            StrokeThickness="0"
+                                            Padding="8,4"
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="12"/>
+                                        </Border.StrokeShape>
+                                        <Label Text="Occupé" FontSize="12" FontAttributes="Bold" TextColor="#D97706"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            
+                        </StackLayout>
+                    </StackLayout>
+                    
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>

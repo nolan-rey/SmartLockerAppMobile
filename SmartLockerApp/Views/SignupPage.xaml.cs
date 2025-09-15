@@ -26,8 +26,9 @@ public partial class SignupPage : ContentPage
             return;
         }
 
-        // TODO: Implement signup logic
-        await DisplayAlert("Inscription", "Fonctionnalité d'inscription à implémenter", "OK");
+        // TODO: Implement real signup logic
+        // For now, simulate successful signup and navigate to HomePage
+        await Shell.Current.GoToAsync("//HomePage");
     }
 
     private async void LoginButton_Clicked(object sender, EventArgs e)
