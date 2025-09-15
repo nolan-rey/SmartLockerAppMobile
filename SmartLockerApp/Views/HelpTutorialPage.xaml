@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.HelpTutorialPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Aide et tutoriel"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Button x:Name="BackButton" 
+                        HorizontalOptions="Start" 
+                        BackgroundColor="Transparent"
+                        BorderWidth="0"
+                        Text="←"
+                        FontSize="20"
+                        TextColor="#64748B"
+                        Clicked="BackButton_Clicked"/>
+                
+                <Label Text="Aide et tutoriel" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="20,100,20,20">
+            <StackLayout MaximumWidthRequest="400" HorizontalOptions="Center">
+                
+                <!-- Tutorial Steps -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout>
+                        <Label Text="Comment utiliser SmartLocker" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#1E293B" 
+                               Margin="0,0,0,20" 
+                               HorizontalTextAlignment="Center"/>
+                        
+                        <!-- Step 1 -->
+                        <StackLayout Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border BackgroundColor="#3B82F6" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Label Text="1" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <StackLayout>
+                                <Label Text="Choisir un casier" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Sélectionnez un casier disponible sur l'écran d'accueil" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <!-- Step 2 -->
+                        <StackLayout Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border BackgroundColor="#3B82F6" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Label Text="2" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <StackLayout>
+                                <Label Text="Définir la durée" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Choisissez combien de temps vous souhaitez utiliser le casier" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <!-- Step 3 -->
+                        <StackLayout Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border BackgroundColor="#3B82F6" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Label Text="3" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <StackLayout>
+                                <Label Text="Déposer vos affaires" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Placez vos objets dans le casier et fermez la porte" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <!-- Step 4 -->
+                        <StackLayout Orientation="Horizontal" Margin="0,0,0,16">
+                            <Border BackgroundColor="#3B82F6" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Label Text="4" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <StackLayout>
+                                <Label Text="Choisir le verrouillage" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Sélectionnez badge RFID ou empreinte digitale" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                        
+                        <!-- Step 5 -->
+                        <StackLayout Orientation="Horizontal">
+                            <Border BackgroundColor="#3B82F6" 
+                                    WidthRequest="32" 
+                                    HeightRequest="32" 
+                                    StrokeThickness="0"
+                                    Margin="0,0,16,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Label Text="5" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="White" 
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center"/>
+                            </Border>
+                            <StackLayout>
+                                <Label Text="Récupérer vos affaires" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Utilisez la même méthode pour ouvrir le casier" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </StackLayout>
+                </Border>
+                
+                <!-- FAQ -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout>
+                        <Label Text="Questions fréquentes" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#1E293B" 
+                               Margin="0,0,0,16"/>
+                        
+                        <StackLayout Margin="0,0,0,12">
+                            <Label Text="Que faire si j'oublie mon badge ?" 
+                                   FontSize="14" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1E293B" 
+                                   Margin="0,0,0,4"/>
+                            <Label Text="Utilisez l'empreinte digitale comme méthode alternative." 
+                                   FontSize="14" 
+                                   TextColor="#64748B"/>
+                        </StackLayout>
+                        
+                        <StackLayout Margin="0,0,0,12">
+                            <Label Text="Combien coûte l'utilisation ?" 
+                                   FontSize="14" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1E293B" 
+                                   Margin="0,0,0,4"/>
+                            <Label Text="2,50 € par heure d'utilisation." 
+                                   FontSize="14" 
+                                   TextColor="#64748B"/>
+                        </StackLayout>
+                        
+                        <StackLayout>
+                            <Label Text="Que se passe-t-il si ma session expire ?" 
+                                   FontSize="14" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#1E293B" 
+                                   Margin="0,0,0,4"/>
+                            <Label Text="Le casier reste verrouillé. Contactez le support pour récupérer vos affaires." 
+                                   FontSize="14" 
+                                   TextColor="#64748B"/>
+                        </StackLayout>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Contact Support -->
+                <Button x:Name="ContactSupportButton" 
+                        Text="Contacter le support"
+                        BackgroundColor="#10B981" 
+                        TextColor="White" 
+                        FontSize="16" 
+                        FontAttributes="Bold"
+                        HeightRequest="56" 
+                        CornerRadius="12" 
+                        BorderWidth="0" 
+                        Clicked="ContactSupportButton_Clicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#10B981" Opacity="0.3" Radius="10" Offset="0,4"/>
+                    </Button.Shadow>
+                </Button>
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

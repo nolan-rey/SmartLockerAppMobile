@@ -107,6 +107,38 @@
                     </Button.Shadow>
                 </Button>
                 
+                <Button
+                    x:Name="LockerDetailBtn"
+                    Text="Détails Casier" 
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#EF4444"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    Clicked="OnLockerDetailClicked"
+                    HorizontalOptions="Fill">
+                    <Button.Shadow>
+                        <Shadow Brush="#EF4444" Opacity="0.2" Radius="8" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+                
+                <Button
+                    x:Name="HelpBtn"
+                    Text="Aide et Tutoriel" 
+                    FontSize="16"
+                    FontAttributes="Bold"
+                    BackgroundColor="#06B6D4"
+                    TextColor="White"
+                    HeightRequest="50"
+                    CornerRadius="8"
+                    Clicked="OnHelpClicked"
+                    HorizontalOptions="Fill">
+                    <Button.Shadow>
+                        <Shadow Brush="#06B6D4" Opacity="0.2" Radius="8" Offset="0,2"/>
+                    </Button.Shadow>
+                </Button>
+                
             </StackLayout>
             
         </VerticalStackLayout>

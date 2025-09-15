@@ -27,4 +27,11 @@ public partial class HomePage : ContentPage
         // TODO: Navigate to session details
         await DisplayAlert("Session active", "Détails de la session à implémenter", "OK");
     }
+
+    // Add navigation to locker details when tapping on a locker
+    // This would be called from locker item tap events
+    private async void NavigateToLockerDetail()
+    {
+        await Shell.Current.GoToAsync("//LockerDetailPage");
+    }
 }

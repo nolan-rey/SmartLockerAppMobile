@@ -33,5 +33,30 @@
         Title="HomePage"
         ContentTemplate="{DataTemplate views:HomePage}"
         Route="HomePage" />
+        
+    <ShellContent
+        Title="LockerDetail"
+        ContentTemplate="{DataTemplate views:LockerDetailPage}"
+        Route="LockerDetailPage" />
+        
+    <ShellContent
+        Title="DepositSetup"
+        ContentTemplate="{DataTemplate views:DepositSetupPage}"
+        Route="DepositSetupPage" />
+        
+    <ShellContent
+        Title="LockInstructions"
+        ContentTemplate="{DataTemplate views:LockInstructionsPage}"
+        Route="LockInstructionsPage" />
+        
+    <ShellContent
+        Title="LockConfirmation"
+        ContentTemplate="{DataTemplate views:LockConfirmationPage}"
+        Route="LockConfirmationPage" />
+        
+    <ShellContent
+        Title="HelpTutorial"
+        ContentTemplate="{DataTemplate views:HelpTutorialPage}"
+        Route="HelpTutorialPage" />
 
 </Shell>

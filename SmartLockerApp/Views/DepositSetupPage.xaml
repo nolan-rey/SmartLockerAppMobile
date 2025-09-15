@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.DepositSetupPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Durée de dépôt"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
+                    <Button x:Name="BackButton" 
+                            BackgroundColor="Transparent"
+                            BorderWidth="0"
+                            Text="←"
+                            FontSize="20"
+                            Clicked="BackButton_Clicked"/>
+                    <Label Text="Durée de dépôt" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                </StackLayout>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="0,80,0,0">
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20">
+                
+                <StackLayout Spacing="24">
+                    
+                    <!-- Header Card -->
+                    <Border BackgroundColor="White" 
+                            StrokeThickness="0"
+                            Padding="24">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16"/>
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Opacity="0.05" Radius="15" Offset="0,2"/>
+                        </Border.Shadow>
+                        
+                        <StackLayout HorizontalOptions="Center" Spacing="16">
+                            <Border BackgroundColor="#F0F8FF" 
+                                    StrokeThickness="0"
+                                    WidthRequest="48" 
+                                    HeightRequest="48" 
+                                    HorizontalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Label Text="⏰" FontSize="24" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Border>
+                            <StackLayout HorizontalOptions="Center" Spacing="8">
+                                <Label Text="Choisissez la durée" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Black"/>
+                                <Label Text="Sélectionnez combien de temps vous souhaitez utiliser le casier" 
+                                       FontSize="14" 
+                                       TextColor="Gray" 
+                                       HorizontalOptions="Center"
+                                       HorizontalTextAlignment="Center"/>
+                            </StackLayout>
+                        </StackLayout>
+                    </Border>
+                    
+                    <!-- Time Options -->
+                    <StackLayout Spacing="12">
+                        
+                        <!-- 30 minutes -->
+                        <Border x:Name="Option30Min" 
+                                BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E5E7EB"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOption30MinTapped"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                
+                                <Border Grid.Column="0" 
+                                        x:Name="Radio30Min"
+                                        WidthRequest="16" 
+                                        HeightRequest="16" 
+                                        StrokeThickness="2"
+                                        Stroke="Gray"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="30 minutes" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                    <Label Text="Idéal pour courses rapides" FontSize="12" TextColor="Gray"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="2,50€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- 1 hour -->
+                        <Border x:Name="Option1Hour" 
+                                BackgroundColor="White" 
+                                StrokeThickness="2"
+                                Stroke="#3B82F6"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOption1HourTapped"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                
+                                <Border Grid.Column="0" 
+                                        x:Name="Radio1Hour"
+                                        WidthRequest="16" 
+                                        HeightRequest="16" 
+                                        StrokeThickness="2"
+                                        Stroke="#3B82F6"
+                                        BackgroundColor="#3B82F6"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8"/>
+                                    </Border.StrokeShape>
+                                    <Border WidthRequest="8" 
+                                            HeightRequest="8" 
+                                            BackgroundColor="White"
+                                            HorizontalOptions="Center"
+                                            VerticalOptions="Center">
+                                        <Border.StrokeShape>
+                                            <RoundRectangle CornerRadius="4"/>
+                                        </Border.StrokeShape>
+                                    </Border>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="1 heure" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                    <Label Text="Idéal pour shopping" FontSize="12" TextColor="Gray"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="4,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- 2 hours -->
+                        <Border x:Name="Option2Hours" 
+                                BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E5E7EB"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOption2HoursTapped"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                
+                                <Border Grid.Column="0" 
+                                        x:Name="Radio2Hours"
+                                        WidthRequest="16" 
+                                        HeightRequest="16" 
+                                        StrokeThickness="2"
+                                        Stroke="Gray"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="2 heures" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                    <Label Text="Idéal pour shopping" FontSize="12" TextColor="Gray"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="7,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- 4 hours -->
+                        <Border x:Name="Option4Hours" 
+                                BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E5E7EB"
+                                Padding="16">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="12"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnOption4HoursTapped"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                
+                                <Border Grid.Column="0" 
+                                        x:Name="Radio4Hours"
+                                        WidthRequest="16" 
+                                        HeightRequest="16" 
+                                        StrokeThickness="2"
+                                        Stroke="Gray"
+                                        VerticalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="8"/>
+                                    </Border.StrokeShape>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="4 heures" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                    <Label Text="Idéal pour journée complète" FontSize="12" TextColor="Gray"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" Text="12,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                            </Grid>
+                        </Border>
+                        
+                    </StackLayout>
+                    
+                    <!-- Summary -->
+                    <Border BackgroundColor="#F8FAFC" 
+                            StrokeThickness="0"
+                            Padding="16">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12"/>
+                        </Border.StrokeShape>
+                        <Grid ColumnDefinitions="*,Auto">
+                            
+                            <StackLayout Grid.Column="0" VerticalOptions="Center" Spacing="4">
+                                <Label Text="Durée sélectionnée" FontSize="14" FontAttributes="Bold" TextColor="Black"/>
+                                <Label x:Name="SelectedDurationText" Text="1 heure" FontSize="12" TextColor="Gray"/>
+                            </StackLayout>
+                            
+                            <Label x:Name="SelectedPriceText" 
+                                   Grid.Column="1" 
+                                   Text="4,00€" 
+                                   FontSize="24" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#3B82F6" 
+                                   VerticalOptions="Center"/>
+                        </Grid>
+                    </Border>
+                    
+                    <!-- Confirm Button -->
+                    <Button x:Name="ConfirmButton" 
+                            Text="Confirmer"
+                            HeightRequest="48"
+                            FontSize="16"
+                            FontAttributes="Bold"
+                            BackgroundColor="#2563EB"
+                            TextColor="White"
+                            CornerRadius="12"
+                            Clicked="ConfirmButton_Clicked">
+                        <Button.Shadow>
+                            <Shadow Brush="#2563EB" Opacity="0.3" Radius="12" Offset="0,0"/>
+                        </Button.Shadow>
+                    </Button>
+                    
+                    <!-- Disclaimer -->
+                    <Label Text="Le paiement sera effectué à la fin de votre session selon la durée réelle d'utilisation" 
+                           FontSize="12" 
+                           TextColor="Gray" 
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+                    
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>

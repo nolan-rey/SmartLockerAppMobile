@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.LockerDetailPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Détails du casier"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
+                    <Button x:Name="BackButton" 
+                            BackgroundColor="Transparent"
+                            BorderWidth="0"
+                            Text="←"
+                            FontSize="20"
+                            Clicked="BackButton_Clicked"/>
+                    <Label Text="Détails du casier" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                </StackLayout>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="0,80,0,0">
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20">
+                
+                <StackLayout Spacing="24">
+                    
+                    <!-- Main Info Card -->
+                    <Border BackgroundColor="White" 
+                            StrokeThickness="0"
+                            Padding="24">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16"/>
+                        </Border.StrokeShape>
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,0"/>
+                        </Border.Shadow>
+                        
+                        <StackLayout Spacing="20" HorizontalOptions="Center">
+                            
+                            <!-- Icon -->
+                            <Border BackgroundColor="#3B82F6"
+                                    StrokeThickness="0"
+                                    WidthRequest="80" 
+                                    HeightRequest="80" 
+                                    HorizontalOptions="Center">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16"/>
+                                </Border.StrokeShape>
+                                <Label Text="🔓" FontSize="32" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White"/>
+                            </Border>
+                            
+                            <!-- Title -->
+                            <StackLayout HorizontalOptions="Center" Spacing="8">
+                                <Label x:Name="LockerNameText" Text="Casier A1" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Black"/>
+                                <Border BackgroundColor="#DCFCE7" 
+                                        StrokeThickness="0"
+                                        Padding="8,4" 
+                                        HorizontalOptions="Center">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <Label x:Name="LockerStatusText" Text="libre" FontSize="12" FontAttributes="Bold" TextColor="#16A34A"/>
+                                </Border>
+                            </StackLayout>
+                            
+                            <!-- Details -->
+                            <StackLayout Spacing="12">
+                                
+                                <!-- Location -->
+                                <Border BackgroundColor="#F8FAFC" 
+                                        StrokeThickness="0"
+                                        Padding="12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        
+                                        <StackLayout Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalOptions="Center">
+                                            <Label Text="📍" FontSize="16"/>
+                                            <Label Text="Emplacement" FontSize="14" FontAttributes="Bold" TextColor="Black"/>
+                                        </StackLayout>
+                                        
+                                        <Label x:Name="LockerLocationText" 
+                                               Grid.Column="2" 
+                                               Text="Entrée principale" 
+                                               FontSize="12" 
+                                               TextColor="Gray"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                                
+                                <!-- Connection -->
+                                <Border BackgroundColor="#F8FAFC" 
+                                        StrokeThickness="0"
+                                        Padding="12">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+                                        
+                                        <StackLayout Grid.Column="0" Orientation="Horizontal" Spacing="8" VerticalOptions="Center">
+                                            <Label Text="📶" FontSize="16"/>
+                                            <Label Text="Connexion" FontSize="14" FontAttributes="Bold" TextColor="Black"/>
+                                        </StackLayout>
+                                        
+                                        <Label Grid.Column="2" 
+                                               Text="Excellente" 
+                                               FontSize="12" 
+                                               TextColor="#16A34A"
+                                               FontAttributes="Bold"
+                                               VerticalOptions="Center"/>
+                                    </Grid>
+                                </Border>
+                                
+                            </StackLayout>
+                            
+                        </StackLayout>
+                    </Border>
+                    
+                    <!-- Action Buttons -->
+                    <StackLayout Spacing="12">
+                        
+                        <!-- Use Locker Button (for available lockers) -->
+                        <Button x:Name="UseLockerButton" 
+                                Text="Utiliser ce casier"
+                                HeightRequest="56"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                BackgroundColor="#2563EB"
+                                TextColor="White"
+                                CornerRadius="16"
+                                Clicked="UseLockerButton_Clicked">
+                            <Button.Shadow>
+                                <Shadow Brush="#2563EB" Opacity="0.3" Radius="12" Offset="0,0"/>
+                            </Button.Shadow>
+                        </Button>
+                        
+                        <!-- Open Remotely Button (for occupied lockers) -->
+                        <Button x:Name="OpenRemotelyButton" 
+                                Text="Ouvrir à distance"
+                                HeightRequest="56"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                BackgroundColor="#2563EB"
+                                TextColor="White"
+                                CornerRadius="16"
+                                IsVisible="False"
+                                Clicked="OpenRemotelyButton_Clicked">
+                            <Button.Shadow>
+                                <Shadow Brush="#2563EB" Opacity="0.3" Radius="12" Offset="0,0"/>
+                            </Button.Shadow>
+                        </Button>
+                        
+                        <!-- Maintenance Button (for maintenance lockers) -->
+                        <Button x:Name="MaintenanceButton" 
+                                Text="Casier en maintenance"
+                                HeightRequest="56"
+                                FontSize="16"
+                                FontAttributes="Bold"
+                                BackgroundColor="#6B7280"
+                                TextColor="White"
+                                CornerRadius="16"
+                                IsEnabled="False"
+                                IsVisible="False"/>
+                        
+                    </StackLayout>
+                    
+                </StackLayout>
+            </Grid>
+        </ScrollView>
+    </Grid>
+</ContentPage>
