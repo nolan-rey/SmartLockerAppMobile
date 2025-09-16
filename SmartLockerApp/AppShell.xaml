@@ -46,6 +46,11 @@
         Route="LockInstructionsPage" />
         
     <ShellContent
+        Title="LockerOpened"
+        ContentTemplate="{DataTemplate views:LockerOpenedPage}"
+        Route="LockerOpenedPage" />
+        
+    <ShellContent
         Title="LockConfirmation"
         ContentTemplate="{DataTemplate views:LockConfirmationPage}"
         Route="LockConfirmationPage" />

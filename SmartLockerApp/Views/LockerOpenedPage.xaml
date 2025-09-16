@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage x:Class="SmartLockerApp.Views.LockerOpenedPage"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             Title="Casier ouvert"
+             BackgroundColor="#F8FAFC">
+
+    <Grid>
+        <!-- Header -->
+        <Border VerticalOptions="Start" 
+                BackgroundColor="White" 
+                HeightRequest="80"
+                StrokeThickness="0">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
+            </Border.Shadow>
+            
+            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
+                <Label Text="Casier ouvert" 
+                       FontSize="20" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       VerticalOptions="Center" 
+                       TextColor="#1E293B"/>
+            </Grid>
+        </Border>
+        
+        <!-- Content -->
+        <ScrollView Margin="20,100,20,20">
+            <StackLayout MaximumWidthRequest="400" HorizontalOptions="Center" Spacing="24">
+                
+                <!-- Status Icon -->
+                <Border BackgroundColor="#10B981" 
+                        WidthRequest="120" 
+                        HeightRequest="120" 
+                        HorizontalOptions="Center"
+                        StrokeThickness="0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="60"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="#10B981" Opacity="0.3" Radius="20" Offset="0,8"/>
+                    </Border.Shadow>
+                    
+                    <Label Text="📦" 
+                           FontSize="48" 
+                           HorizontalOptions="Center" 
+                           VerticalOptions="Center" 
+                           TextColor="White"/>
+                </Border>
+                
+                <!-- Main Message -->
+                <StackLayout Spacing="12" HorizontalOptions="Center">
+                    <Label Text="Casier ouvert !" 
+                           FontSize="28" 
+                           FontAttributes="Bold" 
+                           HorizontalOptions="Center" 
+                           TextColor="#1E293B"/>
+                    
+                    <Label Text="Placez vos affaires dans le casier et fermez la porte" 
+                           FontSize="16" 
+                           HorizontalOptions="Center" 
+                           TextColor="#64748B"
+                           HorizontalTextAlignment="Center"/>
+                </StackLayout>
+                
+                <!-- Instructions Card -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,20,0,0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout Spacing="16">
+                        <Label Text="Instructions" 
+                               FontSize="18" 
+                               FontAttributes="Bold" 
+                               TextColor="#1E293B"/>
+                        
+                        <!-- Step 1 -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                            <Border Grid.Column="0" 
+                                    BackgroundColor="#10B981" 
+                                    WidthRequest="24" 
+                                    HeightRequest="24" 
+                                    StrokeThickness="0"
+                                    VerticalOptions="Start"
+                                    Margin="0,2,0,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Label Text="✓" 
+                                       FontSize="14" 
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center" 
+                                       TextColor="White"/>
+                            </Border>
+                            
+                            <StackLayout Grid.Column="1">
+                                <Label Text="Déposez vos objets" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Placez soigneusement vos affaires dans le casier" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </Grid>
+                        
+                        <!-- Step 2 -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                            <Border Grid.Column="0" 
+                                    BackgroundColor="#10B981" 
+                                    WidthRequest="24" 
+                                    HeightRequest="24" 
+                                    StrokeThickness="0"
+                                    VerticalOptions="Start"
+                                    Margin="0,2,0,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Label Text="✓" 
+                                       FontSize="14" 
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center" 
+                                       TextColor="White"/>
+                            </Border>
+                            
+                            <StackLayout Grid.Column="1">
+                                <Label Text="Fermez la porte du casier" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Assurez-vous que la porte est bien fermée" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </Grid>
+                        
+                        <!-- Step 3 -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                            <Border Grid.Column="0" 
+                                    BackgroundColor="#E2E8F0" 
+                                    WidthRequest="24" 
+                                    HeightRequest="24" 
+                                    StrokeThickness="0"
+                                    VerticalOptions="Start"
+                                    Margin="0,2,0,0">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="12"/>
+                                </Border.StrokeShape>
+                                <Label Text="3" 
+                                       FontSize="14" 
+                                       FontAttributes="Bold"
+                                       HorizontalOptions="Center" 
+                                       VerticalOptions="Center" 
+                                       TextColor="#64748B"/>
+                            </Border>
+                            
+                            <StackLayout Grid.Column="1">
+                                <Label Text="Verrouillez le casier" 
+                                       FontSize="16" 
+                                       FontAttributes="Bold" 
+                                       TextColor="#1E293B"/>
+                                <Label Text="Utilisez votre méthode de verrouillage préférée" 
+                                       FontSize="14" 
+                                       TextColor="#64748B"/>
+                            </StackLayout>
+                        </Grid>
+                    </StackLayout>
+                </Border>
+                
+                <!-- Important Notice -->
+                <Border BackgroundColor="#FEF3C7" 
+                        StrokeThickness="1"
+                        Stroke="#F59E0B"
+                        Padding="16" 
+                        Margin="0,8,0,0">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12"/>
+                    </Border.StrokeShape>
+                    
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                        <Label Grid.Column="0" 
+                               Text="⚠️" 
+                               FontSize="20" 
+                               VerticalOptions="Start"/>
+                        
+                        <StackLayout Grid.Column="1">
+                            <Label Text="Important" 
+                                   FontSize="14" 
+                                   FontAttributes="Bold" 
+                                   TextColor="#92400E"/>
+                            <Label Text="Assurez-vous que la porte est bien fermée avant de procéder au verrouillage" 
+                                   FontSize="13" 
+                                   TextColor="#92400E"/>
+                        </StackLayout>
+                    </Grid>
+                </Border>
+                
+                <!-- Action Button -->
+                <Button x:Name="ContinueButton" 
+                        Text="Continuer →"
+                        BackgroundColor="#2563EB" 
+                        TextColor="White" 
+                        FontSize="16" 
+                        FontAttributes="Bold"
+                        HeightRequest="56"
+                        Margin="0,20,0,40"
+                        Clicked="ContinueButton_Clicked">
+                    <Button.Shadow>
+                        <Shadow Brush="#2563EB" Opacity="0.3" Radius="10" Offset="0,4"/>
+                    </Button.Shadow>
+                </Button>
+                
+            </StackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

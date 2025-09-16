@@ -72,8 +72,8 @@ public partial class OpenLockerPage : ContentPage
         }
         else
         {
-            // Naviguer vers les instructions de verrouillage avec l'ID de session
-            await Shell.Current.GoToAsync($"//LockInstructionsPage?sessionId={SessionId}");
+            // Naviguer vers la page de casier ouvert pour dépôt
+            await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={SessionId}");
         }
     }
 
