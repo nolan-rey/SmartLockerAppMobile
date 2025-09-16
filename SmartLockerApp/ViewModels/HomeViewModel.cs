@@ -155,7 +155,7 @@ public class LockerItemViewModel : BaseViewModel
 
     public string DisplayId => MapServiceIdToDisplayId(Locker.Id);
     public string Location => Locker.Location;
-    public string Size => Locker.Size;
+    public string Size => Locker.Size.ToString();
     public bool IsAvailable => Locker.Status == "Available";
     public string StatusColor => IsAvailable ? "#10B981" : "#EF4444";
     public string StatusText => IsAvailable ? "Disponible" : "Occupé";
