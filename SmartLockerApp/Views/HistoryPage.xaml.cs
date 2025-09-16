@@ -1,12 +1,30 @@
+using SmartLockerApp.Services;
+using SmartLockerApp.Models;
+
 namespace SmartLockerApp.Views;
 
 public partial class HistoryPage : ContentPage
 {
+    private readonly AppStateService _appState = AppStateService.Instance;
     private string currentFilter = "All";
 
     public HistoryPage()
     {
         InitializeComponent();
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await LoadHistoryData();
+    }
+
+    private async Task LoadHistoryData()
+    {
+        // Pour l'instant, on garde les données statiques dans le XAML
+        // TODO: Implémenter la génération dynamique des cartes de session
+        // basée sur les données réelles de sessions quand le service sera étendu
+        await Task.CompletedTask;
     }
 
     private async void BackButton_Clicked(object sender, EventArgs e)

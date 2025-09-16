@@ -60,16 +60,16 @@
                         <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
                             
                             <Label Grid.Row="0" Grid.Column="0" Text="Casier :" FontSize="14" TextColor="#64748B"/>
-                            <Label Grid.Row="0" Grid.Column="1" Text="A-12" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Grid.Row="0" Grid.Column="1" x:Name="SessionLockerLabel" Text="A1" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
                             
                             <Label Grid.Row="1" Grid.Column="0" Text="Durée :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
-                            <Label Grid.Row="1" Grid.Column="1" Text="2h 15min" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="1" Grid.Column="1" x:Name="SessionDurationLabel" Text="2h" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
                             
-                            <Label Grid.Row="2" Grid.Column="0" Text="Tarif de base :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
-                            <Label Grid.Row="2" Grid.Column="1" Text="€5.00" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="0" Text="Heure de début :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="1" x:Name="SessionStartTimeLabel" Text="14:30" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
                             
-                            <Label Grid.Row="3" Grid.Column="0" Text="Temps supplémentaire :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
-                            <Label Grid.Row="3" Grid.Column="1" Text="€0.75" FontSize="14" FontAttributes="Bold" TextColor="#F59E0B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="3" Grid.Column="0" Text="Heure de fin :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="3" Grid.Column="1" x:Name="SessionEndTimeLabel" Text="16:30" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
                         </Grid>
                         
                         <Border BackgroundColor="#F8FAFC" 
@@ -82,7 +82,7 @@
                             
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Grid.Column="0" Text="Total à payer :" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
-                                <Label Grid.Column="1" Text="€5.75" FontSize="18" FontAttributes="Bold" TextColor="#2563EB"/>
+                                <Label Grid.Column="1" x:Name="SessionTotalLabel" Text="€5.00" FontSize="18" FontAttributes="Bold" TextColor="#2563EB"/>
                             </Grid>
                         </Border>
                     </StackLayout>

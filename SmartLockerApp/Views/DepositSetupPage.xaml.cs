@@ -2,6 +2,7 @@ using SmartLockerApp.Services;
 
 namespace SmartLockerApp.Views;
 
+[QueryProperty(nameof(LockerId), "lockerId")]
 public partial class DepositSetupPage : ContentPage
 {
     private readonly AppStateService _appState = AppStateService.Instance;
@@ -10,26 +11,33 @@ public partial class DepositSetupPage : ContentPage
     private double selectedHours = 1.0;
     private string? lockerId;
 
+    public string LockerId
+    {
+        get => lockerId ?? string.Empty;
+        set => lockerId = value;
+    }
+
     public DepositSetupPage()
     {
         InitializeComponent();
         
         // Set default selection (1 hour)
-        UpdateSelection("1 heure", "4,00€", 1.0);
+        selectedHours = 1.0;
+        UpdateSelection("1 heure", CalculatePrice(1.0).ToString("C"), 1.0);
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        await AnimationService.FadeInAsync(this);
-        await AnimationService.SlideInFromBottomAsync(this.Content, 400);
         
-        // Get locker ID from query parameters if available
-        var uri = Shell.Current.CurrentState.Location.ToString();
-        if (uri.Contains("lockerId="))
+        // Charger les détails du casier si l'ID est fourni
+        if (!string.IsNullOrEmpty(lockerId))
         {
-            lockerId = uri.Split("lockerId=")[1].Split('&')[0];
+            LoadLockerDetails();
         }
+        
+        // Calculer et afficher les prix réels
+        UpdatePricing();
     }
 
     private async void BackButton_Clicked(object sender, EventArgs e)
@@ -40,29 +48,72 @@ public partial class DepositSetupPage : ContentPage
     private async void OnOption30MinTapped(object sender, EventArgs e)
     {
         await AnimationService.ButtonPressAsync((VisualElement)sender);
-        UpdateSelection("30 minutes", "2,50€", 0.5);
-        UpdateRadioButtons("30min");
+        ResetAllSelections();
+        SetSelectedStyle(Option30Min, Radio30Min);
+        var price = CalculatePrice(0.5);
+        UpdateSelection("30 minutes", price.ToString("C"), 0.5);
+    }
+
+    private void ResetAllSelections()
+    {
+        // Reset all border styles
+        Option30Min.Stroke = Color.FromArgb("#E5E7EB");
+        Option30Min.StrokeThickness = 1;
+        Option1Hour.Stroke = Color.FromArgb("#E5E7EB");
+        Option1Hour.StrokeThickness = 1;
+        Option2Hours.Stroke = Color.FromArgb("#E5E7EB");
+        Option2Hours.StrokeThickness = 1;
+        Option4Hours.Stroke = Color.FromArgb("#E5E7EB");
+        Option4Hours.StrokeThickness = 1;
+
+        // Reset all radio buttons
+        Radio30Min.BackgroundColor = Colors.Transparent;
+        Radio1Hour.BackgroundColor = Colors.Transparent;
+        Radio2Hours.BackgroundColor = Colors.Transparent;
+        Radio4Hours.BackgroundColor = Colors.Transparent;
+    }
+
+    private void SetSelectedStyle(Border option, Border radio)
+    {
+        // Set selected border style
+        option.Stroke = Color.FromArgb("#3B82F6");
+        option.StrokeThickness = 2;
+        
+        // Set selected radio button
+        radio.BackgroundColor = Color.FromArgb("#3B82F6");
+    }
+
+    private void LoadLockerDetails()
+    {
+        // Charger les détails du casier basé sur lockerId
+        // Pour l'instant, on utilise les prix calculés dynamiquement
     }
 
     private async void OnOption1HourTapped(object sender, EventArgs e)
     {
         await AnimationService.ButtonPressAsync((VisualElement)sender);
-        UpdateSelection("1 heure", "4,00€", 1.0);
-        UpdateRadioButtons("1hour");
+        ResetAllSelections();
+        SetSelectedStyle(Option1Hour, Radio1Hour);
+        var price = CalculatePrice(1.0);
+        UpdateSelection("1 heure", price.ToString("C"), 1.0);
     }
 
     private async void OnOption2HoursTapped(object sender, EventArgs e)
     {
         await AnimationService.ButtonPressAsync((VisualElement)sender);
-        UpdateSelection("2 heures", "7,00€", 2.0);
-        UpdateRadioButtons("2hours");
+        ResetAllSelections();
+        SetSelectedStyle(Option2Hours, Radio2Hours);
+        var price = CalculatePrice(2.0);
+        UpdateSelection("2 heures", price.ToString("C"), 2.0);
     }
 
     private async void OnOption4HoursTapped(object sender, EventArgs e)
     {
         await AnimationService.ButtonPressAsync((VisualElement)sender);
-        UpdateSelection("4 heures", "12,00€", 4.0);
-        UpdateRadioButtons("4hours");
+        ResetAllSelections();
+        SetSelectedStyle(Option4Hours, Radio4Hours);
+        var price = CalculatePrice(4.0);
+        UpdateSelection("4 heures", price.ToString("C"), 4.0);
     }
 
     private void UpdateSelection(string duration, string price, double hours)
@@ -168,6 +219,33 @@ public partial class DepositSetupPage : ContentPage
             "C3" => "L003",
             _ => "L001" // Casier par défaut
         };
+    }
+
+    private decimal CalculatePrice(double hours)
+    {
+        // Tarification basée sur les heures
+        return hours switch
+        {
+            0.5 => 2.50m,  // 30 minutes
+            1.0 => 4.00m,  // 1 heure
+            2.0 => 7.00m,  // 2 heures
+            4.0 => 12.00m, // 4 heures
+            _ => 4.00m     // Par défaut 1 heure
+        };
+    }
+
+    private void UpdatePricing()
+    {
+        // Mettre à jour tous les prix affichés
+        Price30MinLabel.Text = CalculatePrice(0.5).ToString("C");
+        Price1HourLabel.Text = CalculatePrice(1.0).ToString("C");
+        Price2HoursLabel.Text = CalculatePrice(2.0).ToString("C");
+        Price4HoursLabel.Text = CalculatePrice(4.0).ToString("C");
+        
+        // Mettre à jour le prix sélectionné
+        var currentPrice = CalculatePrice(selectedHours);
+        selectedPrice = currentPrice.ToString("C");
+        SelectedPriceText.Text = selectedPrice;
     }
 
     private async void ConfirmButton_Clicked(object sender, EventArgs e)

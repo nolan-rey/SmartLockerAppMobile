@@ -16,7 +16,7 @@ public partial class PaymentPage : ContentPage
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
         
@@ -25,11 +25,20 @@ public partial class PaymentPage : ContentPage
             // Afficher comme reçu de paiement
             Title = "Reçu de paiement";
             // Masquer les options de paiement et afficher le résumé
-            UpdateUIForReceipt();
+            await UpdateUIForReceipt();
+        }
+        else if (!string.IsNullOrEmpty(SessionId))
+        {
+            // Charger les données de session pour le paiement normal
+            var session = await _appState.GetSessionAsync(SessionId);
+            if (session != null)
+            {
+                UpdateSessionDisplay(session);
+            }
         }
     }
 
-    private async void UpdateUIForReceipt()
+    private async Task UpdateUIForReceipt()
     {
         // Masquer les options de paiement et le bouton de paiement
         PayButton.IsVisible = false;
@@ -44,6 +53,9 @@ public partial class PaymentPage : ContentPage
             var session = await _appState.GetSessionAsync(SessionId);
             if (session != null)
             {
+                // Mettre à jour les informations de session
+                UpdateSessionDisplay(session);
+                
                 // Afficher un message de confirmation
                 await DisplayAlert("Session terminée", 
                     $"Votre session a été clôturée avec succès.\nCoût total: {session.TotalCost:C}", 
@@ -53,6 +65,37 @@ public partial class PaymentPage : ContentPage
         
         // Changer le bouton de retour pour aller à la page d'accueil
         BackButton.Text = "Retour à l'accueil";
+    }
+
+    private void UpdateSessionDisplay(Models.LockerSession session)
+    {
+        // Mapper l'ID du service vers l'ID d'affichage
+        var displayId = MapServiceIdToDisplayId(session.LockerId);
+        SessionLockerLabel.Text = displayId;
+        
+        // Afficher la durée
+        SessionDurationLabel.Text = $"{session.DurationHours}h";
+        
+        // Afficher les heures de début et fin
+        SessionStartTimeLabel.Text = session.StartTime.ToString("HH:mm");
+        SessionEndTimeLabel.Text = session.EndTime.ToString("HH:mm");
+        
+        // Afficher le coût total
+        SessionTotalLabel.Text = session.TotalCost.ToString("C");
+        
+        // Mettre à jour le bouton de paiement avec le montant réel
+        PayButton.Text = $"Payer {session.TotalCost:C}";
+    }
+
+    private string MapServiceIdToDisplayId(string serviceId)
+    {
+        return serviceId switch
+        {
+            "L001" => "A1",
+            "L002" => "B2",
+            "L003" => "C3",
+            _ => serviceId
+        };
     }
 
     private async void BackButton_Clicked(object sender, EventArgs e)

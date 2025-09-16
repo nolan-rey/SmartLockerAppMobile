@@ -105,7 +105,7 @@
                                     <Label Text="Idéal pour courses rapides" FontSize="12" TextColor="Gray"/>
                                 </StackLayout>
                                 
-                                <Label Grid.Column="2" Text="2,50€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                                <Label Grid.Column="2" x:Name="Price30MinLabel" Text="2,50€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
                             </Grid>
                         </Border>
                         
@@ -153,7 +153,7 @@
                                     <Label Text="Idéal pour shopping" FontSize="12" TextColor="Gray"/>
                                 </StackLayout>
                                 
-                                <Label Grid.Column="2" Text="4,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                                <Label Grid.Column="2" x:Name="Price1HourLabel" Text="4,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
                             </Grid>
                         </Border>
                         
@@ -191,7 +191,7 @@
                                     <Label Text="Idéal pour shopping" FontSize="12" TextColor="Gray"/>
                                 </StackLayout>
                                 
-                                <Label Grid.Column="2" Text="7,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                                <Label Grid.Column="2" x:Name="Price2HoursLabel" Text="7,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
                             </Grid>
                         </Border>
                         
@@ -229,7 +229,7 @@
                                     <Label Text="Idéal pour journée complète" FontSize="12" TextColor="Gray"/>
                                 </StackLayout>
                                 
-                                <Label Grid.Column="2" Text="12,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
+                                <Label Grid.Column="2" x:Name="Price4HoursLabel" Text="12,00€" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" TextColor="Black"/>
                             </Grid>
                         </Border>
                         
