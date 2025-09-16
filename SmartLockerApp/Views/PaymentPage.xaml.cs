@@ -1,17 +1,71 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
+[QueryProperty(nameof(SessionId), "sessionId")]
+[QueryProperty(nameof(Action), "action")]
 public partial class PaymentPage : ContentPage
 {
+    private readonly AppStateService _appState = AppStateService.Instance;
     private string selectedPaymentMethod = "CreditCard";
+    public string SessionId { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty; // "receipt" pour afficher le reçu
 
     public PaymentPage()
     {
         InitializeComponent();
     }
 
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        
+        if (Action == "receipt")
+        {
+            // Afficher comme reçu de paiement
+            Title = "Reçu de paiement";
+            // Masquer les options de paiement et afficher le résumé
+            UpdateUIForReceipt();
+        }
+    }
+
+    private async void UpdateUIForReceipt()
+    {
+        // Masquer les options de paiement et le bouton de paiement
+        PayButton.IsVisible = false;
+        CancelButton.IsVisible = false;
+        
+        // Modifier le titre de la page
+        Title = "Reçu de paiement";
+        
+        // Charger les détails de la session terminée
+        if (!string.IsNullOrEmpty(SessionId))
+        {
+            var session = await _appState.GetSessionAsync(SessionId);
+            if (session != null)
+            {
+                // Afficher un message de confirmation
+                await DisplayAlert("Session terminée", 
+                    $"Votre session a été clôturée avec succès.\nCoût total: {session.TotalCost:C}", 
+                    "OK");
+            }
+        }
+        
+        // Changer le bouton de retour pour aller à la page d'accueil
+        BackButton.Text = "Retour à l'accueil";
+    }
+
     private async void BackButton_Clicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        if (Action == "receipt")
+        {
+            // Retourner à la page d'accueil après avoir vu le reçu
+            await Shell.Current.GoToAsync("//HomePage");
+        }
+        else
+        {
+            await Shell.Current.GoToAsync("..");
+        }
     }
 
     private void PaymentMethod_Tapped(object sender, EventArgs e)

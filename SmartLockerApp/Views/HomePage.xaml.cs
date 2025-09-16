@@ -36,6 +36,8 @@ public partial class HomePage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        _appState.PropertyChanged += OnAppStateChanged;
+        
         await AnimationService.FadeInAsync(this);
         
         // Animate cards in sequence
@@ -43,19 +45,35 @@ public partial class HomePage : ContentPage
         await AnimationService.SlideInFromBottomAsync(WelcomeSection, 300);
         await Task.Delay(100);
         
+        // Mettre à jour l'interface utilisateur
+        UpdateUI();
+        
         if (_appState.ActiveSession != null)
         {
             ActiveSessionCard.IsVisible = true;
         }
-        
-        UpdateUI();
+        else
+        {
+            ActiveSessionCard.IsVisible = false;
+        }
     }
 
     private void OnAppStateChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
         if (e.PropertyName == nameof(AppStateService.ActiveSession))
         {
-            MainThread.BeginInvokeOnMainThread(UpdateUI);
+            MainThread.BeginInvokeOnMainThread(() => {
+                UpdateUI();
+                // Mettre à jour la visibilité de la carte de session active
+                if (_appState.ActiveSession != null)
+                {
+                    ActiveSessionCard.IsVisible = true;
+                }
+                else
+                {
+                    ActiveSessionCard.IsVisible = false;
+                }
+            });
         }
     }
 

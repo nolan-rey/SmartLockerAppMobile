@@ -6,6 +6,7 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
 {
     private readonly AppStateService _appState = AppStateService.Instance;
     private string? _sessionId;
+    private string? _action; // "close" pour clôturer la session
 
     public UnlockInstructionsPage()
     {
@@ -18,8 +19,12 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
         if (query.ContainsKey("sessionId"))
         {
             _sessionId = query["sessionId"].ToString();
-            LoadSessionInfo();
         }
+        if (query.ContainsKey("action"))
+        {
+            _action = query["action"].ToString();
+        }
+        LoadSessionInfo();
     }
 
     private void LoadSessionInfo()
@@ -76,21 +81,32 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
         // Simuler un délai
         await Task.Delay(2000);
         
-        // Verrouiller le casier après dépôt
-        if (_appState.ActiveSession != null)
+        if (_action == "close")
         {
-            var success = await _appState.LockLockerAsync(_appState.ActiveSession.Id);
-            if (success)
+            // Processus de clôture de session
+            await DisplayAlert("Succès", "Casier déverrouillé ! Récupérez vos affaires.", "OK");
+            
+            // Naviguer vers la page de casier ouvert pour récupération
+            await Shell.Current.GoToAsync($"//OpenLockerPage?sessionId={_sessionId}&action=retrieve");
+        }
+        else
+        {
+            // Processus normal (dépôt)
+            if (_appState.ActiveSession != null)
             {
-                await DisplayAlert("Succès", "Casier déverrouillé ! Déposez vos affaires et refermez la porte.", "OK");
-                await DisplayAlert("Verrouillage", "Casier verrouillé automatiquement. Votre session est maintenant active.", "OK");
-                
-                // Naviguer vers la page de confirmation
-                await Shell.Current.GoToAsync("//UnlockConfirmationPage");
-            }
-            else
-            {
-                await DisplayAlert("Erreur", "Impossible de verrouiller le casier", "OK");
+                var success = await _appState.LockLockerAsync(_appState.ActiveSession.Id);
+                if (success)
+                {
+                    await DisplayAlert("Succès", "Casier déverrouillé ! Déposez vos affaires et refermez la porte.", "OK");
+                    await DisplayAlert("Verrouillage", "Casier verrouillé automatiquement. Votre session est maintenant active.", "OK");
+                    
+                    // Naviguer vers la page de confirmation
+                    await Shell.Current.GoToAsync("//UnlockConfirmationPage");
+                }
+                else
+                {
+                    await DisplayAlert("Erreur", "Impossible de verrouiller le casier", "OK");
+                }
             }
         }
     }

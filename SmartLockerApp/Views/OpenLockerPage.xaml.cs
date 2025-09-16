@@ -3,10 +3,12 @@ using SmartLockerApp.Services;
 namespace SmartLockerApp.Views;
 
 [QueryProperty(nameof(SessionId), "sessionId")]
+[QueryProperty(nameof(Action), "action")]
 public partial class OpenLockerPage : ContentPage
 {
     private readonly AppStateService _appState = AppStateService.Instance;
     public string SessionId { get; set; } = string.Empty;
+    public string Action { get; set; } = string.Empty; // "retrieve" pour récupération
 
     public OpenLockerPage()
     {
@@ -32,7 +34,16 @@ public partial class OpenLockerPage : ContentPage
         // Update UI to show success
         StatusIcon.Text = "✅";
         StatusTitle.Text = "Casier ouvert !";
-        StatusMessage.Text = "Vous pouvez maintenant récupérer vos affaires";
+        
+        if (Action == "retrieve")
+        {
+            StatusMessage.Text = "Récupérez vos affaires et fermez le casier";
+        }
+        else
+        {
+            StatusMessage.Text = "Vous pouvez maintenant déposer vos affaires";
+        }
+        
         LoadingIndicator.IsRunning = false;
         ProgressContainer.IsVisible = false;
         
@@ -43,8 +54,27 @@ public partial class OpenLockerPage : ContentPage
 
     private async void ConfirmRetrievalButton_Clicked(object sender, EventArgs e)
     {
-        // Naviguer vers les instructions de verrouillage avec l'ID de session
-        await Shell.Current.GoToAsync($"//LockInstructionsPage?sessionId={SessionId}");
+        if (Action == "retrieve")
+        {
+            // Terminer la session et naviguer vers le reçu de paiement
+            if (!string.IsNullOrEmpty(SessionId))
+            {
+                var result = await _appState.EndSessionAsync(SessionId);
+                if (result.Success)
+                {
+                    await Shell.Current.GoToAsync($"//PaymentPage?sessionId={SessionId}&action=receipt");
+                }
+                else
+                {
+                    await DisplayAlert("Erreur", result.Message, "OK");
+                }
+            }
+        }
+        else
+        {
+            // Naviguer vers les instructions de verrouillage avec l'ID de session
+            await Shell.Current.GoToAsync($"//LockInstructionsPage?sessionId={SessionId}");
+        }
     }
 
     private async void NeedHelpButton_Clicked(object sender, EventArgs e)

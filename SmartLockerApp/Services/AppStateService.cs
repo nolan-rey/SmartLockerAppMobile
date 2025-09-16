@@ -178,6 +178,14 @@ public class AppStateService : INotifyPropertyChanged
         OnPropertyChanged(nameof(ActiveSession));
     }
 
+    /// <summary>
+    /// Obtenir une session spécifique par ID
+    /// </summary>
+    public async Task<LockerSession?> GetSessionAsync(string sessionId)
+    {
+        return await _lockerService.GetSessionAsync(sessionId);
+    }
+
     protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

@@ -1,7 +1,11 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
 public partial class ActiveSessionPage : ContentPage
 {
+    private readonly AppStateService _appState = AppStateService.Instance;
+
     public ActiveSessionPage()
     {
         InitializeComponent();
@@ -19,7 +23,10 @@ public partial class ActiveSessionPage : ContentPage
 
     private async void EndSessionButton_Clicked(object sender, EventArgs e)
     {
-        // TODO: Implement end session logic
-        await Shell.Current.GoToAsync("//PaymentPage");
+        if (_appState.ActiveSession != null)
+        {
+            // Naviguer vers les instructions de déverrouillage pour clôturer la session
+            await Shell.Current.GoToAsync($"//UnlockInstructionsPage?sessionId={_appState.ActiveSession.Id}&action=close");
+        }
     }
 }

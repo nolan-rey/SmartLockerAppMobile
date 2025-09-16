@@ -330,6 +330,23 @@ public class LockerManagementService : INotifyPropertyChanged
         }
     }
 
+    /// <summary>
+    /// Obtenir une session spécifique par ID
+    /// </summary>
+    public async Task<LockerSession?> GetSessionAsync(string sessionId)
+    {
+        // Chercher d'abord dans les sessions actives
+        var activeSession = _activeSessions.FirstOrDefault(s => s.Id == sessionId);
+        if (activeSession != null)
+        {
+            return activeSession;
+        }
+
+        // Chercher dans l'historique
+        var historySession = _sessionHistory.FirstOrDefault(s => s.Id == sessionId);
+        return historySession;
+    }
+
     protected virtual void OnPropertyChanged(string propertyName)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
