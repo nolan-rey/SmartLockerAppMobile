@@ -123,10 +123,16 @@ public partial class HomePage : ContentPage
         await Shell.Current.GoToAsync("//HistoryPage");
     }
 
-    private async void OnLockerClicked(object sender, EventArgs e)
+    private async void OnLockerA1Clicked(object sender, EventArgs e)
     {
-        await AnimationService.ButtonPressAsync((VisualElement)sender);
-        await Shell.Current.GoToAsync("//LockerDetailPage");
+        await AnimationService.ButtonPressAsync(LockerA1);
+        await Shell.Current.GoToAsync($"//LockerDetailPage?lockerId=A1");
+    }
+
+    private async void OnLockerB2Clicked(object sender, EventArgs e)
+    {
+        await AnimationService.ButtonPressAsync(LockerB2);
+        await Shell.Current.GoToAsync($"//LockerDetailPage?lockerId=B2");
     }
 
     private async void OnStartSessionClicked(object sender, EventArgs e)

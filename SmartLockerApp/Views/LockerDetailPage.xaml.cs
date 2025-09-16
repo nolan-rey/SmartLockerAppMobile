@@ -3,10 +3,13 @@ using SmartLockerApp.Models;
 
 namespace SmartLockerApp.Views;
 
+[QueryProperty(nameof(LockerId), "lockerId")]
 public partial class LockerDetailPage : ContentPage
 {
     private readonly AppStateService _appState = AppStateService.Instance;
     private Locker? _selectedLocker;
+    
+    public string LockerId { get; set; } = string.Empty;
 
     public LockerDetailPage()
     {
@@ -24,17 +27,45 @@ public partial class LockerDetailPage : ContentPage
 
     private void LoadLockerData()
     {
-        // Get first available locker for demo
-        var locker = _appState.Lockers.FirstOrDefault();
-        
-        if (locker != null)
+        // Utiliser le LockerId passé en paramètre ou le premier casier disponible
+        if (!string.IsNullOrEmpty(LockerId))
         {
-            _selectedLocker = locker;
-            // Demo data since UI elements don't exist in XAML
+            // Créer un casier de démonstration basé sur l'ID
+            _selectedLocker = CreateDemoLocker(LockerId);
+        }
+        else
+        {
+            // Fallback vers le premier casier disponible
+            _selectedLocker = _appState.Lockers.FirstOrDefault() ?? CreateDemoLocker("A1");
+        }
+        
+        if (_selectedLocker != null)
+        {
             Title = $"Casier {_selectedLocker.Id}";
-            
             UpdateStatusDisplay();
         }
+    }
+
+    private Locker CreateDemoLocker(string lockerId)
+    {
+        var locations = new Dictionary<string, string>
+        {
+            { "A1", "Entrée principale" },
+            { "B2", "Hall principal" },
+            { "C3", "Zone sécurisée" }
+        };
+
+        var status = lockerId == "C3" ? LockerStatus.Occupied : LockerStatus.Available;
+
+        return new Locker
+        {
+            Id = lockerId,
+            Location = locations.GetValueOrDefault(lockerId, "Emplacement inconnu"),
+            Size = LockerSize.Medium,
+            Status = status,
+            PricePerHour = 2.50m,
+            Features = new List<string> { "Sécurisé", "Climatisé", "Accès 24/7" }
+        };
     }
 
     private void UpdateStatusDisplay()

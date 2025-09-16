@@ -180,13 +180,17 @@
                             <!-- Locker Item 1 -->
                             <Border BackgroundColor="White" 
                                     StrokeThickness="0"
-                                    Padding="16">
+                                    Padding="16"
+                                    x:Name="LockerA1">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="12"/>
                                 </Border.StrokeShape>
                                 <Border.Shadow>
                                     <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                                 </Border.Shadow>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnLockerA1Clicked"/>
+                                </Border.GestureRecognizers>
                                 
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     
@@ -229,13 +233,17 @@
                             <!-- Locker Item 2 -->
                             <Border BackgroundColor="White" 
                                     StrokeThickness="0"
-                                    Padding="16">
+                                    Padding="16"
+                                    x:Name="LockerB2">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="12"/>
                                 </Border.StrokeShape>
                                 <Border.Shadow>
                                     <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                                 </Border.Shadow>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnLockerB2Clicked"/>
+                                </Border.GestureRecognizers>
                                 
                                 <Grid ColumnDefinitions="Auto,*,Auto">
                                     
@@ -275,10 +283,12 @@
                                 </Grid>
                             </Border>
                             
-                            <!-- Locker Item 3 -->
+                            <!-- Locker Item 3 - Occupé (non cliquable) -->
                             <Border BackgroundColor="White" 
                                     StrokeThickness="0"
-                                    Padding="16">
+                                    Padding="16"
+                                    x:Name="LockerC3"
+                                    Opacity="0.6">
                                 <Border.StrokeShape>
                                     <RoundRectangle CornerRadius="12"/>
                                 </Border.StrokeShape>
