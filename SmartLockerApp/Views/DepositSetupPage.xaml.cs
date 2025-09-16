@@ -137,8 +137,8 @@ public partial class DepositSetupPage : ContentPage
                 ConfirmButton.Text = "✓ Session créée";
                 await AnimationService.SuccessCheckmarkAsync(ConfirmButton);
                 
-                // Naviguer vers la page d'ouverture du casier avec l'ID de session
-                await Shell.Current.GoToAsync($"//OpenLockerPage?sessionId={result.Session.Id}");
+                // Naviguer directement vers LockerOpenedPage après création de session
+                await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={result.Session.Id}");
             }
             else
             {

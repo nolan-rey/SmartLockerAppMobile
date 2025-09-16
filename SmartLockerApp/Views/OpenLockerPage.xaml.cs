@@ -72,7 +72,7 @@ public partial class OpenLockerPage : ContentPage
         }
         else
         {
-            // Naviguer vers la page de casier ouvert pour dépôt
+            // Pour le dépôt initial, naviguer directement vers la page de casier ouvert
             await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={SessionId}");
         }
     }
