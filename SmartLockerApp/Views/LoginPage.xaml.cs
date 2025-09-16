@@ -74,7 +74,7 @@ public partial class LoginPage : ContentPage
     private async void OnSignupClicked(object sender, EventArgs e)
     {
         await AnimationService.ButtonPressAsync((VisualElement)sender);
-        await DisplayAlert("Inscription", "Fonctionnalité d'inscription à venir", "OK");
+        await Shell.Current.GoToAsync("//SignupPage");
     }
 
     private void ShowPasswordButton_Clicked(object sender, EventArgs e)

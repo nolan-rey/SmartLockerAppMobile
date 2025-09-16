@@ -25,7 +25,43 @@ public class AuthenticationService
 
     private AuthenticationService()
     {
-        _ = LoadUsersAsync();
+        _ = InitializeAsync();
+    }
+
+    /// <summary>
+    /// Initialise le service et crée un utilisateur de test si nécessaire
+    /// </summary>
+    private async Task InitializeAsync()
+    {
+        await LoadUsersAsync();
+        await CreateDefaultUserIfNeededAsync();
+    }
+
+    /// <summary>
+    /// Crée un utilisateur de test par défaut si aucun utilisateur n'existe
+    /// </summary>
+    private async Task CreateDefaultUserIfNeededAsync()
+    {
+        if (_users.Count == 0)
+        {
+            var defaultUser = new UserAccount
+            {
+                Id = Guid.NewGuid().ToString(),
+                Email = "test@smartlocker.com",
+                FirstName = "Utilisateur",
+                LastName = "Test",
+                PasswordHash = HashPassword("123456"),
+                CreatedAt = DateTime.Now,
+                IsActive = true
+            };
+
+            _users.Add(defaultUser);
+            await _storage.SaveAsync(UsersKey, _users);
+            
+            System.Diagnostics.Debug.WriteLine("Utilisateur de test créé:");
+            System.Diagnostics.Debug.WriteLine("Email: test@smartlocker.com");
+            System.Diagnostics.Debug.WriteLine("Mot de passe: 123456");
+        }
     }
 
     /// <summary>
