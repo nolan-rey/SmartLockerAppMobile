@@ -2,8 +2,17 @@
 <ContentPage x:Class="SmartLockerApp.Views.LoginPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:SmartLockerApp.ViewModels"
+             xmlns:converters="clr-namespace:SmartLockerApp.Converters"
              Title="Connexion"
-             BackgroundColor="#F8FAFC">
+             BackgroundColor="#F8FAFC"
+             x:DataType="viewmodels:LoginViewModel">
+    
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:InvertBoolConverter x:Key="InvertBoolConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ScrollView>
         <Grid Padding="20" RowDefinitions="*,Auto,*">
@@ -75,7 +84,7 @@
                         <!-- Email Field -->
                         <StackLayout Spacing="8">
                             <Label Text="Adresse email" FontSize="14" FontAttributes="Bold"/>
-                            <Entry x:Name="EmailEntry" 
+                            <Entry Text="{Binding Email}" 
                                    Placeholder="votre@email.com"
                                    FontSize="16"
                                    BackgroundColor="White"
@@ -87,44 +96,41 @@
                         <StackLayout Spacing="8">
                             <Label Text="Mot de passe" FontSize="14" FontAttributes="Bold"/>
                             <Grid>
-                                <Entry x:Name="PasswordEntry" 
+                                <Entry Text="{Binding Password}" 
                                        Placeholder="••••••••"
                                        FontSize="16"
                                        BackgroundColor="White"
                                        HeightRequest="48"
-                                       IsPassword="True"/>
-                                <Button x:Name="ShowPasswordButton" 
+                                       IsPassword="{Binding IsPasswordVisible, Converter={StaticResource InvertBoolConverter}}"/>
+                                <Button Command="{Binding TogglePasswordVisibilityCommand}" 
                                         HorizontalOptions="End" 
                                         VerticalOptions="Center"
                                         Margin="0,0,12,0"
                                         BackgroundColor="Transparent"
-                                        Text="👁"
+                                        Text="{Binding PasswordVisibilityIcon}"
                                         FontSize="16"
-                                        BorderWidth="0"
-                                        Clicked="ShowPasswordButton_Clicked"/>
+                                        BorderWidth="0"/>
                             </Grid>
                         </StackLayout>
                         
                         <!-- Forgot Password Link -->
-                        <Button x:Name="ForgotPasswordButton" 
+                        <Button Command="{Binding ForgotPasswordCommand}" 
                                 Text="Mot de passe oublié ?" 
                                 HorizontalOptions="End"
                                 FontSize="14"
                                 TextColor="#2563EB"
                                 BackgroundColor="Transparent"
-                                BorderWidth="0"
-                                Clicked="ForgotPasswordButton_Clicked"/>
+                                BorderWidth="0"/>
                         
                         <!-- Login Button -->
-                        <Button x:Name="LoginButton" 
+                        <Button Command="{Binding LoginCommand}" 
                                 Text="Se connecter"
                                 FontSize="16"
                                 FontAttributes="Bold"
                                 BackgroundColor="#2563EB"
                                 TextColor="White"
                                 HeightRequest="48"
-                                CornerRadius="8"
-                                Clicked="LoginButton_Clicked">
+                                CornerRadius="8">
                             <Button.Shadow>
                                 <Shadow Brush="#2563EB" Opacity="0.2" Radius="8" Offset="0,2"/>
                             </Button.Shadow>
@@ -137,13 +143,12 @@
                         <BoxView BackgroundColor="#E5E7EB" HeightRequest="1" Margin="0,16,0,16"/>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="4">
                             <Label Text="Pas encore de compte ?" FontSize="14" TextColor="Gray"/>
-                            <Button x:Name="SignupButton" 
+                            <Button Command="{Binding SignupCommand}" 
                                     Text="Créer un compte" 
                                     FontSize="14"
                                     TextColor="#2563EB"
                                     BackgroundColor="Transparent"
-                                    BorderWidth="0"
-                                    Clicked="SignupButton_Clicked"/>
+                                    BorderWidth="0"/>
                         </StackLayout>
                     </StackLayout>
                     
