@@ -137,8 +137,8 @@ public partial class DepositSetupPage : ContentPage
                 ConfirmButton.Text = "✓ Session créée";
                 await AnimationService.SuccessCheckmarkAsync(ConfirmButton);
                 
-                // Naviguer vers la page de dépôt d'items avec l'ID de session
-                await Shell.Current.GoToAsync($"//DepositItemsPage?sessionId={result.Session.Id}");
+                // Naviguer vers la page d'ouverture du casier avec l'ID de session
+                await Shell.Current.GoToAsync($"//OpenLockerPage?sessionId={result.Session.Id}");
             }
             else
             {

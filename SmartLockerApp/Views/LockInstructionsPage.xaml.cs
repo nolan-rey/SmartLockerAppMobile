@@ -1,7 +1,13 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
+[QueryProperty(nameof(SessionId), "sessionId")]
 public partial class LockInstructionsPage : ContentPage
 {
+    private readonly AppStateService _appState = AppStateService.Instance;
+    public string SessionId { get; set; } = string.Empty;
+
     public LockInstructionsPage()
     {
         InitializeComponent();
@@ -17,8 +23,8 @@ public partial class LockInstructionsPage : ContentPage
         // Simulate RFID scanning process
         await DisplayAlert("Badge RFID", "Approchez votre badge du lecteur RFID...", "OK");
         
-        // Navigate to confirmation page
-        await Shell.Current.GoToAsync("//LockConfirmationPage");
+        // Navigate to confirmation page with session ID
+        await Shell.Current.GoToAsync($"//LockConfirmationPage?sessionId={SessionId}");
     }
 
     private async void FingerprintButton_Clicked(object sender, EventArgs e)
@@ -26,7 +32,7 @@ public partial class LockInstructionsPage : ContentPage
         // Simulate fingerprint scanning process
         await DisplayAlert("Empreinte digitale", "Placez votre doigt sur le capteur...", "OK");
         
-        // Navigate to confirmation page
-        await Shell.Current.GoToAsync("//LockConfirmationPage");
+        // Navigate to confirmation page with session ID
+        await Shell.Current.GoToAsync($"//LockConfirmationPage?sessionId={SessionId}");
     }
 }

@@ -1,10 +1,21 @@
+using SmartLockerApp.Services;
+
 namespace SmartLockerApp.Views;
 
+[QueryProperty(nameof(SessionId), "sessionId")]
 public partial class OpenLockerPage : ContentPage
 {
+    private readonly AppStateService _appState = AppStateService.Instance;
+    public string SessionId { get; set; } = string.Empty;
+
     public OpenLockerPage()
     {
         InitializeComponent();
+    }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
         StartOpeningProcess();
     }
 
@@ -32,7 +43,8 @@ public partial class OpenLockerPage : ContentPage
 
     private async void ConfirmRetrievalButton_Clicked(object sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("//PaymentPage");
+        // Naviguer vers les instructions de verrouillage avec l'ID de session
+        await Shell.Current.GoToAsync($"//LockInstructionsPage?sessionId={SessionId}");
     }
 
     private async void NeedHelpButton_Clicked(object sender, EventArgs e)
