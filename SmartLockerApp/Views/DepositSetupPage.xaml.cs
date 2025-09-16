@@ -126,20 +126,11 @@ public partial class DepositSetupPage : ContentPage
         
         try
         {
-            var lockerId = "A-12"; // Demo locker ID
-            
-            // Déterminer la durée en heures basée sur la sélection
-            double selectedHours = selectedDuration switch
-            {
-                "30min" => 0.5,
-                "1hour" => 1.0,
-                "2hours" => 2.0,
-                "4hours" => 4.0,
-                _ => 1.0
-            };
+            // Mapper l'ID du casier de la page d'accueil vers l'ID du service
+            var selectedLockerId = MapLockerIdToServiceId(lockerId);
             
             // Créer une liste d'items vide pour l'instant, sera remplie dans DepositItemsPage
-            var result = await _appState.StartSessionWithItemsAsync(lockerId, (int)selectedHours, new List<string>());
+            var result = await _appState.StartSessionWithItemsAsync(selectedLockerId, (int)selectedHours, new List<string>());
             
             if (result.Success && result.Session != null)
             {
@@ -163,6 +154,20 @@ public partial class DepositSetupPage : ContentPage
             ConfirmButton.Text = "Confirmer";
             ConfirmButton.IsEnabled = true;
         }
+    }
+
+    /// <summary>
+    /// Mappe l'ID du casier de la page d'accueil vers l'ID utilisé par le service
+    /// </summary>
+    private string MapLockerIdToServiceId(string? homePageLockerId)
+    {
+        return homePageLockerId switch
+        {
+            "A1" => "L001",
+            "B2" => "L002", 
+            "C3" => "L003",
+            _ => "L001" // Casier par défaut
+        };
     }
 
     private async void ConfirmButton_Clicked(object sender, EventArgs e)
