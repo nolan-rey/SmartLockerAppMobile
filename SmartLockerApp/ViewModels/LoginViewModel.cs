@@ -81,10 +81,15 @@ public class LoginViewModel : BaseViewModel
         }
         else
         {
-            await Application.Current?.MainPage?.DisplayAlert(
-                "Erreur de connexion", 
-                result.Message ?? "Email ou mot de passe incorrect", 
-                "OK");
+            if (Application.Current?.Windows?.Count > 0)
+            {
+                var mainPage = Application.Current.Windows[0].Page;
+                if (mainPage != null)
+                    await mainPage.DisplayAlert(
+                        "Erreur de connexion", 
+                        result.Message ?? "Email ou mot de passe incorrect", 
+                        "OK");
+            }
         }
     }
 
@@ -101,9 +106,14 @@ public class LoginViewModel : BaseViewModel
 
     private async Task ForgotPasswordAsync()
     {
-        await Application.Current?.MainPage?.DisplayAlert(
-            "Mot de passe oublié", 
-            "Fonctionnalité à implémenter avec l'API", 
-            "OK");
+        if (Application.Current?.Windows?.Count > 0)
+        {
+            var mainPage = Application.Current.Windows[0].Page;
+            if (mainPage != null)
+                await mainPage.DisplayAlert(
+                    "Erreur", 
+                    "Veuillez remplir tous les champs", 
+                    "OK");
+        }
     }
 }

@@ -1,26 +1,27 @@
 using SmartLockerApp.Services;
 using SmartLockerApp.ViewModels;
 
-namespace SmartLockerApp.Views;
-
-public partial class HomePage : ContentPage
+namespace SmartLockerApp.Views
 {
-    private HomeViewModel ViewModel => (HomeViewModel)BindingContext;
-
-    public HomePage()
+    public partial class HomePage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = ViewModelLocator.Instance.HomeViewModel;
-    }
+        private HomeViewModel ViewModel => (HomeViewModel)BindingContext;
 
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-        await ViewModel.InitializeAsync();
-    }
+        public HomePage()
+        {
+            InitializeComponent();
+            BindingContext = ViewModelLocator.Instance.HomeViewModel;
+        }
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await ViewModel.InitializeAsync();
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+        }
     }
 }

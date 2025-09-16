@@ -134,10 +134,15 @@ public class DepositSetupViewModel : BaseViewModel
         }
         else
         {
-            await Application.Current?.MainPage?.DisplayAlert(
-                "Erreur", 
-                result.Message ?? "Impossible de créer la session", 
-                "OK");
+            if (Application.Current?.Windows?.Count > 0)
+            {
+                var mainPage = Application.Current.Windows[0].Page;
+                if (mainPage != null)
+                    await mainPage.DisplayAlert(
+                        "Erreur", 
+                        result.Message ?? "Impossible de créer la session", 
+                        "OK");
+            }
         }
     }
 

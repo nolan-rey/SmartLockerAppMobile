@@ -186,7 +186,7 @@ public class ActiveSessionViewModel : BaseViewModel
 
     private void StartAutoRefresh()
     {
-        Device.StartTimer(TimeSpan.FromMinutes(1), () =>
+        Microsoft.Maui.Dispatching.Dispatcher.GetForCurrentThread()?.StartTimer(TimeSpan.FromMinutes(1), () =>
         {
             if (HasActiveSession)
             {

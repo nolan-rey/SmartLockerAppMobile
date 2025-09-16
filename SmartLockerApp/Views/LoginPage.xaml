@@ -143,7 +143,7 @@
                         <BoxView BackgroundColor="#E5E7EB" HeightRequest="1" Margin="0,16,0,16"/>
                         <StackLayout Orientation="Horizontal" HorizontalOptions="Center" Spacing="4">
                             <Label Text="Pas encore de compte ?" FontSize="14" TextColor="Gray"/>
-                            <Button Command="{Binding SignupCommand}" 
+                            <Button Command="{Binding NavigateToSignupCommand}" 
                                     Text="Créer un compte" 
                                     FontSize="14"
                                     TextColor="#2563EB"

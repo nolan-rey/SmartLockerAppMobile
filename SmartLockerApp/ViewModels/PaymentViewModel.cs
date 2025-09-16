@@ -168,21 +168,32 @@ public class PaymentViewModel : BaseViewModel
             return;
 
         // Simulate payment processing
-        await Application.Current?.MainPage?.DisplayAlert(
-            "Paiement", 
-            $"Paiement de {Session.TotalCost:C} effectué avec {SelectedPaymentMethod.DisplayName}", 
-            "OK");
+        if (Application.Current?.Windows?.Count > 0)
+        {
+            var mainPage = Application.Current.Windows[0].Page;
+            if (mainPage != null)
+                await mainPage.DisplayAlert(
+                    "Paiement", 
+                    $"Paiement de {Session.TotalCost:C} effectué avec {SelectedPaymentMethod.DisplayName}", 
+                    "OK");
+        }
 
         await Shell.Current.GoToAsync("//HomePage");
     }
 
     private async Task CancelPaymentAsync()
     {
-        var result = await Application.Current?.MainPage?.DisplayAlert(
-            "Annuler", 
-            "Êtes-vous sûr de vouloir annuler le paiement?", 
-            "Oui", 
-            "Non");
+        bool result = false;
+        if (Application.Current?.Windows?.Count > 0)
+        {
+            var mainPage = Application.Current.Windows[0].Page;
+            if (mainPage != null)
+                result = await mainPage.DisplayAlert(
+                    "Annuler", 
+                    "Êtes-vous sûr de vouloir annuler le paiement?", 
+                    "Oui", 
+                    "Non");
+        }
 
         if (result == true)
         {
@@ -206,10 +217,15 @@ public class PaymentViewModel : BaseViewModel
     {
         if (Session != null)
         {
-            await Application.Current?.MainPage?.DisplayAlert(
-                "Session terminée", 
-                $"Votre session a été clôturée avec succès.\nCoût total: {Session.TotalCost:C}", 
-                "OK");
+            if (Application.Current?.Windows?.Count > 0)
+            {
+                var mainPage = Application.Current.Windows[0].Page;
+                if (mainPage != null)
+                    await mainPage.DisplayAlert(
+                        "Session terminée", 
+                        $"Votre session a été clôturée avec succès.\nCoût total: {Session.TotalCost:C}", 
+                        "OK");
+            }
         }
     }
 

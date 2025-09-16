@@ -3,12 +3,17 @@
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SmartLockerApp.ViewModels"
+             xmlns:converters="clr-namespace:SmartLockerApp.Converters"
              Title="{Binding Title}"
-             BackgroundColor="#F8FAFC">
+             BackgroundColor="#F8FAFC"
+             x:DataType="vm:HomeViewModel">
     
-    <ContentPage.BindingContext>
-        <vm:HomeViewModel x:Name="ViewModel"/>
-    </ContentPage.BindingContext>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToLockerIconConverter x:Key="BoolToLockerIconConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
 
     <Grid>
         
@@ -42,9 +47,7 @@
         
         <!-- Content -->
         <ScrollView x:Name="MainScrollView" Margin="0,80,0,0">
-            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20">
-                
-                <StackLayout x:Name="WelcomeSection" Spacing="20">
+            <StackLayout x:Name="WelcomeSection" MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20" Spacing="20">
                     
                     <!-- Active Session Card (Visible when session is active) -->
                     <Border BackgroundColor="#3B82F6"
@@ -105,7 +108,7 @@
                     <StackLayout x:Name="QuickStatsSection">
                         <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto">
                         
-                        <Border Grid.Column="0" 
+                            <Border Grid.Column="0" 
                                 BackgroundColor="White" 
                                 StrokeThickness="0"
                                 Padding="16" 
@@ -155,7 +158,7 @@
                                 <Label Text="Dépensé" FontSize="12" TextColor="Gray" HorizontalOptions="Center"/>
                             </StackLayout>
                         </Border>
-                    </Grid>
+                        </Grid>
                     </StackLayout>
                     
                     <!-- Lockers List -->
@@ -192,55 +195,10 @@
                                             <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                                         </Border.Shadow>
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Source={x:Reference ViewModel}, Path=LockerSelectedCommand}" 
+                                            <TapGestureRecognizer Command="{Binding LockerSelectedCommand}" 
                                                                   CommandParameter="{Binding}"/>
                                         </Border.GestureRecognizers>
                                         <Grid ColumnDefinitions="Auto,*,Auto">
-                                            
-                                            <!-- Status Icon -->
-                                            <Border Grid.Column="0" 
-                                                    BackgroundColor="{Binding StatusColor, StringFormat='{0}20'}" 
-                                                    StrokeThickness="0"
-                                                    WidthRequest="40" 
-                                                    HeightRequest="40" 
-                                                    VerticalOptions="Center">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="8"/>
-                                                </Border.StrokeShape>
-                                                <Label Text="{Binding IsAvailable, Converter={StaticResource BoolToLockerIconConverter}}" 
-                                                       FontSize="16" 
-                                                       HorizontalOptions="Center" 
-                                                       VerticalOptions="Center"/>
-                                            </Border>
-                                            
-                                            <!-- Locker Info -->
-                                            <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
-                                        <Grid ColumnDefinitions="Auto,*,Auto">
-                                            
-                                            <!-- Status Icon -->
-                                            <Border Grid.Column="0" 
-                                                    BackgroundColor="{Binding StatusColor, StringFormat='{0}20'}" 
-                                                    StrokeThickness="0"
-                                                    WidthRequest="40" 
-                                                    HeightRequest="40" 
-                                                    VerticalOptions="Center">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="8"/>
-                                                </Border.StrokeShape>
-                                                <Label Text="{Binding IsAvailable, Converter={StaticResource BoolToLockerIconConverter}}" 
-                                                       FontSize="16" 
-                                                       HorizontalOptions="Center" 
-                                                       VerticalOptions="Center"/>
-                                            </Border>
-                                            
-                                            <!-- Locker Info -->
-                                            <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
-                                                <Label Text="{Binding DisplayId, StringFormat='Casier {0}'}" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
-                                                        <StackLayout Orientation="Horizontal" Spacing="4">
-                                                            <Label Text="📍" FontSize="12"/>
-                                                            <Label Text="{Binding Location}" FontSize="12" TextColor="Gray"/>
-                                                        </StackLayout>
-                                                                                            <Grid ColumnDefinitions="Auto,*,Auto">
                                             
                                             <!-- Status Icon -->
                                             <Border Grid.Column="0" 
@@ -265,32 +223,7 @@
                                                     <Label Text="📍" FontSize="12"/>
                                                     <Label Text="{Binding Location}" FontSize="12" TextColor="Gray"/>
                                                 </StackLayout>
-                                        <Grid ColumnDefinitions="Auto,*,Auto">
-                                            
-                                            <!-- Status Icon -->
-                                            <Border Grid.Column="0" 
-                                                    BackgroundColor="{Binding StatusColor, StringFormat='{0}20'}" 
-                                                    StrokeThickness="0"
-                                                    WidthRequest="40" 
-                                                    HeightRequest="40" 
-                                                    VerticalOptions="Center">
-                                                <Border.StrokeShape>
-                                                    <RoundRectangle CornerRadius="8"/>
-                                                </Border.StrokeShape>
-                                                <Label Text="{Binding IsAvailable, Converter={StaticResource BoolToLockerIconConverter}}" 
-                                                       FontSize="16" 
-                                                       HorizontalOptions="Center" 
-                                                       VerticalOptions="Center"/>
-                                            </Border>
-                                            
-                                            <!-- Locker Info -->
-                                            <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
-                                                <Label Text="{Binding DisplayId, StringFormat='Casier {0}'}" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
-                                                                        <StackLayout Orientation="Horizontal" Spacing="4">
-                                                                            <Label Text="📍" FontSize="12"/>
-                                                                            <Label Text="{Binding Location}" FontSize="12" TextColor="Gray"/>
-                                                                        </StackLayout>
-                                                                    </StackLayout>
+                                            </StackLayout>
                                         
                                         <!-- Status Badge -->
                                         <Border Grid.Column="2" 
@@ -312,11 +245,9 @@
                             </CollectionView.ItemTemplate>
                         </CollectionView>
                             
-                        </StackLayout>
                     </StackLayout>
                     
-                </StackLayout>
-            </Grid>
+            </StackLayout>
         </ScrollView>
     </Grid>
 </ContentPage>

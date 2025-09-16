@@ -60,6 +60,11 @@ public abstract class BaseViewModel : INotifyPropertyChanged
     protected virtual async Task HandleErrorAsync(Exception ex)
     {
         // Log error and show user-friendly message
-        await Application.Current?.MainPage?.DisplayAlert("Erreur", ex.Message, "OK");
+        if (Application.Current?.Windows?.Count > 0)
+        {
+            var mainPage = Application.Current.Windows[0].Page;
+            if (mainPage != null)
+                await mainPage.DisplayAlert("Erreur", ex.Message, "OK");
+        }
     }
 }
