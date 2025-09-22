@@ -18,6 +18,24 @@ public class LockerSession
     public bool IsLocked { get; set; }
     public DateTime? LockedAt { get; set; }
     public string? Notes { get; set; }
+    
+    // Propriétés calculées pour l'affichage
+    public string Location { get; set; } = string.Empty;
+    public string RemainingTime 
+    { 
+        get 
+        {
+            if (Status != SessionStatus.Active) return "Session terminée";
+            
+            var remaining = EndTime - DateTime.Now;
+            if (remaining.TotalMinutes <= 0) return "Expiré";
+            
+            if (remaining.TotalHours >= 1)
+                return $"{remaining.Hours}h {remaining.Minutes}min";
+            else
+                return $"{remaining.Minutes}min";
+        } 
+    }
 }
 
 /// <summary>

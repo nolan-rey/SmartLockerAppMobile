@@ -195,7 +195,7 @@
                                             <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                                         </Border.Shadow>
                                         <Border.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding LockerSelectedCommand}" 
+                                            <TapGestureRecognizer Command="{Binding Source={x:Reference Name=MainScrollView}, Path=BindingContext.LockerSelectedCommand}" 
                                                                   CommandParameter="{Binding}"/>
                                         </Border.GestureRecognizers>
                                         <Grid ColumnDefinitions="Auto,*,Auto">
