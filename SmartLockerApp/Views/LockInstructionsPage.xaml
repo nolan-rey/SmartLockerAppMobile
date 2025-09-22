@@ -6,133 +6,173 @@
              BackgroundColor="#F8FAFC">
 
     <Grid>
-        <!-- Header -->
-        <Border VerticalOptions="Start" 
-                BackgroundColor="White" 
-                HeightRequest="80"
-                StrokeThickness="0">
-            <Border.Shadow>
-                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
-            </Border.Shadow>
-            
-            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
-                <Button x:Name="BackButton" 
-                        HorizontalOptions="Start" 
-                        BackgroundColor="Transparent"
-                        BorderWidth="0"
-                        Text="←"
-                        FontSize="20"
-                        TextColor="#64748B"
-                        Clicked="BackButton_Clicked"/>
-                
-                <Label Text="Verrouillage" 
-                       FontSize="20" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center" 
-                       VerticalOptions="Center" 
-                       TextColor="#1E293B"/>
+        <!-- Header with Navigation -->
+        <Border Style="{StaticResource NavigationHeader}">
+            <Grid Style="{StaticResource MobileContentContainer}" Padding="0,20">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
+                    <Button x:Name="BackButton" 
+                            Style="{StaticResource BackButton}"
+                            Clicked="BackButton_Clicked"/>
+                    <Label Text="Verrouillage" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           TextColor="Black"/>
+                </StackLayout>
             </Grid>
         </Border>
         
         <!-- Content -->
-        <StackLayout Margin="20,100,20,20" HorizontalOptions="Center" MaximumWidthRequest="400">
+        <ScrollView Margin="0,100,0,0">
+            <Grid HorizontalOptions="Center" MaximumWidthRequest="400" Margin="20">
+                <StackLayout Spacing="24" HorizontalOptions="Fill">
             
-            <!-- Method Selection -->
-            <Border BackgroundColor="White" 
-                    StrokeThickness="0"
-                    Padding="24" 
-                    Margin="0,0,0,20">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="16"/>
-                </Border.StrokeShape>
-                <Border.Shadow>
-                    <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,4"/>
-                </Border.Shadow>
-                
-                <StackLayout>
-                    <Label Text="Choisissez votre méthode de verrouillage" 
-                           FontSize="18" 
-                           FontAttributes="Bold" 
-                           TextColor="#1E293B" 
-                           Margin="0,0,0,20" 
-                           HorizontalTextAlignment="Center"/>
-                    
-                    <!-- RFID Option -->
-                    <Border BackgroundColor="#F1F5F9" 
-                            HeightRequest="60" 
+                    <!-- Header Info -->
+                    <Border BackgroundColor="White" 
                             StrokeThickness="0"
-                            Margin="0,0,0,12">
+                            Padding="24"
+                            HorizontalOptions="Fill">
                         <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="12"/>
+                            <RoundRectangle CornerRadius="16"/>
                         </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="RfidButton_Clicked"/>
-                        </Border.GestureRecognizers>
-                        <StackLayout Orientation="Horizontal" Margin="16">
-                            <Border BackgroundColor="#3B82F6" 
-                                    WidthRequest="40" 
-                                    HeightRequest="40" 
+                        <Border.Shadow>
+                            <Shadow Brush="Black" Opacity="0.1" Radius="20" Offset="0,0"/>
+                        </Border.Shadow>
+                        
+                        <StackLayout Spacing="16" HorizontalOptions="Center">
+                            <!-- Icon -->
+                            <Border BackgroundColor="#F59E0B"
                                     StrokeThickness="0"
-                                    Margin="0,0,16,0">
+                                    WidthRequest="80" 
+                                    HeightRequest="80" 
+                                    HorizontalOptions="Center">
                                 <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
+                                    <RoundRectangle CornerRadius="16"/>
                                 </Border.StrokeShape>
-                                <Label Text="💳" 
-                                       FontSize="20" 
-                                       TextColor="White"
-                                       HorizontalOptions="Center"
-                                       VerticalOptions="Center"/>
+                                <Label Text="🔒" FontSize="32" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White"/>
                             </Border>
-                            <StackLayout>
-                                <Label Text="Badge RFID" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold" 
-                                       TextColor="#1E293B"/>
-                                <Label Text="Utilisez votre badge" 
-                                       FontSize="14" 
-                                       TextColor="#64748B"/>
-                            </StackLayout>
+                            
+                            <!-- Title -->
+                            <Label Text="Verrouillage du casier" 
+                                   FontSize="20" 
+                                   FontAttributes="Bold" 
+                                   TextColor="Black" 
+                                   HorizontalOptions="Center"/>
+                            
+                            <Label Text="Choisissez votre méthode de verrouillage préférée" 
+                                   FontSize="14" 
+                                   TextColor="Gray" 
+                                   HorizontalOptions="Center"
+                                   HorizontalTextAlignment="Center"/>
                         </StackLayout>
                     </Border>
                     
-                    <!-- Fingerprint Option -->
-                    <Border BackgroundColor="#F1F5F9" 
-                            HeightRequest="60" 
-                            StrokeThickness="0">
-                        <Border.StrokeShape>
-                            <RoundRectangle CornerRadius="12"/>
-                        </Border.StrokeShape>
-                        <Border.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="FingerprintButton_Clicked"/>
-                        </Border.GestureRecognizers>
-                        <StackLayout Orientation="Horizontal" Margin="16">
-                            <Border BackgroundColor="#10B981" 
-                                    WidthRequest="40" 
-                                    HeightRequest="40" 
-                                    StrokeThickness="0"
-                                    Margin="0,0,16,0">
-                                <Border.StrokeShape>
-                                    <RoundRectangle CornerRadius="8"/>
-                                </Border.StrokeShape>
-                                <Label Text="👆" 
+                    <!-- Method Options -->
+                    <StackLayout Spacing="16" HorizontalOptions="Fill">
+                        
+                        <!-- RFID Option -->
+                        <Border BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E2E8F0"
+                                Padding="20"
+                                HorizontalOptions="Fill">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="RfidButton_Clicked"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="#3B82F6" 
+                                        WidthRequest="50" 
+                                        HeightRequest="50" 
+                                        StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="💳" 
+                                           FontSize="24" 
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="Badge RFID" 
+                                           FontSize="18" 
+                                           FontAttributes="Bold" 
+                                           TextColor="Black"/>
+                                    <Label Text="Approchez votre badge du lecteur" 
+                                           FontSize="14" 
+                                           TextColor="Gray"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" 
+                                       Text="→" 
                                        FontSize="20" 
-                                       TextColor="White"
-                                       HorizontalOptions="Center"
+                                       TextColor="#3B82F6"
                                        VerticalOptions="Center"/>
-                            </Border>
-                            <StackLayout>
-                                <Label Text="Empreinte digitale" 
-                                       FontSize="16" 
-                                       FontAttributes="Bold" 
-                                       TextColor="#1E293B"/>
-                                <Label Text="Scannez votre doigt" 
-                                       FontSize="14" 
-                                       TextColor="#64748B"/>
-                            </StackLayout>
-                        </StackLayout>
-                    </Border>
+                            </Grid>
+                        </Border>
+                        
+                        <!-- Fingerprint Option -->
+                        <Border BackgroundColor="White" 
+                                StrokeThickness="1"
+                                Stroke="#E2E8F0"
+                                Padding="20"
+                                HorizontalOptions="Fill">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16"/>
+                            </Border.StrokeShape>
+                            <Border.Shadow>
+                                <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                            </Border.Shadow>
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="FingerprintButton_Clicked"/>
+                            </Border.GestureRecognizers>
+                            
+                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="16">
+                                <Border Grid.Column="0"
+                                        BackgroundColor="#10B981" 
+                                        WidthRequest="50" 
+                                        HeightRequest="50" 
+                                        StrokeThickness="0">
+                                    <Border.StrokeShape>
+                                        <RoundRectangle CornerRadius="12"/>
+                                    </Border.StrokeShape>
+                                    <Label Text="👆" 
+                                           FontSize="24" 
+                                           TextColor="White"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"/>
+                                </Border>
+                                
+                                <StackLayout Grid.Column="1" VerticalOptions="Center" Spacing="4">
+                                    <Label Text="Empreinte digitale" 
+                                           FontSize="18" 
+                                           FontAttributes="Bold" 
+                                           TextColor="Black"/>
+                                    <Label Text="Placez votre doigt sur le capteur" 
+                                           FontSize="14" 
+                                           TextColor="Gray"/>
+                                </StackLayout>
+                                
+                                <Label Grid.Column="2" 
+                                       Text="→" 
+                                       FontSize="20" 
+                                       TextColor="#10B981"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                        </Border>
+                        
+                    </StackLayout>
                 </StackLayout>
-            </Border>
-        </StackLayout>
+            </Grid>
+        </ScrollView>
     </Grid>
 </ContentPage>
