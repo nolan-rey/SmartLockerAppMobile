@@ -25,13 +25,14 @@
         
         <!-- Content -->
         <ScrollView Margin="0,100,0,0">
-            <StackLayout Style="{StaticResource MobileScrollContent}" Spacing="24">
+            <Grid HorizontalOptions="Center" MaximumWidthRequest="400" Margin="20">
+                <StackLayout Spacing="24" HorizontalOptions="Fill">
                     
                     <!-- Main Info Card -->
                     <Border BackgroundColor="White" 
                             StrokeThickness="0"
                             Padding="24"
-                            HorizontalOptions="Center">
+                            HorizontalOptions="Fill">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="16"/>
                         </Border.StrokeShape>
@@ -122,7 +123,7 @@
                     </Border>
                     
                     <!-- Action Buttons -->
-                    <StackLayout Spacing="12" HorizontalOptions="Center">
+                    <StackLayout Spacing="12" HorizontalOptions="Fill">
                         
                         <!-- Use Locker Button (for available lockers) -->
                         <Button x:Name="UseLockerButton" 
@@ -133,8 +134,7 @@
                                 BackgroundColor="#2563EB"
                                 TextColor="White"
                                 CornerRadius="16"
-                                HorizontalOptions="Center"
-                                MinimumWidthRequest="280"
+                                HorizontalOptions="Fill"
                                 Clicked="UseLockerButton_Clicked">
                             <Button.Shadow>
                                 <Shadow Brush="#2563EB" Opacity="0.3" Radius="12" Offset="0,0"/>
@@ -150,8 +150,7 @@
                                 BackgroundColor="#2563EB"
                                 TextColor="White"
                                 CornerRadius="16"
-                                HorizontalOptions="Center"
-                                MinimumWidthRequest="280"
+                                HorizontalOptions="Fill"
                                 IsVisible="False"
                                 Clicked="OpenRemotelyButton_Clicked">
                             <Button.Shadow>
@@ -173,7 +172,8 @@
                         
                     </StackLayout>
                     
-            </StackLayout>
+                </StackLayout>
+            </Grid>
         </ScrollView>
     </Grid>
 </ContentPage>
