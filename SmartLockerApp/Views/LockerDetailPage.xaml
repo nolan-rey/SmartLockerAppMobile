@@ -25,9 +25,7 @@
         
         <!-- Content -->
         <ScrollView Margin="0,100,0,0">
-            <StackLayout Style="{StaticResource MobileScrollContent}">
-                
-                <StackLayout Spacing="24">
+            <StackLayout Style="{StaticResource MobileScrollContent}" Spacing="24">
                     
                     <!-- Main Info Card -->
                     <Border BackgroundColor="White" 
@@ -170,7 +168,6 @@
                         
                     </StackLayout>
                     
-                </StackLayout>
             </StackLayout>
         </ScrollView>
     </Grid>
