@@ -6,37 +6,25 @@
              BackgroundColor="#F8FAFC">
 
     <Grid>
-        <!-- Header -->
-        <Border VerticalOptions="Start" 
-                BackgroundColor="White" 
-                HeightRequest="80"
-                StrokeThickness="0">
-            <Border.Shadow>
-                <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2"/>
-            </Border.Shadow>
-            
-            <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
-                <Button x:Name="BackButton" 
-                        HorizontalOptions="Start" 
-                        BackgroundColor="Transparent"
-                        BorderWidth="0"
-                        Text="←"
-                        FontSize="20"
-                        TextColor="#64748B"
-                        Clicked="BackButton_Clicked"/>
-                
-                <Label Text="Session active" 
-                       FontSize="20" 
-                       FontAttributes="Bold" 
-                       HorizontalOptions="Center" 
-                       VerticalOptions="Center" 
-                       TextColor="#1E293B"/>
+        <!-- Header with Navigation -->
+        <Border Style="{StaticResource NavigationHeader}">
+            <Grid Style="{StaticResource MobileContentContainer}" Padding="0,20">
+                <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
+                    <Button x:Name="BackButton" 
+                            Style="{StaticResource BackButton}"
+                            Clicked="BackButton_Clicked"/>
+                    <Label Text="Session active" 
+                           FontSize="18" 
+                           FontAttributes="Bold" 
+                           VerticalOptions="Center" 
+                           TextColor="Black"/>
+                </StackLayout>
             </Grid>
         </Border>
         
         <!-- Content -->
-        <ScrollView Margin="20,100,20,20">
-            <StackLayout MaximumWidthRequest="400" HorizontalOptions="Center">
+        <ScrollView Margin="0,100,0,0">
+            <StackLayout Style="{StaticResource MobileScrollContent}">
                 
                 <!-- Session Status -->
                 <Border BackgroundColor="White" 

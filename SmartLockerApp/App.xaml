@@ -134,6 +134,43 @@
                 </Setter>
             </Style>
             
+            <!-- Navigation Header Styles -->
+            <Style x:Key="NavigationHeader" TargetType="Border">
+                <Setter Property="BackgroundColor" Value="White" />
+                <Setter Property="StrokeThickness" Value="0" />
+                <Setter Property="HeightRequest" Value="100" />
+                <Setter Property="VerticalOptions" Value="Start" />
+                <Setter Property="Shadow">
+                    <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                </Setter>
+            </Style>
+            
+            <Style x:Key="BackButton" TargetType="Button">
+                <Setter Property="BackgroundColor" Value="Transparent" />
+                <Setter Property="BorderWidth" Value="0" />
+                <Setter Property="Text" Value="←" />
+                <Setter Property="FontSize" Value="24" />
+                <Setter Property="TextColor" Value="#2563EB" />
+                <Setter Property="WidthRequest" Value="44" />
+                <Setter Property="HeightRequest" Value="44" />
+                <Setter Property="CornerRadius" Value="22" />
+                <Setter Property="Margin" Value="0,0,12,0" />
+            </Style>
+            
+            <!-- Mobile-optimized Content Container -->
+            <Style x:Key="MobileContentContainer" TargetType="Grid">
+                <Setter Property="MaximumWidthRequest" Value="400" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="Margin" Value="20,0" />
+            </Style>
+            
+            <Style x:Key="MobileScrollContent" TargetType="StackLayout">
+                <Setter Property="MaximumWidthRequest" Value="400" />
+                <Setter Property="HorizontalOptions" Value="Center" />
+                <Setter Property="Margin" Value="20" />
+                <Setter Property="Spacing" Value="20" />
+            </Style>
+            
         </ResourceDictionary>
     </Application.Resources>
 </Application>
