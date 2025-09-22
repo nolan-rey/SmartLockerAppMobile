@@ -30,7 +30,8 @@
                     <!-- Main Info Card -->
                     <Border BackgroundColor="White" 
                             StrokeThickness="0"
-                            Padding="24">
+                            Padding="24"
+                            HorizontalOptions="Center">
                         <Border.StrokeShape>
                             <RoundRectangle CornerRadius="16"/>
                         </Border.StrokeShape>
@@ -67,7 +68,7 @@
                             </StackLayout>
                             
                             <!-- Details -->
-                            <StackLayout Spacing="12">
+                            <StackLayout Spacing="12" HorizontalOptions="FillAndExpand">
                                 
                                 <!-- Location -->
                                 <Border BackgroundColor="#F8FAFC" 
@@ -121,7 +122,7 @@
                     </Border>
                     
                     <!-- Action Buttons -->
-                    <StackLayout Spacing="12">
+                    <StackLayout Spacing="12" HorizontalOptions="Center">
                         
                         <!-- Use Locker Button (for available lockers) -->
                         <Button x:Name="UseLockerButton" 
@@ -132,6 +133,8 @@
                                 BackgroundColor="#2563EB"
                                 TextColor="White"
                                 CornerRadius="16"
+                                HorizontalOptions="Center"
+                                MinimumWidthRequest="280"
                                 Clicked="UseLockerButton_Clicked">
                             <Button.Shadow>
                                 <Shadow Brush="#2563EB" Opacity="0.3" Radius="12" Offset="0,0"/>
@@ -147,6 +150,8 @@
                                 BackgroundColor="#2563EB"
                                 TextColor="White"
                                 CornerRadius="16"
+                                HorizontalOptions="Center"
+                                MinimumWidthRequest="280"
                                 IsVisible="False"
                                 Clicked="OpenRemotelyButton_Clicked">
                             <Button.Shadow>
