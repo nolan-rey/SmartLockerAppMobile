@@ -16,7 +16,7 @@
                     <Label Text="Historique" 
                            FontSize="18" 
                            FontAttributes="Bold" 
-                           VerticalOptions="Center" 
+                           VerticalOptions="Center"
                            TextColor="Black"/>
                 </StackLayout>
             </Grid>

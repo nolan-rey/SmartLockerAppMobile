@@ -104,35 +104,23 @@
                 </Border>
                 
                 <!-- Actions -->
-                <StackLayout>
-                    <!-- Open Locker Button -->
-                    <Button x:Name="OpenLockerButton" 
-                            Text="Ouvrir le casier"
-                            BackgroundColor="#3B82F6" 
+                <StackLayout HorizontalOptions="Fill">
+                    <!-- End Session Button -->
+                    <Button x:Name="EndSessionButton" 
+                            Text="Terminer la session"
+                            BackgroundColor="#EF4444" 
                             TextColor="White" 
                             FontSize="18" 
                             FontAttributes="Bold"
                             HeightRequest="56" 
-                            CornerRadius="12" 
+                            CornerRadius="16" 
                             BorderWidth="0" 
-                            Margin="0,0,0,12" 
-                            Clicked="OpenLockerButton_Clicked">
+                            HorizontalOptions="Fill"
+                            Clicked="EndSessionButton_Clicked">
                         <Button.Shadow>
-                            <Shadow Brush="#3B82F6" Opacity="0.3" Radius="10" Offset="0,4"/>
+                            <Shadow Brush="#EF4444" Opacity="0.3" Radius="12" Offset="0,4"/>
                         </Button.Shadow>
                     </Button>
-                    
-                    <!-- End Session Button -->
-                    <Button x:Name="EndSessionButton" 
-                            Text="Terminer la session"
-                            BackgroundColor="Transparent" 
-                            TextColor="#EF4444" 
-                            FontSize="16" 
-                            HeightRequest="48" 
-                            BorderWidth="1" 
-                            BorderColor="#FEE2E2"
-                            CornerRadius="8" 
-                            Clicked="EndSessionButton_Clicked"/>
                 </StackLayout>
             </StackLayout>
         </ScrollView>
