@@ -47,7 +47,6 @@ public partial class LockerOpenedPage : ContentPage
         {
             "L001" => "A1",
             "L002" => "B2",
-            "L003" => "C3",
             _ => serviceId
         };
     }

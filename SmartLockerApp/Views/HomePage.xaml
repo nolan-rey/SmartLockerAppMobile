@@ -183,7 +183,7 @@
                         <CollectionView ItemsSource="{Binding AvailableLockers}"
                                         SelectionMode="None">
                             <CollectionView.ItemTemplate>
-                                <DataTemplate>
+                                <DataTemplate x:DataType="vm:LockerItemViewModel">
                                     <Border BackgroundColor="White" 
                                             StrokeThickness="0"
                                             Padding="16"

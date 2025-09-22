@@ -51,11 +51,10 @@ public partial class LockerDetailPage : ContentPage
         var locations = new Dictionary<string, string>
         {
             { "A1", "Entrée principale" },
-            { "B2", "Hall principal" },
-            { "C3", "Zone sécurisée" }
+            { "B2", "Hall principal" }
         };
 
-        var status = lockerId == "C3" ? LockerStatus.Occupied : LockerStatus.Available;
+        var status = LockerStatus.Available;
 
         return new Locker
         {

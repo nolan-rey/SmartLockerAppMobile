@@ -1,5 +1,6 @@
 using SmartLockerApp.Interfaces;
 using SmartLockerApp.Models;
+using SmartLockerApp.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -87,12 +88,30 @@ public class HomeViewModel : BaseViewModel
         ActiveSession = await _dataService.GetActiveSessionAsync();
         OnPropertyChanged(nameof(HasActiveSession));
 
-        // Load available lockers
-        var lockers = await _dataService.GetAvailableLockersAsync();
-        AvailableLockers.Clear();
-        foreach (var locker in lockers)
+        // Load all lockers (available and occupied) - we only have 2 now
+        try
         {
-            AvailableLockers.Add(new LockerItemViewModel(locker));
+            // Get all lockers from the data service
+            var availableLockers = await _dataService.GetAvailableLockersAsync();
+            
+            // Also get all lockers from the locker management service to include occupied ones
+            var lockerService = LockerManagementService.Instance;
+            var allLockers = lockerService.Lockers;
+            
+            System.Diagnostics.Debug.WriteLine($"Loading {allLockers.Count} lockers");
+            
+            AvailableLockers.Clear();
+            foreach (var locker in allLockers)
+            {
+                System.Diagnostics.Debug.WriteLine($"Adding locker: {locker.Id} - {locker.Location} - {locker.Status}");
+                AvailableLockers.Add(new LockerItemViewModel(locker));
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"AvailableLockers collection now has {AvailableLockers.Count} items");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading lockers: {ex.Message}");
         }
 
         // Load statistics
@@ -138,7 +157,6 @@ public class HomeViewModel : BaseViewModel
         {
             "L001" => "A1",
             "L002" => "B2",
-            "L003" => "C3",
             _ => serviceId
         };
     }
@@ -166,7 +184,6 @@ public class LockerItemViewModel : BaseViewModel
         {
             "L001" => "A1",
             "L002" => "B2",
-            "L003" => "C3",
             _ => serviceId
         };
     }

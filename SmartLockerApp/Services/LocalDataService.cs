@@ -4,7 +4,7 @@ using SmartLockerApp.Models;
 namespace SmartLockerApp.Services;
 
 /// <summary>
-/// Service de données local - refactorisé depuis AppStateService pour suivre l'architecture MVVM
+/// Service de données local optimisé utilisant les services existants
 /// </summary>
 public class LocalDataService : IDataService
 {
@@ -19,26 +19,24 @@ public class LocalDataService : IDataService
         _lockerService = LockerManagementService.Instance;
     }
 
-    public async Task<User?> GetCurrentUserAsync()
-    {
-        var currentUser = _authService.CurrentUser;
-        if (currentUser == null) return null;
-        
-        return new User
+    /// <summary>
+    /// Convertit un UserAccount en User
+    /// </summary>
+    private static User? ConvertToUser(UserAccount? userAccount) =>
+        userAccount == null ? null : new User
         {
-            Id = currentUser.Id,
-            FirstName = currentUser.FirstName,
-            LastName = currentUser.LastName,
-            Email = currentUser.Email
+            Id = userAccount.Id,
+            FirstName = userAccount.FirstName,
+            LastName = userAccount.LastName,
+            Email = userAccount.Email
         };
-    }
 
-    public async Task<bool> SetCurrentUserAsync(User user)
-    {
-        // Cannot directly set CurrentUser as it's read-only
-        // This would require authentication
-        return false;
-    }
+    public async Task<User?> GetCurrentUserAsync() =>
+        await Task.FromResult(ConvertToUser(_authService.CurrentUser));
+
+    public async Task<bool> SetCurrentUserAsync(User user) =>
+        // Cannot directly set CurrentUser as it's read-only - requires authentication
+        await Task.FromResult(false);
 
     public async Task<bool> ClearCurrentUserAsync()
     {
@@ -49,46 +47,20 @@ public class LocalDataService : IDataService
     public async Task<(bool Success, User? User, string? Message)> AuthenticateAsync(string email, string password)
     {
         var result = await _authService.LoginAsync(email, password);
-        if (result.Success && _authService.CurrentUser != null)
-        {
-            var user = new User
-            {
-                Id = _authService.CurrentUser.Id,
-                FirstName = _authService.CurrentUser.FirstName,
-                LastName = _authService.CurrentUser.LastName,
-                Email = _authService.CurrentUser.Email
-            };
-            return (true, user, result.Message);
-        }
-        return (result.Success, null, result.Message);
+        return (result.Success, ConvertToUser(_authService.CurrentUser), result.Message);
     }
 
     public async Task<(bool Success, User? User, string? Message)> CreateAccountAsync(string firstName, string lastName, string email, string password)
     {
-        var result = await _authService.CreateAccountAsync(firstName, lastName, email, password);
-        if (result.Success && _authService.CurrentUser != null)
-        {
-            var user = new User
-            {
-                Id = _authService.CurrentUser.Id,
-                FirstName = _authService.CurrentUser.FirstName,
-                LastName = _authService.CurrentUser.LastName,
-                Email = _authService.CurrentUser.Email
-            };
-            return (true, user, result.Message);
-        }
-        return (result.Success, null, result.Message);
+        var result = await _authService.CreateAccountAsync(email, password, firstName, lastName);
+        return (result.Success, ConvertToUser(_authService.CurrentUser), result.Message);
     }
 
-    public async Task<List<Locker>> GetAvailableLockersAsync()
-    {
-        return _lockerService.Lockers.Where(l => l.Status == LockerStatus.Available).ToList();
-    }
+    public async Task<List<Locker>> GetAvailableLockersAsync() =>
+        await Task.FromResult(_lockerService.Lockers.Where(l => l.Status == LockerStatus.Available).ToList());
 
-    public async Task<Locker?> GetLockerByIdAsync(string lockerId)
-    {
-        return _lockerService.GetLockerDetails(lockerId);
-    }
+    public async Task<Locker?> GetLockerByIdAsync(string lockerId) =>
+        await Task.FromResult(_lockerService.GetLockerDetails(lockerId));
 
     public async Task<(bool Success, LockerSession? Session, string? Message)> CreateSessionAsync(string lockerId, int durationHours, List<string> items)
     {
@@ -104,21 +76,11 @@ public class LocalDataService : IDataService
         return await _lockerService.GetSessionAsync(sessionId);
     }
 
-    public async Task<LockerSession?> GetActiveSessionAsync()
-    {
-        if (_authService.CurrentUser == null)
-            return null;
+    public async Task<LockerSession?> GetActiveSessionAsync() =>
+        await Task.FromResult(_authService.CurrentUser == null ? null : _lockerService.CurrentActiveSession);
 
-        return _lockerService.CurrentActiveSession;
-    }
-
-    public async Task<List<LockerSession>> GetSessionHistoryAsync()
-    {
-        if (_authService.CurrentUser == null)
-            return new List<LockerSession>();
-
-        return _lockerService.SessionHistory;
-    }
+    public async Task<List<LockerSession>> GetSessionHistoryAsync() =>
+        await Task.FromResult(_authService.CurrentUser == null ? new List<LockerSession>() : _lockerService.SessionHistory);
 
     public async Task<bool> EndSessionAsync(string sessionId)
     {
@@ -132,15 +94,13 @@ public class LocalDataService : IDataService
         return true;
     }
 
-    public async Task<decimal> CalculatePriceAsync(double hours)
-    {
-        return hours switch
+    public async Task<decimal> CalculatePriceAsync(double hours) =>
+        await Task.FromResult(hours switch
         {
             0.5 => 2.50m,  // 30 minutes
             1.0 => 4.00m,  // 1 heure
             2.0 => 7.00m,  // 2 heures
             4.0 => 12.00m, // 4 heures
             _ => (decimal)(hours * 4.00) // 4€ par heure par défaut
-        };
-    }
+        });
 }

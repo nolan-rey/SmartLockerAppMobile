@@ -1,14 +1,14 @@
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SmartLockerApp.Models;
 
 namespace SmartLockerApp.Services;
 
 /// <summary>
-/// Service d'authentification locale avec chiffrement
+/// Service d'authentification locale avec chiffrement utilisant CommunityToolkit.Mvvm
 /// </summary>
-public class AuthenticationService
+public partial class AuthenticationService : ObservableObject
 {
     private static AuthenticationService? _instance;
     public static AuthenticationService Instance => _instance ??= new AuthenticationService();
@@ -18,10 +18,11 @@ public class AuthenticationService
     private const string CurrentUserKey = "current_user";
 
     private List<UserAccount> _users = new();
+    
+    [ObservableProperty]
     private UserAccount? _currentUser;
 
-    public UserAccount? CurrentUser => _currentUser;
-    public bool IsAuthenticated => _currentUser != null;
+    public bool IsAuthenticated => CurrentUser != null;
 
     private AuthenticationService()
     {
@@ -73,7 +74,7 @@ public class AuthenticationService
         var currentUserId = await _storage.LoadAsync<string>(CurrentUserKey);
         if (!string.IsNullOrEmpty(currentUserId))
         {
-            _currentUser = _users.FirstOrDefault(u => u.Id == currentUserId);
+            CurrentUser = _users.FirstOrDefault(u => u.Id == currentUserId);
         }
     }
 
@@ -136,7 +137,7 @@ public class AuthenticationService
             if (!VerifyPassword(password, user.PasswordHash))
                 return (false, "Email ou mot de passe incorrect");
 
-            _currentUser = user;
+            CurrentUser = user;
             user.LastLoginAt = DateTime.Now;
             
             await _storage.SaveAsync(UsersKey, _users);
@@ -155,7 +156,7 @@ public class AuthenticationService
     /// </summary>
     public async Task LogoutAsync()
     {
-        _currentUser = null;
+        CurrentUser = null;
         _storage.Delete(CurrentUserKey);
         await Task.CompletedTask;
     }
@@ -171,8 +172,8 @@ public class AuthenticationService
             if (userIndex >= 0)
             {
                 _users[userIndex] = updatedUser;
-                if (_currentUser?.Id == updatedUser.Id)
-                    _currentUser = updatedUser;
+                if (CurrentUser?.Id == updatedUser.Id)
+                    CurrentUser = updatedUser;
 
                 await _storage.SaveAsync(UsersKey, _users);
                 return true;

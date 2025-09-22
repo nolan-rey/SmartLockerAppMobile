@@ -157,7 +157,6 @@ public class DepositSetupViewModel : BaseViewModel
         {
             "L001" => "A1",
             "L002" => "B2",
-            "L003" => "C3",
             _ => serviceId
         };
     }
@@ -168,7 +167,6 @@ public class DepositSetupViewModel : BaseViewModel
         {
             "A1" => "L001",
             "B2" => "L002",
-            "C3" => "L003",
             _ => "L001"
         };
     }

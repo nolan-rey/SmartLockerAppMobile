@@ -216,7 +216,6 @@ public partial class DepositSetupPage : ContentPage
         {
             "A1" => "L001",
             "B2" => "L002", 
-            "C3" => "L003",
             _ => "L001" // Casier par défaut
         };
     }

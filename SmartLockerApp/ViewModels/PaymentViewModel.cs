@@ -235,7 +235,6 @@ public class PaymentViewModel : BaseViewModel
         {
             "L001" => "A1",
             "L002" => "B2",
-            "L003" => "C3",
             _ => serviceId
         };
     }

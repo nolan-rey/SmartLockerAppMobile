@@ -37,39 +37,31 @@ public class LockerManagementService : INotifyPropertyChanged
     }
 
     /// <summary>
-    /// Initialise les casiers par défaut
+    /// Initialise les 2 casiers par défaut
     /// </summary>
     private void InitializeLockers()
     {
-        _lockers = new List<Locker>();
-        
-        // Créer 20 casiers avec différentes tailles
-        for (int i = 1; i <= 20; i++)
+        _lockers = new List<Locker>
         {
-            var size = i <= 8 ? LockerSize.Small : 
-                      i <= 16 ? LockerSize.Medium : LockerSize.Large;
-            
-            _lockers.Add(new Locker
+            new Locker
             {
-                Id = $"L{i:D3}",
-                Location = $"Zone A - Niveau {(i - 1) / 4 + 1}",
-                Size = size,
+                Id = "L001",
+                Location = "Entrée principale",
+                Size = LockerSize.Medium,
                 Status = LockerStatus.Available,
-                PricePerHour = size switch
-                {
-                    LockerSize.Small => 2.50m,
-                    LockerSize.Medium => 3.50m,
-                    LockerSize.Large => 5.00m,
-                    _ => 2.50m
-                },
-                Features = new List<string> { "Sécurisé", "Surveillance 24/7" }
-            });
-        }
-
-        // Quelques casiers occupés pour la démo
-        _lockers[2].Status = LockerStatus.Occupied;
-        _lockers[7].Status = LockerStatus.Occupied;
-        _lockers[12].Status = LockerStatus.Maintenance;
+                PricePerHour = 3.50m,
+                Features = new List<string> { "Sécurisé", "Surveillance 24/7", "Accès facile" }
+            },
+            new Locker
+            {
+                Id = "L002",
+                Location = "Hall principal",
+                Size = LockerSize.Large,
+                Status = LockerStatus.Available,
+                PricePerHour = 5.00m,
+                Features = new List<string> { "Sécurisé", "Surveillance 24/7", "Grande capacité" }
+            }
+        };
     }
 
     /// <summary>
@@ -77,18 +69,45 @@ public class LockerManagementService : INotifyPropertyChanged
     /// </summary>
     private async Task LoadDataAsync()
     {
-        var savedLockers = await _storage.LoadAsync<List<Locker>>(LockersKey);
-        if (savedLockers != null && savedLockers.Count > 0)
-            _lockers = savedLockers;
-
+        // Toujours utiliser les 2 casiers par défaut
+        // Ne pas charger les casiers sauvegardés pour garantir qu'il n'y en ait que 2
+        
         _activeSessions = await _storage.LoadAsync<List<LockerSession>>(SessionsKey) ?? new();
         _sessionHistory = await _storage.LoadAsync<List<LockerSession>>(HistoryKey) ?? new();
 
         // Nettoyer les sessions expirées
         await CleanExpiredSessionsAsync();
+        
+        // Mettre à jour le statut des casiers en fonction des sessions actives
+        UpdateLockersStatus();
+        
         OnPropertyChanged(nameof(Lockers));
         OnPropertyChanged(nameof(ActiveSessions));
         OnPropertyChanged(nameof(SessionHistory));
+    }
+
+    /// <summary>
+    /// Met à jour le statut des casiers en fonction des sessions actives
+    /// </summary>
+    private void UpdateLockersStatus()
+    {
+        // Réinitialiser tous les casiers comme disponibles
+        foreach (var locker in _lockers)
+        {
+            locker.Status = LockerStatus.Available;
+            locker.CurrentSessionId = null;
+        }
+
+        // Marquer les casiers occupés selon les sessions actives
+        foreach (var session in _activeSessions.Where(s => s.Status == SessionStatus.Active))
+        {
+            var locker = _lockers.FirstOrDefault(l => l.Id == session.LockerId);
+            if (locker != null)
+            {
+                locker.Status = LockerStatus.Occupied;
+                locker.CurrentSessionId = session.Id;
+            }
+        }
     }
 
     /// <summary>
@@ -201,6 +220,9 @@ public class LockerManagementService : INotifyPropertyChanged
             _activeSessions.Remove(session);
             _sessionHistory.Add(session);
 
+            // Mettre à jour le statut des casiers
+            UpdateLockersStatus();
+            
             await SaveDataAsync();
 
             OnPropertyChanged(nameof(Lockers));
@@ -290,16 +312,18 @@ public class LockerManagementService : INotifyPropertyChanged
 
         if (expiredSessions.Any())
         {
+            // Mettre à jour le statut des casiers après nettoyage
+            UpdateLockersStatus();
             await SaveDataAsync();
         }
     }
 
     /// <summary>
-    /// Sauvegarde les données
+    /// Sauvegarde les données (sessions seulement, les casiers sont fixes)
     /// </summary>
     private async Task SaveDataAsync()
     {
-        await _storage.SaveAsync(LockersKey, _lockers);
+        // Ne pas sauvegarder les casiers car ils sont toujours les 2 mêmes
         await _storage.SaveAsync(SessionsKey, _activeSessions);
         await _storage.SaveAsync(HistoryKey, _sessionHistory);
     }

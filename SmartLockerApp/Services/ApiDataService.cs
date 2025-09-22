@@ -4,7 +4,7 @@ using SmartLockerApp.Models;
 namespace SmartLockerApp.Services;
 
 /// <summary>
-/// Implémentation future pour l'API - actuellement utilise le service local
+/// Service de données API simplifié avec fallback vers le service local
 /// </summary>
 public class ApiDataService : IDataService
 {
@@ -17,157 +17,81 @@ public class ApiDataService : IDataService
         _fallbackService = fallbackService;
     }
 
-    public async Task<User?> GetCurrentUserAsync()
-    {
-        // Pour l'instant, utilise le service local
-        // TODO: Implémenter avec l'API quand disponible
-        return await _fallbackService.GetCurrentUserAsync();
-    }
-
-    public async Task<bool> SetCurrentUserAsync(User user)
-    {
-        return await _fallbackService.SetCurrentUserAsync(user);
-    }
-
-    public async Task<bool> ClearCurrentUserAsync()
-    {
-        return await _fallbackService.ClearCurrentUserAsync();
-    }
-
-    public async Task<(bool Success, User? User, string? Message)> AuthenticateAsync(string email, string password)
+    /// <summary>
+    /// Exécute une opération avec fallback automatique vers le service local
+    /// </summary>
+    private async Task<T> ExecuteWithFallbackAsync<T>(Func<Task<T>> operation, Func<Task<T>> fallback)
     {
         try
         {
-            // TODO: Remplacer par l'appel API
-            // var response = await _apiService.LoginAsync(email, password);
-            // if (response.Success && response.Data != null)
-            // {
-            //     await SetCurrentUserAsync(response.Data);
-            //     return (true, response.Data, null);
-            // }
-            // return (false, null, response.Message);
-
-            // Utilise le service local pour l'instant
-            return await _fallbackService.AuthenticateAsync(email, password);
+            // TODO: Implémenter l'appel API quand disponible
+            return await fallback();
         }
-        catch (Exception ex)
+        catch
         {
-            return (false, null, $"Erreur de connexion: {ex.Message}");
+            return await fallback();
         }
     }
 
-    public async Task<(bool Success, User? User, string? Message)> CreateAccountAsync(string firstName, string lastName, string email, string password)
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.CreateAccountAsync(firstName, lastName, email, password);
-        }
-        catch (Exception ex)
-        {
-            return (false, null, $"Erreur de création de compte: {ex.Message}");
-        }
-    }
+    public async Task<User?> GetCurrentUserAsync() => 
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API not implemented yet"),
+            () => _fallbackService.GetCurrentUserAsync());
 
-    public async Task<List<Locker>> GetAvailableLockersAsync()
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.GetAvailableLockersAsync();
-        }
-        catch (Exception ex)
-        {
-            // Fallback vers le service local en cas d'erreur
-            return await _fallbackService.GetAvailableLockersAsync();
-        }
-    }
+    public async Task<bool> SetCurrentUserAsync(User user) => 
+        await _fallbackService.SetCurrentUserAsync(user);
 
-    public async Task<Locker?> GetLockerByIdAsync(string lockerId)
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.GetLockerByIdAsync(lockerId);
-        }
-        catch (Exception ex)
-        {
-            return await _fallbackService.GetLockerByIdAsync(lockerId);
-        }
-    }
+    public async Task<bool> ClearCurrentUserAsync() => 
+        await _fallbackService.ClearCurrentUserAsync();
 
-    public async Task<(bool Success, LockerSession? Session, string? Message)> CreateSessionAsync(string lockerId, int durationHours, List<string> items)
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.CreateSessionAsync(lockerId, durationHours, items);
-        }
-        catch (Exception ex)
-        {
-            return (false, null, $"Erreur de création de session: {ex.Message}");
-        }
-    }
+    public async Task<(bool Success, User? User, string? Message)> AuthenticateAsync(string email, string password) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API authentication not implemented yet"),
+            () => _fallbackService.AuthenticateAsync(email, password));
 
-    public async Task<LockerSession?> GetSessionAsync(string sessionId)
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.GetSessionAsync(sessionId);
-        }
-        catch (Exception ex)
-        {
-            return await _fallbackService.GetSessionAsync(sessionId);
-        }
-    }
+    public async Task<(bool Success, User? User, string? Message)> CreateAccountAsync(string firstName, string lastName, string email, string password) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API account creation not implemented yet"),
+            () => _fallbackService.CreateAccountAsync(firstName, lastName, email, password));
 
-    public async Task<LockerSession?> GetActiveSessionAsync()
-    {
-        return await _fallbackService.GetActiveSessionAsync();
-    }
+    public async Task<List<Locker>> GetAvailableLockersAsync() =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API lockers not implemented yet"),
+            () => _fallbackService.GetAvailableLockersAsync());
 
-    public async Task<List<LockerSession>> GetSessionHistoryAsync()
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.GetSessionHistoryAsync();
-        }
-        catch (Exception ex)
-        {
-            return await _fallbackService.GetSessionHistoryAsync();
-        }
-    }
+    public async Task<Locker?> GetLockerByIdAsync(string lockerId) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API locker details not implemented yet"),
+            () => _fallbackService.GetLockerByIdAsync(lockerId));
 
-    public async Task<bool> EndSessionAsync(string sessionId)
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.EndSessionAsync(sessionId);
-        }
-        catch (Exception ex)
-        {
-            return await _fallbackService.EndSessionAsync(sessionId);
-        }
-    }
+    public async Task<(bool Success, LockerSession? Session, string? Message)> CreateSessionAsync(string lockerId, int durationHours, List<string> items) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API session creation not implemented yet"),
+            () => _fallbackService.CreateSessionAsync(lockerId, durationHours, items));
 
-    public async Task<bool> UpdateSessionAsync(LockerSession session)
-    {
-        return await _fallbackService.UpdateSessionAsync(session);
-    }
+    public async Task<LockerSession?> GetSessionAsync(string sessionId) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API session details not implemented yet"),
+            () => _fallbackService.GetSessionAsync(sessionId));
 
-    public async Task<decimal> CalculatePriceAsync(double hours)
-    {
-        try
-        {
-            // TODO: Remplacer par l'appel API
-            return await _fallbackService.CalculatePriceAsync(hours);
-        }
-        catch (Exception ex)
-        {
-            return await _fallbackService.CalculatePriceAsync(hours);
-        }
-    }
+    public async Task<LockerSession?> GetActiveSessionAsync() =>
+        await _fallbackService.GetActiveSessionAsync();
+
+    public async Task<List<LockerSession>> GetSessionHistoryAsync() =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API session history not implemented yet"),
+            () => _fallbackService.GetSessionHistoryAsync());
+
+    public async Task<bool> EndSessionAsync(string sessionId) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API session termination not implemented yet"),
+            () => _fallbackService.EndSessionAsync(sessionId));
+
+    public async Task<bool> UpdateSessionAsync(LockerSession session) =>
+        await _fallbackService.UpdateSessionAsync(session);
+
+    public async Task<decimal> CalculatePriceAsync(double hours) =>
+        await ExecuteWithFallbackAsync(
+            () => throw new NotImplementedException("API price calculation not implemented yet"),
+            () => _fallbackService.CalculatePriceAsync(hours));
 }

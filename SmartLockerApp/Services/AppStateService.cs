@@ -1,12 +1,12 @@
-using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using SmartLockerApp.Models;
 
 namespace SmartLockerApp.Services;
 
 /// <summary>
-/// Service global de gestion de l'état de l'application
+/// Service global de gestion de l'état de l'application utilisant CommunityToolkit.Mvvm
 /// </summary>
-public class AppStateService : INotifyPropertyChanged
+public partial class AppStateService : ObservableObject
 {
     private static AppStateService? _instance;
     public static AppStateService Instance => _instance ??= new AppStateService();
@@ -14,6 +14,7 @@ public class AppStateService : INotifyPropertyChanged
     private readonly AuthenticationService _auth = AuthenticationService.Instance;
     private readonly LockerManagementService _lockerService = LockerManagementService.Instance;
 
+    // Propriétés observables avec génération automatique des notifications
     public User? CurrentUser => _auth.CurrentUser != null ? new User
     {
         Id = _auth.CurrentUser.Id,
@@ -27,12 +28,10 @@ public class AppStateService : INotifyPropertyChanged
     public LockerSession? ActiveSession => _lockerService.CurrentActiveSession;
     public bool IsLoggedIn => _auth.IsAuthenticated;
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-
     private AppStateService()
     {
-        // S'abonner aux changements des services
-        _lockerService.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
+        // S'abonner aux changements des services pour propager les notifications
+        _lockerService.PropertyChanged += (s, e) => OnPropertyChanged(e?.PropertyName);
     }
 
     /// <summary>
@@ -43,10 +42,8 @@ public class AppStateService : INotifyPropertyChanged
         var (success, message) = await _auth.LoginAsync(email, password);
         if (success)
         {
-            OnPropertyChanged(nameof(CurrentUser));
-            OnPropertyChanged(nameof(IsLoggedIn));
-            OnPropertyChanged(nameof(ActiveSession));
-            OnPropertyChanged(nameof(SessionHistory));
+            // Notifier les changements d'état après connexion
+            NotifyStateChanged();
         }
         return success;
     }
@@ -65,10 +62,7 @@ public class AppStateService : INotifyPropertyChanged
     public async Task LogoutAsync()
     {
         await _auth.LogoutAsync();
-        OnPropertyChanged(nameof(CurrentUser));
-        OnPropertyChanged(nameof(IsLoggedIn));
-        OnPropertyChanged(nameof(ActiveSession));
-        OnPropertyChanged(nameof(SessionHistory));
+        NotifyStateChanged();
     }
 
     /// <summary>
@@ -79,8 +73,7 @@ public class AppStateService : INotifyPropertyChanged
         var (success, message, session) = await _lockerService.StartSessionAsync(lockerId, durationHours, new List<string>());
         if (success)
         {
-            OnPropertyChanged(nameof(Lockers));
-            OnPropertyChanged(nameof(ActiveSession));
+            NotifyStateChanged();
         }
         return success;
     }
@@ -93,8 +86,7 @@ public class AppStateService : INotifyPropertyChanged
         var result = await _lockerService.StartSessionAsync(lockerId, durationHours, items);
         if (result.Success)
         {
-            OnPropertyChanged(nameof(Lockers));
-            OnPropertyChanged(nameof(ActiveSession));
+            NotifyStateChanged();
         }
         return result;
     }
@@ -122,9 +114,7 @@ public class AppStateService : INotifyPropertyChanged
         var (success, message) = await _lockerService.EndSessionAsync(ActiveSession.Id);
         if (success)
         {
-            OnPropertyChanged(nameof(Lockers));
-            OnPropertyChanged(nameof(ActiveSession));
-            OnPropertyChanged(nameof(SessionHistory));
+            NotifyStateChanged();
         }
         return success;
     }
@@ -137,9 +127,7 @@ public class AppStateService : INotifyPropertyChanged
         var result = await _lockerService.EndSessionAsync(sessionId);
         if (result.Success)
         {
-            OnPropertyChanged(nameof(Lockers));
-            OnPropertyChanged(nameof(ActiveSession));
-            OnPropertyChanged(nameof(SessionHistory));
+            NotifyStateChanged();
         }
         return result;
     }
@@ -186,8 +174,15 @@ public class AppStateService : INotifyPropertyChanged
         return await _lockerService.GetSessionAsync(sessionId);
     }
 
-    protected virtual void OnPropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null)
+    /// <summary>
+    /// Notifie tous les changements d'état principaux
+    /// </summary>
+    private void NotifyStateChanged()
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        OnPropertyChanged(nameof(CurrentUser));
+        OnPropertyChanged(nameof(IsLoggedIn));
+        OnPropertyChanged(nameof(ActiveSession));
+        OnPropertyChanged(nameof(SessionHistory));
+        OnPropertyChanged(nameof(Lockers));
     }
 }
