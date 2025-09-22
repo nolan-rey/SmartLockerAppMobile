@@ -1,76 +1,37 @@
 using SmartLockerApp.Interfaces;
 using SmartLockerApp.Models;
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SmartLockerApp.ViewModels;
 
-public class LoginViewModel : BaseViewModel
+public partial class LoginViewModel : BaseViewModel
 {
     private readonly IDataService _dataService;
-    private string _email = string.Empty;
-    private string _password = string.Empty;
-    private bool _isPasswordVisible = false;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
+    private string email = string.Empty;
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
+    private string password = string.Empty;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(PasswordVisibilityIcon))]
+    private bool isPasswordVisible = false;
 
     public LoginViewModel(IDataService dataService)
     {
         _dataService = dataService;
         Title = "Connexion";
-
-        // Commands
-        LoginCommand = new AsyncRelayCommand(LoginAsync, CanLogin);
-        TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
-        NavigateToSignupCommand = new AsyncRelayCommand(NavigateToSignupAsync);
-        ForgotPasswordCommand = new AsyncRelayCommand(ForgotPasswordAsync);
-    }
-
-    // Properties
-    public string Email
-    {
-        get => _email;
-        set
-        {
-            if (SetProperty(ref _email, value))
-            {
-                ((AsyncRelayCommand)LoginCommand).RaiseCanExecuteChanged();
-            }
-        }
-    }
-
-    public string Password
-    {
-        get => _password;
-        set
-        {
-            if (SetProperty(ref _password, value))
-            {
-                ((AsyncRelayCommand)LoginCommand).RaiseCanExecuteChanged();
-            }
-        }
-    }
-
-    public bool IsPasswordVisible
-    {
-        get => _isPasswordVisible;
-        set => SetProperty(ref _isPasswordVisible, value);
     }
 
     public string PasswordVisibilityIcon => IsPasswordVisible ? "👁️" : "👁️‍🗨️";
 
-    // Commands
-    public ICommand LoginCommand { get; }
-    public ICommand TogglePasswordVisibilityCommand { get; }
-    public ICommand NavigateToSignupCommand { get; }
-    public ICommand ForgotPasswordCommand { get; }
-
-    // Methods
-    private bool CanLogin()
-    {
-        return !string.IsNullOrWhiteSpace(Email) && 
-               !string.IsNullOrWhiteSpace(Password) && 
-               !IsBusy;
-    }
-
-    private async Task LoginAsync()
+    // Commands avec RelayCommand
+    [RelayCommand(CanExecute = nameof(CanLogin))]
+    private async Task Login()
     {
         var result = await _dataService.AuthenticateAsync(Email, Password);
         
@@ -93,27 +54,37 @@ public class LoginViewModel : BaseViewModel
         }
     }
 
+    [RelayCommand]
     private void TogglePasswordVisibility()
     {
         IsPasswordVisible = !IsPasswordVisible;
-        OnPropertyChanged(nameof(PasswordVisibilityIcon));
     }
 
-    private async Task NavigateToSignupAsync()
+    [RelayCommand]
+    private async Task NavigateToSignup()
     {
         await Shell.Current.GoToAsync("//SignupPage");
     }
 
-    private async Task ForgotPasswordAsync()
+    [RelayCommand]
+    private async Task ForgotPassword()
     {
         if (Application.Current?.Windows?.Count > 0)
         {
             var mainPage = Application.Current.Windows[0].Page;
             if (mainPage != null)
                 await mainPage.DisplayAlert(
-                    "Erreur", 
-                    "Veuillez remplir tous les champs", 
+                    "Mot de passe oublié", 
+                    "Fonctionnalité à venir", 
                     "OK");
         }
+    }
+
+    // Méthode CanExecute pour LoginCommand
+    private bool CanLogin()
+    {
+        return !string.IsNullOrWhiteSpace(Email) && 
+               !string.IsNullOrWhiteSpace(Password) && 
+               !IsBusy;
     }
 }
