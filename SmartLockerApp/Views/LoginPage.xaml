@@ -35,11 +35,12 @@
                     
                     <!-- Logo Section -->
                     <StackLayout HorizontalOptions="Center" Spacing="16">
-                        <Border WidthRequest="120" 
-                                HeightRequest="120"
+                        <Border WidthRequest="140" 
+                                HeightRequest="140"
                                 HorizontalOptions="Center"
                                 VerticalOptions="Center"
-                                BackgroundColor="Transparent">
+                                BackgroundColor="Transparent"
+                                Padding="10">
                             <Image Source="smartlocker_logo.svg" 
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center"

@@ -261,10 +261,11 @@
                     </Border.Shadow>
                     
                     <StackLayout HorizontalOptions="Center" Spacing="16">
-                        <Border WidthRequest="80" 
-                                HeightRequest="80"
+                        <Border WidthRequest="100" 
+                                HeightRequest="100"
                                 HorizontalOptions="Center"
-                                BackgroundColor="Transparent">
+                                BackgroundColor="Transparent"
+                                Padding="10">
                             <Image Source="smartlocker_logo.svg" 
                                    HorizontalOptions="Center"
                                    VerticalOptions="Center"

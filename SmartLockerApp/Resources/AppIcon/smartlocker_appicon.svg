@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="200" height="200" rx="16" ry="16" fill="#2563EB"/>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with rounded corners -->
+  <rect width="512" height="512" rx="80" ry="80" fill="#2563EB"/>
   
   <!-- Logo Container -->
-  <g transform="translate(25, 40)">
+  <g transform="translate(106, 156)">
     <!-- Main Logo Box -->
-    <rect x="0" y="0" width="150" height="90" rx="6" ry="6" fill="white" stroke="white" stroke-width="2"/>
+    <rect x="0" y="0" width="300" height="180" rx="20" ry="20" fill="white"/>
     
     <!-- Left Section (E) -->
-    <rect x="15" y="15" width="52" height="60" fill="#2563EB"/>
-    <rect x="22" y="22" width="38" height="11" fill="white"/>
-    <rect x="22" y="39" width="30" height="11" fill="white"/>
-    <rect x="22" y="56" width="38" height="11" fill="white"/>
+    <rect x="30" y="30" width="110" height="120" fill="#2563EB"/>
+    <rect x="45" y="45" width="80" height="20" fill="white"/>
+    <rect x="45" y="85" width="65" height="20" fill="white"/>
+    <rect x="45" y="125" width="80" height="20" fill="white"/>
     
     <!-- Right Section (Lock) -->
-    <rect x="82" y="15" width="52" height="60" fill="#2563EB"/>
+    <rect x="160" y="30" width="110" height="120" fill="#2563EB"/>
     
     <!-- Lock Body -->
-    <rect x="97" y="48" width="22" height="19" rx="2" ry="2" fill="white"/>
+    <rect x="185" y="105" width="60" height="35" rx="5" ry="5" fill="white"/>
     
     <!-- Lock Shackle -->
-    <path d="M 101 48 Q 101 36 108 36 Q 115 36 115 48" stroke="white" stroke-width="3" fill="none"/>
+    <path d="M 195 105 Q 195 75 215 75 Q 235 75 235 105" stroke="white" stroke-width="8" fill="none"/>
     
     <!-- Keyhole -->
-    <circle cx="108" cy="56" r="2" fill="#2563EB"/>
-    <rect x="106" y="57" width="4" height="6" fill="#2563EB"/>
+    <circle cx="215" cy="118" r="6" fill="#2563EB"/>
+    <rect x="211" y="122" width="8" height="12" fill="#2563EB"/>
   </g>
-  
-  <!-- Text -->
-  <text x="100" y="165" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="white">SmartLocker</text>
 </svg>
