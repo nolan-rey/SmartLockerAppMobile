@@ -25,12 +25,16 @@
                     
                     <!-- Header -->
                     <StackLayout HorizontalOptions="Center" Spacing="16">
-                        <Image Source="smartlocker_logo.svg" 
-                               WidthRequest="120" 
-                               HeightRequest="120"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               Aspect="AspectFit"/>
+                        <Border WidthRequest="120" 
+                                HeightRequest="120"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                BackgroundColor="Transparent">
+                            <Image Source="smartlocker_logo.svg" 
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Aspect="AspectFit"/>
+                        </Border>
                         <StackLayout HorizontalOptions="Center" Spacing="8">
                             <Label Text="Créer un compte" 
                                    FontSize="28" 

@@ -1,4 +1,4 @@
-﻿namespace SmartLockerApp
+namespace SmartLockerApp
 {
     public partial class App : Application
     {
@@ -9,7 +9,12 @@
 
         protected override Window CreateWindow(IActivationState? activationState)
         {
-            return new Window(new AppShell());
+            var shell = new AppShell();
+            
+            // Démarrer avec l'écran de chargement
+            shell.GoToAsync("//SplashScreenPage");
+            
+            return new Window(shell);
         }
     }
 }

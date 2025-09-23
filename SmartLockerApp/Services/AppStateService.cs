@@ -175,6 +175,14 @@ public partial class AppStateService : ObservableObject
     }
 
     /// <summary>
+    /// Vérifier si l'utilisateur est connecté
+    /// </summary>
+    public bool IsUserLoggedIn()
+    {
+        return IsLoggedIn && CurrentUser != null;
+    }
+
+    /// <summary>
     /// Notifie tous les changements d'état principaux
     /// </summary>
     private void NotifyStateChanged()

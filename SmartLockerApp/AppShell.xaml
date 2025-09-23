@@ -7,6 +7,12 @@
     xmlns:views="clr-namespace:SmartLockerApp.Views"
     Title="SmartLockerApp">
 
+    <!-- Splash Screen -->
+    <ShellContent
+        Title="Splash"
+        ContentTemplate="{DataTemplate views:SplashScreenPage}"
+        Route="SplashScreenPage" />
+
     <!-- Authentication Pages -->
     <ShellContent
         Title="Login"

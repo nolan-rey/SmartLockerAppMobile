@@ -261,11 +261,15 @@
                     </Border.Shadow>
                     
                     <StackLayout HorizontalOptions="Center" Spacing="16">
-                        <Image Source="smartlocker_logo.svg" 
-                               WidthRequest="80" 
-                               HeightRequest="80"
-                               HorizontalOptions="Center"
-                               Aspect="AspectFit"/>
+                        <Border WidthRequest="80" 
+                                HeightRequest="80"
+                                HorizontalOptions="Center"
+                                BackgroundColor="Transparent">
+                            <Image Source="smartlocker_logo.svg" 
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   Aspect="AspectFit"/>
+                        </Border>
                         
                         <StackLayout HorizontalOptions="Center" Spacing="4">
                             <Label Text="SmartLocker" 
