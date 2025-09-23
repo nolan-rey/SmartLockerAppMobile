@@ -23,7 +23,8 @@ public partial class DepositSetupPage : ContentPage
         
         // Set default selection (1 hour)
         selectedHours = 1.0;
-        UpdateSelection("1 heure", CalculatePrice(1.0).ToString("C"), 1.0);
+        var defaultPrice = CalculatePrice(1.0);
+        UpdateSelection("1 heure", $"{defaultPrice:F2} €", 1.0);
     }
 
     protected override void OnAppearing()
@@ -51,7 +52,7 @@ public partial class DepositSetupPage : ContentPage
         ResetAllSelections();
         SetSelectedStyle(Option30Min, Radio30Min);
         var price = CalculatePrice(0.5);
-        UpdateSelection("30 minutes", price.ToString("C"), 0.5);
+        UpdateSelection("30 minutes", $"{price:F2} €", 0.5);
     }
 
     private void ResetAllSelections()
@@ -95,7 +96,7 @@ public partial class DepositSetupPage : ContentPage
         ResetAllSelections();
         SetSelectedStyle(Option1Hour, Radio1Hour);
         var price = CalculatePrice(1.0);
-        UpdateSelection("1 heure", price.ToString("C"), 1.0);
+        UpdateSelection("1 heure", $"{price:F2} €", 1.0);
     }
 
     private async void OnOption2HoursTapped(object sender, EventArgs e)
@@ -104,7 +105,7 @@ public partial class DepositSetupPage : ContentPage
         ResetAllSelections();
         SetSelectedStyle(Option2Hours, Radio2Hours);
         var price = CalculatePrice(2.0);
-        UpdateSelection("2 heures", price.ToString("C"), 2.0);
+        UpdateSelection("2 heures", $"{price:F2} €", 2.0);
     }
 
     private async void OnOption4HoursTapped(object sender, EventArgs e)
@@ -113,7 +114,7 @@ public partial class DepositSetupPage : ContentPage
         ResetAllSelections();
         SetSelectedStyle(Option4Hours, Radio4Hours);
         var price = CalculatePrice(4.0);
-        UpdateSelection("4 heures", price.ToString("C"), 4.0);
+        UpdateSelection("4 heures", $"{price:F2} €", 4.0);
     }
 
     private void UpdateSelection(string duration, string price, double hours)
@@ -236,14 +237,14 @@ public partial class DepositSetupPage : ContentPage
     private void UpdatePricing()
     {
         // Mettre à jour tous les prix affichés
-        Price30MinLabel.Text = CalculatePrice(0.5).ToString("C");
-        Price1HourLabel.Text = CalculatePrice(1.0).ToString("C");
-        Price2HoursLabel.Text = CalculatePrice(2.0).ToString("C");
-        Price4HoursLabel.Text = CalculatePrice(4.0).ToString("C");
+        Price30MinLabel.Text = $"{CalculatePrice(0.5):F2} €";
+        Price1HourLabel.Text = $"{CalculatePrice(1.0):F2} €";
+        Price2HoursLabel.Text = $"{CalculatePrice(2.0):F2} €";
+        Price4HoursLabel.Text = $"{CalculatePrice(4.0):F2} €";
         
         // Mettre à jour le prix sélectionné
         var currentPrice = CalculatePrice(selectedHours);
-        selectedPrice = currentPrice.ToString("C");
+        selectedPrice = $"{currentPrice:F2} €";
         SelectedPriceText.Text = selectedPrice;
     }
 

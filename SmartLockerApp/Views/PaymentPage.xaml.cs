@@ -87,31 +87,51 @@ public partial class PaymentPage : ContentPage
 
     private void UpdateSessionDisplay(Models.LockerSession session)
     {
-        // Mapper l'ID du service vers l'ID d'affichage
-        var displayId = MapServiceIdToDisplayId(session.LockerId);
-        SessionLockerLabel.Text = displayId;
-        
-        // Afficher la durée
-        SessionDurationLabel.Text = $"{session.DurationHours}h";
-        
-        // Afficher les heures de début et fin
-        SessionStartTimeLabel.Text = session.StartTime.ToString("HH:mm");
-        SessionEndTimeLabel.Text = session.EndTime.ToString("HH:mm");
-        
-        // Afficher le coût total
-        SessionTotalLabel.Text = session.TotalCost.ToString("C");
-        
-        // Mettre à jour le bouton de paiement avec le montant réel
-        PayButton.Text = $"Payer {session.TotalCost:C}";
+        try
+        {
+            // Mapper l'ID du service vers l'ID d'affichage
+            var displayId = MapServiceIdToDisplayId(session.LockerId);
+            SessionLockerLabel.Text = displayId;
+            
+            // Afficher la durée
+            SessionDurationLabel.Text = $"{session.DurationHours}h";
+            
+            // Afficher les heures de début et fin
+            SessionStartTimeLabel.Text = session.StartTime.ToString("HH:mm");
+            SessionEndTimeLabel.Text = session.EndTime.ToString("HH:mm");
+            
+            // Afficher le coût total avec format français
+            SessionTotalLabel.Text = $"{session.TotalCost:F2} €";
+            
+            // Mettre à jour le bouton de paiement avec le montant réel
+            PayButton.Text = $"Payer {session.TotalCost:F2} €";
+        }
+        catch (Exception ex)
+        {
+            // En cas d'erreur, afficher des valeurs par défaut
+            SessionLockerLabel.Text = "Casier";
+            SessionDurationLabel.Text = "N/A";
+            SessionStartTimeLabel.Text = "N/A";
+            SessionEndTimeLabel.Text = "N/A";
+            SessionTotalLabel.Text = "0,00 €";
+            PayButton.Text = "Payer";
+            
+            System.Diagnostics.Debug.WriteLine($"Erreur UpdateSessionDisplay: {ex.Message}");
+        }
     }
 
     private string MapServiceIdToDisplayId(string serviceId)
     {
+        if (string.IsNullOrEmpty(serviceId))
+            return "Casier";
+            
         return serviceId switch
         {
-            "L001" => "A1",
-            "L002" => "B2",
-            _ => serviceId
+            "L001" => "Casier A1",
+            "L002" => "Casier B2",
+            "L003" => "Casier C3",
+            "L004" => "Casier D4",
+            _ => $"Casier {serviceId}"
         };
     }
 
