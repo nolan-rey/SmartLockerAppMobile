@@ -20,6 +20,14 @@ public partial class PaymentPage : ContentPage
     {
         base.OnAppearing();
         
+        // Vérifier si nous avons les paramètres nécessaires
+        if (string.IsNullOrEmpty(SessionId))
+        {
+            await DisplayAlert("Erreur", "Session introuvable", "OK");
+            await Shell.Current.GoToAsync("//HomePage");
+            return;
+        }
+        
         if (Action == "receipt")
         {
             // Afficher comme reçu de paiement
@@ -27,13 +35,23 @@ public partial class PaymentPage : ContentPage
             // Masquer les options de paiement et afficher le résumé
             await UpdateUIForReceipt();
         }
-        else if (!string.IsNullOrEmpty(SessionId))
+        else
         {
+            // Mode paiement normal - s'assurer que les boutons sont visibles
+            Title = "Paiement";
+            PayButton.IsVisible = true;
+            CancelButton.IsVisible = true;
+            
             // Charger les données de session pour le paiement normal
             var session = await _appState.GetSessionAsync(SessionId);
             if (session != null)
             {
                 UpdateSessionDisplay(session);
+            }
+            else
+            {
+                await DisplayAlert("Erreur", "Session introuvable", "OK");
+                await Shell.Current.GoToAsync("//HomePage");
             }
         }
     }

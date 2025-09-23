@@ -62,6 +62,7 @@ public partial class OpenLockerPage : ContentPage
                 var result = await _appState.EndSessionAsync(SessionId);
                 if (result.Success)
                 {
+                    // Naviguer vers PaymentPage avec action=receipt pour afficher le reçu
                     await Shell.Current.GoToAsync($"//PaymentPage?sessionId={SessionId}&action=receipt");
                 }
                 else
@@ -69,11 +70,24 @@ public partial class OpenLockerPage : ContentPage
                     await DisplayAlert("Erreur", result.Message, "OK");
                 }
             }
+            else
+            {
+                await DisplayAlert("Erreur", "Session introuvable", "OK");
+                await Shell.Current.GoToAsync("//HomePage");
+            }
         }
         else
         {
             // Pour le dépôt initial, naviguer directement vers la page de casier ouvert
-            await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={SessionId}");
+            if (!string.IsNullOrEmpty(SessionId))
+            {
+                await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={SessionId}");
+            }
+            else
+            {
+                await DisplayAlert("Erreur", "Session introuvable", "OK");
+                await Shell.Current.GoToAsync("//HomePage");
+            }
         }
     }
 

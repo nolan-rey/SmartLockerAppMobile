@@ -86,8 +86,19 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
             // Processus de clôture de session
             await DisplayAlert("Succès", "Casier déverrouillé ! Récupérez vos affaires.", "OK");
             
-            // Naviguer vers la page de casier ouvert pour récupération
-            await Shell.Current.GoToAsync($"//OpenLockerPage?sessionId={_sessionId}&action=retrieve");
+            // S'assurer que sessionId n'est pas null ou vide
+            var sessionId = !string.IsNullOrEmpty(_sessionId) ? _sessionId : _appState.ActiveSession?.Id;
+            
+            if (!string.IsNullOrEmpty(sessionId))
+            {
+                // Naviguer vers la page de casier ouvert pour récupération
+                await Shell.Current.GoToAsync($"//OpenLockerPage?sessionId={sessionId}&action=retrieve");
+            }
+            else
+            {
+                await DisplayAlert("Erreur", "Session introuvable", "OK");
+                await Shell.Current.GoToAsync("//HomePage");
+            }
         }
         else
         {
