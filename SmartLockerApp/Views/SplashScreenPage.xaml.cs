@@ -49,12 +49,12 @@ public partial class SplashScreenPage : ContentPage
     private async Task AnimateLogo()
     {
         // Animation d'entrée du logo
-        LogoContainer.Scale = 0.3;
-        LogoContainer.Opacity = 0;
+        LogoImage.Scale = 0.3;
+        LogoImage.Opacity = 0;
         
         // Animation de scale et fade in
-        var scaleAnimation = LogoContainer.ScaleTo(1.0, 800, Easing.BounceOut);
-        var fadeAnimation = LogoContainer.FadeTo(1.0, 600, Easing.CubicOut);
+        var scaleAnimation = LogoImage.ScaleTo(1.0, 800, Easing.BounceOut);
+        var fadeAnimation = LogoImage.FadeTo(1.0, 600, Easing.CubicOut);
         
         await Task.WhenAll(scaleAnimation, fadeAnimation);
         
@@ -63,8 +63,8 @@ public partial class SplashScreenPage : ContentPage
         {
             while (!_animationsCompleted)
             {
-                await LogoContainer.ScaleTo(1.05, 1000, Easing.SinInOut);
-                await LogoContainer.ScaleTo(1.0, 1000, Easing.SinInOut);
+                await LogoImage.ScaleTo(1.05, 1000, Easing.SinInOut);
+                await LogoImage.ScaleTo(1.0, 1000, Easing.SinInOut);
             }
         });
     }
@@ -89,7 +89,7 @@ public partial class SplashScreenPage : ContentPage
         TaglineLabel.Opacity = 0;
         
         var taglineSlide = TaglineLabel.TranslateTo(0, 0, 500, Easing.CubicOut);
-        var taglineFade = TaglineLabel.FadeTo(0.8, 500, Easing.CubicOut);
+        var taglineFade = TaglineLabel.FadeTo(1.0, 500, Easing.CubicOut);
         
         await Task.WhenAll(taglineSlide, taglineFade);
     }
