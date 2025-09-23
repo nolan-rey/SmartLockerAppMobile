@@ -149,17 +149,8 @@ public partial class SplashScreenPage : ContentPage
             var fadeOut = this.FadeTo(0, 300, Easing.CubicIn);
             await fadeOut;
             
-            // Vérifier si l'utilisateur est connecté
-            if (_appState.IsUserLoggedIn())
-            {
-                // Utilisateur connecté -> Page d'accueil
-                await Shell.Current.GoToAsync("//HomePage");
-            }
-            else
-            {
-                // Utilisateur non connecté -> Page de connexion
-                await Shell.Current.GoToAsync("//LoginPage");
-            }
+            // Toujours naviguer vers la page de connexion après le chargement
+            await Shell.Current.GoToAsync("//LoginPage");
         }
         catch (Exception ex)
         {
