@@ -247,6 +247,44 @@
                         CornerRadius="8" 
                         Margin="0,0,0,20"
                         Clicked="LogoutButton_Clicked"/>
+                
+                <!-- App Info Section -->
+                <Border BackgroundColor="White" 
+                        StrokeThickness="0"
+                        Padding="24" 
+                        Margin="0,0,0,20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="16"/>
+                    </Border.StrokeShape>
+                    <Border.Shadow>
+                        <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
+                    </Border.Shadow>
+                    
+                    <StackLayout HorizontalOptions="Center" Spacing="16">
+                        <Image Source="smartlocker_logo.svg" 
+                               WidthRequest="80" 
+                               HeightRequest="80"
+                               HorizontalOptions="Center"
+                               Aspect="AspectFit"/>
+                        
+                        <StackLayout HorizontalOptions="Center" Spacing="4">
+                            <Label Text="SmartLocker" 
+                                   FontSize="20" 
+                                   FontAttributes="Bold" 
+                                   HorizontalOptions="Center"
+                                   TextColor="#2563EB"/>
+                            <Label Text="Version 1.0.0" 
+                                   FontSize="14" 
+                                   TextColor="#64748B" 
+                                   HorizontalOptions="Center"/>
+                            <Label Text="© 2024 SmartLocker. Tous droits réservés." 
+                                   FontSize="12" 
+                                   TextColor="#9CA3AF" 
+                                   HorizontalOptions="Center"
+                                   Margin="0,8,0,0"/>
+                        </StackLayout>
+                    </StackLayout>
+                </Border>
             </StackLayout>
         </ScrollView>
     </Grid>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="500" height="300" viewBox="0 0 500 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="500" height="300" fill="#F8FAFC"/>
+  
+  <!-- Logo Container -->
+  <g transform="translate(150, 50)">
+    <!-- Main Logo Box -->
+    <rect x="0" y="0" width="200" height="120" rx="8" ry="8" fill="#2563EB" stroke="#2563EB" stroke-width="4"/>
+    
+    <!-- Left Section (E) -->
+    <rect x="20" y="20" width="70" height="80" fill="white"/>
+    <rect x="30" y="30" width="50" height="15" fill="#2563EB"/>
+    <rect x="30" y="52" width="40" height="15" fill="#2563EB"/>
+    <rect x="30" y="75" width="50" height="15" fill="#2563EB"/>
+    
+    <!-- Right Section (Lock) -->
+    <rect x="110" y="20" width="70" height="80" fill="white"/>
+    
+    <!-- Lock Body -->
+    <rect x="130" y="65" width="30" height="25" rx="3" ry="3" fill="#2563EB"/>
+    
+    <!-- Lock Shackle -->
+    <path d="M 135 65 Q 135 50 145 50 Q 155 50 155 65" stroke="#2563EB" stroke-width="4" fill="none"/>
+    
+    <!-- Keyhole -->
+    <circle cx="145" cy="75" r="3" fill="white"/>
+    <rect x="143" y="77" width="4" height="8" fill="white"/>
+  </g>
+  
+  <!-- Text -->
+  <text x="250" y="220" text-anchor="middle" font-family="Arial, sans-serif" font-size="36" font-weight="bold" fill="#2563EB">SmartLocker</text>
+</svg>

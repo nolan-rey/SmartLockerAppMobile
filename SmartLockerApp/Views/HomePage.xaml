@@ -28,9 +28,12 @@
             
             <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
                 <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="12">
-                    <Image Source="dotnet_bot.png" WidthRequest="40" HeightRequest="40"/>
+                    <Image Source="smartlocker_logo.svg" 
+                           WidthRequest="40" 
+                           HeightRequest="40"
+                           Aspect="AspectFit"/>
                     <StackLayout VerticalOptions="Center">
-                        <Label Text="SmartLocker" FontSize="20" FontAttributes="Bold" TextColor="Black"/>
+                        <Label Text="SmartLocker" FontSize="20" FontAttributes="Bold" TextColor="#2563EB"/>
                         <Label Text="{Binding WelcomeMessage}" FontSize="14" TextColor="Gray"/>
                     </StackLayout>
                 </StackLayout>
