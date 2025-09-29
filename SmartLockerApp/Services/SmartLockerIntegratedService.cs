@@ -56,6 +56,55 @@ public class SmartLockerIntegratedService
         return _isApiAvailable ? _apiService.IsAuthenticated() : true; // Fallback toujours connecté
     }
 
+    /// <summary>
+    /// Crée un nouvel utilisateur dans la BDD via l'API
+    /// </summary>
+    public async Task<(bool Success, string Message, Models.User? User)> CreateUserAsync(string username, string password, string email, string name, string role = "user")
+    {
+        try
+        {
+            // Essaie d'abord avec l'API
+            var apiResponse = await _apiService.CreateUserAsync(username, password, email, name, role);
+            
+            if (apiResponse != null && apiResponse.success && apiResponse.user != null)
+            {
+                _isApiAvailable = true;
+                
+                // Convertit le DTO en modèle
+                var user = new Models.User
+                {
+                    Id = apiResponse.user.id,
+                    Name = apiResponse.user.name,
+                    Email = email, // L'email n'est pas retourné par l'API, on garde celui fourni
+                    Role = apiResponse.user.role
+                };
+                
+                return (true, "Utilisateur créé avec succès dans la BDD", user);
+            }
+            else
+            {
+                var errorMessage = apiResponse?.message ?? "Erreur inconnue lors de la création";
+                return (false, $"Échec création API: {errorMessage}", null);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur création utilisateur API: {ex.Message}");
+            _isApiAvailable = false;
+            
+            // Fallback : création locale (simulation)
+            var localUser = new Models.User
+            {
+                Id = new Random().Next(1000, 9999), // ID temporaire
+                Name = name,
+                Email = email,
+                Role = role
+            };
+            
+            return (true, "Utilisateur créé localement (mode hors ligne)", localUser);
+        }
+    }
+
     #endregion
 
     #region Casiers
@@ -127,6 +176,63 @@ public class SmartLockerIntegratedService
         // Fallback : simulation d'ouverture
         await Task.Delay(1000); // Simule le temps d'ouverture
         return true;
+    }
+
+    /// <summary>
+    /// Crée une nouvelle session de casier dans la BDD
+    /// </summary>
+    public async Task<(bool Success, string Message, Models.LockerSession? Session)> CreateSessionAsync(int userId, int lockerId, DateTime startTime, DateTime endTime, decimal cost)
+    {
+        try
+        {
+            // Essaie d'abord avec l'API
+            var apiResponse = await _apiService.CreateSessionAsync(userId, lockerId, startTime, endTime, cost);
+            
+            if (apiResponse != null && apiResponse.success && apiResponse.session != null)
+            {
+                _isApiAvailable = true;
+                
+                // Convertit le DTO en modèle
+                var session = new Models.LockerSession
+                {
+                    Id = apiResponse.session.id,
+                    UserId = apiResponse.session.user_id,
+                    LockerId = apiResponse.session.locker_id,
+                    StartedAt = apiResponse.session.started_at,
+                    PlannedEndAt = apiResponse.session.planned_end_at,
+                    AmountDue = apiResponse.session.amount_due,
+                    Status = apiResponse.session.status,
+                    PaymentStatus = apiResponse.session.payment_status ?? "pending"
+                };
+                
+                return (true, "Session créée avec succès dans la BDD", session);
+            }
+            else
+            {
+                var errorMessage = apiResponse?.message ?? "Erreur inconnue lors de la création";
+                return (false, $"Échec création session API: {errorMessage}", null);
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur création session API: {ex.Message}");
+            _isApiAvailable = false;
+            
+            // Fallback : création locale (simulation)
+            var localSession = new Models.LockerSession
+            {
+                Id = new Random().Next(1000, 9999), // ID temporaire
+                UserId = userId,
+                LockerId = lockerId,
+                StartedAt = startTime,
+                PlannedEndAt = endTime,
+                AmountDue = cost,
+                Status = "active",
+                PaymentStatus = "pending"
+            };
+            
+            return (true, "Session créée localement (mode hors ligne)", localSession);
+        }
     }
 
     #endregion

@@ -73,6 +73,36 @@ public class SmartLockerApiService
         }
     }
 
+    /// <summary>
+    /// Crée un nouvel utilisateur
+    /// </summary>
+    public async Task<CreateUserResponseDto?> CreateUserAsync(string username, string password, string email, string name, string role = "user")
+    {
+        try
+        {
+            var request = new CreateUserRequestDto
+            {
+                username = username,
+                password = password,
+                email = email,
+                name = name,
+                role = role
+            };
+
+            var response = await _httpService.PostAsync<CreateUserRequestDto, CreateUserResponseDto>("users", request);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur CreateUser: {ex.Message}");
+            return new CreateUserResponseDto
+            {
+                success = false,
+                message = $"Erreur lors de la création: {ex.Message}"
+            };
+        }
+    }
+
     #endregion
 
     #region Casiers
@@ -145,13 +175,12 @@ public class SmartLockerApiService
     }
 
     #endregion
-
     #region Sessions
 
     /// <summary>
     /// Démarre une nouvelle session
     /// </summary>
-    public async Task<StartSessionResponseDto?> StartSessionAsync(int userId, int lockerId, DateTime plannedEndAt)
+    public async Task<SessionDto?> StartSessionAsync(int userId, int lockerId, DateTime endTime)
     {
         try
         {
@@ -159,15 +188,46 @@ public class SmartLockerApiService
             {
                 user_id = userId,
                 locker_id = lockerId,
-                planned_end_at = plannedEndAt
+                planned_end_at = endTime
             };
 
-            return await _httpService.PostAsync<StartSessionDto, StartSessionResponseDto>("sessions/start", request);
+            return await _httpService.PostAsync<StartSessionDto, SessionDto>("sessions", request);
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Erreur StartSession: {ex.Message}");
             return null;
+        }
+    }
+
+    /// <summary>
+    /// Crée une nouvelle session de casier dans la BDD
+    /// </summary>
+    public async Task<CreateSessionResponseDto?> CreateSessionAsync(int userId, int lockerId, DateTime startTime, DateTime endTime, decimal cost)
+    {
+        try
+        {
+            var request = new CreateSessionRequestDto
+            {
+                user_id = userId,
+                locker_id = lockerId,
+                start_time = startTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                end_time = endTime.ToString("yyyy-MM-dd HH:mm:ss"),
+                cost = cost,
+                status = "active"
+            };
+
+            var response = await _httpService.PostAsync<CreateSessionRequestDto, CreateSessionResponseDto>("sessions/create", request);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Erreur CreateSession: {ex.Message}");
+            return new CreateSessionResponseDto
+            {
+                success = false,
+                message = $"Erreur lors de la création de session: {ex.Message}"
+            };
         }
     }
 
