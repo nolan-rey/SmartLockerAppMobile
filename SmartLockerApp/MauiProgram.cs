@@ -36,7 +36,6 @@ namespace SmartLockerApp
             // Services API de base
             services.AddSingleton<ApiHttpService>();
             services.AddSingleton<SmartLockerApiService>();
-            services.AddTransient<ApiTestService>();
 
             // Service intégré principal (recommandé pour les ViewModels)
             services.AddSingleton<SmartLockerIntegratedService>();

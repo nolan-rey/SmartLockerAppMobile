@@ -216,8 +216,15 @@ public class SmartLockerIntegratedService
     /// </summary>
     public async Task<string> TestApiConnectionAsync()
     {
-        var testService = new ApiTestService();
-        return await testService.RunFullTestAsync();
+        try
+        {
+            var isConnected = await _apiService.TestConnectionAsync();
+            return isConnected ? "✅ Connexion API réussie" : "❌ Connexion API échouée";
+        }
+        catch (Exception ex)
+        {
+            return $"❌ Erreur de connexion: {ex.Message}";
+        }
     }
 
     /// <summary>
