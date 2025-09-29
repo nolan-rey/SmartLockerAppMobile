@@ -24,7 +24,7 @@ public class ViewModelLocator
     public HomeViewModel HomeViewModel => new(_dataService);
     public LoginViewModel LoginViewModel => new(_dataService);
     public DepositSetupViewModel DepositSetupViewModel => new(_dataService);
-    public ActiveSessionViewModel ActiveSessionViewModel => new(_dataService);
+    public ActiveSessionViewModel ActiveSessionViewModel => new(new LocalDataService());
     public PaymentViewModel PaymentViewModel => new(_dataService);
 
     // Méthode pour basculer vers l'API quand elle sera prête

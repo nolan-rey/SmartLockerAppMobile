@@ -27,11 +27,11 @@ public partial class LockerOpenedPage : ContentPage
             if (session != null)
             {
                 // Afficher l'ID du casier réel
-                var locker = _appState.GetLockerDetails(session.LockerId);
+                var locker = _appState.GetLockerDetails(CompatibilityService.IntToStringId(session.LockerId));
                 if (locker != null)
                 {
                     // Mapper l'ID du service vers l'ID d'affichage
-                    var displayId = MapServiceIdToDisplayId(session.LockerId);
+                    var displayId = CompatibilityService.IntToStringId(session.LockerId);
                     LockerIdLabel.Text = displayId;
                 }
 

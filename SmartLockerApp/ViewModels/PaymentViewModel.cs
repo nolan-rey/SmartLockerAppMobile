@@ -1,5 +1,6 @@
 using SmartLockerApp.Interfaces;
 using SmartLockerApp.Models;
+using SmartLockerApp.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -98,7 +99,7 @@ public class PaymentViewModel : BaseViewModel
     public bool ShowPaymentOptions => !IsReceiptMode;
 
     // Session Display Properties
-    public string LockerDisplayId => Session != null ? MapServiceIdToDisplayId(Session.LockerId) : string.Empty;
+    public string LockerDisplayId => Session != null ? CompatibilityService.IntToStringId(Session.LockerId) : string.Empty;
     public string SessionDuration => Session != null ? FormatDuration(Session.DurationHours) : string.Empty;
     public string SessionStartTime => Session?.StartTime.ToString("HH:mm") ?? string.Empty;
     public string SessionEndTime => Session?.EndTime.ToString("HH:mm") ?? string.Empty;

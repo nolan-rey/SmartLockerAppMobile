@@ -1,12 +1,14 @@
-using SmartLockerApp.Interfaces;
 using SmartLockerApp.Models;
+using SmartLockerApp.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 
 namespace SmartLockerApp.ViewModels;
 
 public class ActiveSessionViewModel : BaseViewModel
 {
-    private readonly IDataService _dataService;
+    private readonly LocalDataService _dataService;
     private LockerSession? _activeSession;
     private string _lockerDisplayId = string.Empty;
     private string _startTime = string.Empty;
@@ -15,7 +17,7 @@ public class ActiveSessionViewModel : BaseViewModel
     private string _remainingTime = string.Empty;
     private string _remainingTimeColor = "#F59E0B";
 
-    public ActiveSessionViewModel(IDataService dataService)
+    public ActiveSessionViewModel(LocalDataService dataService)
     {
         _dataService = dataService;
         Title = "Session Active";
@@ -100,7 +102,7 @@ public class ActiveSessionViewModel : BaseViewModel
     {
         if (ActiveSession != null)
         {
-            var updatedSession = await _dataService.GetSessionAsync(ActiveSession.Id);
+            var updatedSession = await _dataService.GetSessionAsync(CompatibilityService.IntToStringId(ActiveSession.Id));
             if (updatedSession != null)
             {
                 ActiveSession = updatedSession;
@@ -121,7 +123,7 @@ public class ActiveSessionViewModel : BaseViewModel
         }
 
         // Map locker ID
-        LockerDisplayId = $"Casier {MapServiceIdToDisplayId(ActiveSession.LockerId)}";
+        LockerDisplayId = $"Casier {CompatibilityService.IntToStringId(ActiveSession.LockerId)}";
 
         // Format times
         StartTime = ActiveSession.StartTime.ToString("HH:mm");

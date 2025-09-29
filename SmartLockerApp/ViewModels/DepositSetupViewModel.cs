@@ -1,5 +1,6 @@
 using SmartLockerApp.Interfaces;
 using SmartLockerApp.Models;
+using SmartLockerApp.Services;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -68,7 +69,7 @@ public class DepositSetupViewModel : BaseViewModel
         }
     }
 
-    public string DisplayLockerId => SelectedLocker != null ? MapServiceIdToDisplayId(SelectedLocker.Id) : LockerId;
+    public string DisplayLockerId => SelectedLocker != null ? CompatibilityService.IntToStringId(SelectedLocker.Id) : LockerId;
     public string LocationText => SelectedLocker?.Location ?? "Chargement...";
 
     // Commands

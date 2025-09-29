@@ -129,7 +129,7 @@ public class HomeViewModel : BaseViewModel
             return;
 
         // Navigate to locker detail
-        var lockerId = MapServiceIdToDisplayId(lockerViewModel.Locker.Id);
+        var lockerId = CompatibilityService.IntToStringId(lockerViewModel.Locker.Id);
         Shell.Current.GoToAsync($"//LockerDetailPage?lockerId={lockerId}");
     }
 
@@ -171,10 +171,10 @@ public class LockerItemViewModel : BaseViewModel
 
     public Locker Locker { get; }
 
-    public string DisplayId => MapServiceIdToDisplayId(Locker.Id);
+    public string DisplayId => CompatibilityService.IntToStringId(Locker.Id);
     public string Location => Locker.Location;
     public string Size => Locker.Size.ToString();
-    public bool IsAvailable => Locker.Status == LockerStatus.Available;
+    public bool IsAvailable => CompatibilityService.CompareStatus(Locker.Status, LockerStatus.Available);
     public string StatusColor => IsAvailable ? "#10B981" : "#EF4444";
     public string StatusText => IsAvailable ? "Disponible" : "Occupé";
 

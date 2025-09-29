@@ -17,9 +17,8 @@ public partial class AppStateService : ObservableObject
     // Propriétés observables avec génération automatique des notifications
     public User? CurrentUser => _auth.CurrentUser != null ? new User
     {
-        Id = _auth.CurrentUser.Id,
-        FirstName = _auth.CurrentUser.FirstName,
-        LastName = _auth.CurrentUser.LastName,
+        Id = int.TryParse(_auth.CurrentUser.Id, out int id) ? id : 0,
+        Name = $"{_auth.CurrentUser.FirstName} {_auth.CurrentUser.LastName}".Trim(),
         Email = _auth.CurrentUser.Email
     } : null;
 
@@ -111,7 +110,7 @@ public partial class AppStateService : ObservableObject
     {
         if (ActiveSession == null) return false;
 
-        var (success, message) = await _lockerService.EndSessionAsync(ActiveSession.Id);
+        var (success, message) = await _lockerService.EndSessionAsync(CompatibilityService.IntToStringId(ActiveSession.Id));
         if (success)
         {
             NotifyStateChanged();

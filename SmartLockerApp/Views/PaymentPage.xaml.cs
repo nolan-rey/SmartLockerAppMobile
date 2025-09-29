@@ -90,7 +90,7 @@ public partial class PaymentPage : ContentPage
         try
         {
             // Mapper l'ID du service vers l'ID d'affichage
-            var displayId = MapServiceIdToDisplayId(session.LockerId);
+            var displayId = CompatibilityService.IntToStringId(session.LockerId);
             SessionLockerLabel.Text = displayId;
             
             // Afficher la durée

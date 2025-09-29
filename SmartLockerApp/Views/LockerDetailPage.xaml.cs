@@ -58,10 +58,10 @@ public partial class LockerDetailPage : ContentPage
 
         return new Locker
         {
-            Id = lockerId,
-            Location = locations.GetValueOrDefault(lockerId, "Emplacement inconnu"),
+            Id = CompatibilityService.StringToIntId(lockerId),
+            Name = locations.GetValueOrDefault(lockerId, "Emplacement inconnu"),
             Size = LockerSize.Medium,
-            Status = status,
+            Status = CompatibilityService.StatusToString(status),
             PricePerHour = 2.50m,
             Features = new List<string> { "Sécurisé", "Climatisé", "Accès 24/7" }
         };
@@ -86,7 +86,7 @@ public partial class LockerDetailPage : ContentPage
 
     private async void OnUseLockerClicked(object sender, EventArgs e)
     {
-        if (_selectedLocker?.Status != LockerStatus.Available) return;
+        if (_selectedLocker == null || !CompatibilityService.CompareStatus(_selectedLocker.Status, LockerStatus.Available)) return;
 
         await AnimationService.ButtonPressAsync((VisualElement)sender);
         

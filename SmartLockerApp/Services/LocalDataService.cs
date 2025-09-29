@@ -25,9 +25,8 @@ public class LocalDataService : IDataService
     private static User? ConvertToUser(UserAccount? userAccount) =>
         userAccount == null ? null : new User
         {
-            Id = userAccount.Id,
-            FirstName = userAccount.FirstName,
-            LastName = userAccount.LastName,
+            Id = CompatibilityService.StringToIntId(userAccount.Id),
+            Name = $"{userAccount.FirstName} {userAccount.LastName}".Trim(),
             Email = userAccount.Email
         };
 
@@ -57,10 +56,10 @@ public class LocalDataService : IDataService
     }
 
     public async Task<List<Locker>> GetAvailableLockersAsync() =>
-        await Task.FromResult(_lockerService.Lockers.Where(l => l.Status == LockerStatus.Available).ToList());
+        await Task.FromResult(_lockerService.Lockers.Where(l => CompatibilityService.CompareStatus(l.Status, LockerStatus.Available)).ToList());
 
     public async Task<Locker?> GetLockerByIdAsync(string lockerId) =>
-        await Task.FromResult(_lockerService.GetLockerDetails(lockerId));
+        await Task.FromResult(_lockerService.GetLockerDetails(CompatibilityService.StringToIntId(lockerId).ToString()));
 
     public async Task<(bool Success, LockerSession? Session, string? Message)> CreateSessionAsync(string lockerId, int durationHours, List<string> items)
     {
@@ -90,7 +89,7 @@ public class LocalDataService : IDataService
 
     public async Task<bool> UpdateSessionAsync(LockerSession session)
     {
-        await _lockerService.UpdateSessionItemsAsync(session.Id, session.Items);
+        await _lockerService.UpdateSessionItemsAsync(CompatibilityService.IntToStringId(session.Id), session.Items);
         return true;
     }
 

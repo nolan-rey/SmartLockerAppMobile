@@ -30,7 +30,7 @@ public static class ServiceExtensions
     /// Extension pour obtenir les casiers disponibles seulement
     /// </summary>
     public static List<Locker> GetAvailableLockers(this AppStateService appState) =>
-        appState.Lockers.Where(l => l.Status == LockerStatus.Available).ToList();
+        appState.Lockers.Where(l => CompatibilityService.CompareStatus(l.Status, LockerStatus.Available)).ToList();
 
     /// <summary>
     /// Extension pour calculer le temps restant d'une session
@@ -66,24 +66,30 @@ public static class ServiceExtensions
     /// <summary>
     /// Extension pour obtenir la couleur de statut d'un casier
     /// </summary>
-    public static Color GetStatusColor(this Locker locker) => locker.Status switch
+    public static Color GetStatusColor(this Locker locker)
     {
-        LockerStatus.Available => Colors.Green,
-        LockerStatus.Occupied => Colors.Red,
-        LockerStatus.Maintenance => Colors.Orange,
-        _ => Colors.Gray
-    };
+        if (CompatibilityService.CompareStatus(locker.Status, LockerStatus.Available))
+            return Colors.Green;
+        if (CompatibilityService.CompareStatus(locker.Status, LockerStatus.Occupied))
+            return Colors.Red;
+        if (CompatibilityService.CompareStatus(locker.Status, LockerStatus.Maintenance))
+            return Colors.Orange;
+        return Colors.Gray;
+    }
 
     /// <summary>
     /// Extension pour obtenir le texte de statut d'un casier
     /// </summary>
-    public static string GetStatusText(this Locker locker) => locker.Status switch
+    public static string GetStatusText(this Locker locker)
     {
-        LockerStatus.Available => "Disponible",
-        LockerStatus.Occupied => "Occupé",
-        LockerStatus.Maintenance => "Maintenance",
-        _ => "Inconnu"
-    };
+        if (CompatibilityService.CompareStatus(locker.Status, LockerStatus.Available))
+            return "Disponible";
+        if (CompatibilityService.CompareStatus(locker.Status, LockerStatus.Occupied))
+            return "Occupé";
+        if (CompatibilityService.CompareStatus(locker.Status, LockerStatus.Maintenance))
+            return "Maintenance";
+        return "Inconnu";
+    }
 
     /// <summary>
     /// Extension pour exécuter une animation avec gestion d'erreur

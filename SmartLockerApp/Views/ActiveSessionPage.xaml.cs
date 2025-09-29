@@ -24,7 +24,7 @@ public partial class ActiveSessionPage : ContentPage
             var session = _appState.ActiveSession;
             
             // Mapper l'ID du casier pour l'affichage
-            var displayLockerId = MapServiceIdToDisplayId(session.LockerId);
+            var displayLockerId = CompatibilityService.IntToStringId(session.LockerId);
             LockerIdLabel.Text = $"Casier {displayLockerId}";
             
             // Afficher les heures de début et fin

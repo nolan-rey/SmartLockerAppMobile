@@ -23,8 +23,8 @@ public class LockerManagementService : INotifyPropertyChanged
     private Timer? _sessionTimer;
 
     public List<Locker> Lockers => _lockers;
-    public List<LockerSession> ActiveSessions => _activeSessions.Where(s => s.UserId == _auth.CurrentUser?.Id).ToList();
-    public List<LockerSession> SessionHistory => _sessionHistory.Where(s => s.UserId == _auth.CurrentUser?.Id).ToList();
+    public List<LockerSession> ActiveSessions => _activeSessions.Where(s => CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? "")).ToList();
+    public List<LockerSession> SessionHistory => _sessionHistory.Where(s => CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? "")).ToList();
     public LockerSession? CurrentActiveSession => ActiveSessions.FirstOrDefault();
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -45,19 +45,19 @@ public class LockerManagementService : INotifyPropertyChanged
         {
             new Locker
             {
-                Id = "L001",
-                Location = "Entrée principale",
+                Id = 1,
+                Name = "Entrée principale",
                 Size = LockerSize.Medium,
-                Status = LockerStatus.Available,
+                Status = CompatibilityService.StatusToString(LockerStatus.Available),
                 PricePerHour = 3.50m,
                 Features = new List<string> { "Sécurisé", "Surveillance 24/7", "Accès facile" }
             },
             new Locker
             {
-                Id = "L002",
-                Location = "Hall principal",
+                Id = 2,
+                Name = "Hall principal",
                 Size = LockerSize.Large,
-                Status = LockerStatus.Available,
+                Status = CompatibilityService.StatusToString(LockerStatus.Available),
                 PricePerHour = 5.00m,
                 Features = new List<string> { "Sécurisé", "Surveillance 24/7", "Grande capacité" }
             }
@@ -94,18 +94,18 @@ public class LockerManagementService : INotifyPropertyChanged
         // Réinitialiser tous les casiers comme disponibles
         foreach (var locker in _lockers)
         {
-            locker.Status = LockerStatus.Available;
+            locker.Status = CompatibilityService.StatusToString(LockerStatus.Available);
             locker.CurrentSessionId = null;
         }
 
         // Marquer les casiers occupés selon les sessions actives
-        foreach (var session in _activeSessions.Where(s => s.Status == SessionStatus.Active))
+        foreach (var session in _activeSessions.Where(s => CompatibilityService.CompareSessionStatus(s.Status, SessionStatus.Active)))
         {
             var locker = _lockers.FirstOrDefault(l => l.Id == session.LockerId);
             if (locker != null)
             {
-                locker.Status = LockerStatus.Occupied;
-                locker.CurrentSessionId = session.Id;
+                locker.Status = CompatibilityService.StatusToString(LockerStatus.Occupied);
+                locker.CurrentSessionId = CompatibilityService.IntToStringId(session.Id);
             }
         }
     }
@@ -120,11 +120,11 @@ public class LockerManagementService : INotifyPropertyChanged
             if (_auth.CurrentUser == null)
                 return (false, "Utilisateur non connecté", null);
 
-            var locker = _lockers.FirstOrDefault(l => l.Id == lockerId);
+            var locker = _lockers.FirstOrDefault(l => CompatibilityService.CompareIds(l.Id, lockerId));
             if (locker == null)
                 return (false, "Casier introuvable", null);
 
-            if (locker.Status != LockerStatus.Available)
+            if (!CompatibilityService.CompareStatus(locker.Status, LockerStatus.Available))
                 return (false, "Casier non disponible", null);
 
             // Vérifier si l'utilisateur a déjà une session active
@@ -133,21 +133,21 @@ public class LockerManagementService : INotifyPropertyChanged
 
             var session = new LockerSession
             {
-                Id = Guid.NewGuid().ToString(),
-                UserId = _auth.CurrentUser.Id,
-                LockerId = lockerId,
-                StartTime = DateTime.Now,
-                EndTime = DateTime.Now.AddHours(durationHours),
+                Id = new Random().Next(1000, 9999),
+                UserId = CompatibilityService.StringToIntId(_auth.CurrentUser.Id),
+                LockerId = CompatibilityService.StringToIntId(lockerId),
+                StartedAt = DateTime.Now,
+                PlannedEndAt = DateTime.Now.AddHours(durationHours),
                 DurationHours = durationHours,
-                TotalCost = locker.PricePerHour * durationHours,
-                Status = SessionStatus.Active,
+                AmountDue = locker.PricePerHour * durationHours,
+                Status = CompatibilityService.SessionStatusToString(SessionStatus.Active),
                 Items = items,
                 IsLocked = false
             };
 
             // Mettre à jour le statut du casier
-            locker.Status = LockerStatus.Occupied;
-            locker.CurrentSessionId = session.Id;
+            locker.Status = CompatibilityService.StatusToString(LockerStatus.Occupied);
+            locker.CurrentSessionId = CompatibilityService.IntToStringId(session.Id);
 
             _activeSessions.Add(session);
             await SaveDataAsync();
@@ -171,7 +171,7 @@ public class LockerManagementService : INotifyPropertyChanged
     {
         try
         {
-            var session = _activeSessions.FirstOrDefault(s => s.Id == sessionId && s.UserId == _auth.CurrentUser?.Id);
+            var session = _activeSessions.FirstOrDefault(s => CompatibilityService.CompareIds(s.Id, sessionId) && CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? ""));
             if (session == null) return false;
 
             session.IsLocked = true;
@@ -196,18 +196,18 @@ public class LockerManagementService : INotifyPropertyChanged
     {
         try
         {
-            var session = _activeSessions.FirstOrDefault(s => s.Id == sessionId && s.UserId == _auth.CurrentUser?.Id);
+            var session = _activeSessions.FirstOrDefault(s => CompatibilityService.CompareIds(s.Id, sessionId) && CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? ""));
             if (session == null)
                 return (false, "Session introuvable");
 
             var locker = _lockers.FirstOrDefault(l => l.Id == session.LockerId);
             if (locker != null)
             {
-                locker.Status = LockerStatus.Available;
+                locker.Status = CompatibilityService.StatusToString(LockerStatus.Available);
                 locker.CurrentSessionId = null;
             }
 
-            session.Status = SessionStatus.Completed;
+            session.Status = CompatibilityService.SessionStatusToString(SessionStatus.Completed);
             session.ActualEndTime = DateTime.Now;
 
             // Calculer le coût final (si terminé plus tôt)
@@ -243,7 +243,7 @@ public class LockerManagementService : INotifyPropertyChanged
     /// </summary>
     public Locker? GetLockerDetails(string lockerId)
     {
-        return _lockers.FirstOrDefault(l => l.Id == lockerId);
+        return _lockers.FirstOrDefault(l => CompatibilityService.CompareIds(l.Id, lockerId));
     }
 
     /// <summary>
@@ -272,9 +272,9 @@ public class LockerManagementService : INotifyPropertyChanged
 
         foreach (var session in _activeSessions.ToList())
         {
-            if (DateTime.Now >= session.EndTime && session.Status == SessionStatus.Active)
+            if (DateTime.Now >= session.EndTime && CompatibilityService.CompareSessionStatus(session.Status, SessionStatus.Active))
             {
-                session.Status = SessionStatus.Expired;
+                session.Status = CompatibilityService.SessionStatusToString(SessionStatus.Expired);
                 hasChanges = true;
             }
         }
@@ -299,11 +299,11 @@ public class LockerManagementService : INotifyPropertyChanged
             var locker = _lockers.FirstOrDefault(l => l.Id == session.LockerId);
             if (locker != null)
             {
-                locker.Status = LockerStatus.Available;
+                locker.Status = CompatibilityService.StatusToString(LockerStatus.Available);
                 locker.CurrentSessionId = null;
             }
 
-            session.Status = SessionStatus.Expired;
+            session.Status = CompatibilityService.SessionStatusToString(SessionStatus.Expired);
             session.ActualEndTime = session.EndTime;
 
             _activeSessions.Remove(session);
@@ -333,7 +333,7 @@ public class LockerManagementService : INotifyPropertyChanged
     /// </summary>
     public (int TotalSessions, decimal TotalSpent, TimeSpan TotalTime) GetUserStats()
     {
-        var sessions = _sessionHistory.Where(s => s.UserId == _auth.CurrentUser.Id).ToList();
+        var sessions = _sessionHistory.Where(s => CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? "")).ToList();
         var totalSessions = sessions.Count;
         var totalSpent = sessions.Sum(s => s.TotalCost);
         var totalTime = TimeSpan.FromHours(sessions.Sum(s => (s.EndTime - s.StartTime).TotalHours));
@@ -346,7 +346,7 @@ public class LockerManagementService : INotifyPropertyChanged
     /// </summary>
     public async Task UpdateSessionItemsAsync(string sessionId, List<string> items)
     {
-        var session = _activeSessions.FirstOrDefault(s => s.Id == sessionId);
+        var session = _activeSessions.FirstOrDefault(s => CompatibilityService.CompareIds(s.Id, sessionId));
         if (session != null)
         {
             session.Items = items;
@@ -360,14 +360,14 @@ public class LockerManagementService : INotifyPropertyChanged
     public async Task<LockerSession?> GetSessionAsync(string sessionId)
     {
         // Chercher d'abord dans les sessions actives
-        var activeSession = _activeSessions.FirstOrDefault(s => s.Id == sessionId);
+        var activeSession = _activeSessions.FirstOrDefault(s => CompatibilityService.CompareIds(s.Id, sessionId));
         if (activeSession != null)
         {
             return activeSession;
         }
 
         // Chercher dans l'historique
-        var historySession = _sessionHistory.FirstOrDefault(s => s.Id == sessionId);
+        var historySession = _sessionHistory.FirstOrDefault(s => CompatibilityService.CompareIds(s.Id, sessionId));
         return historySession;
     }
 

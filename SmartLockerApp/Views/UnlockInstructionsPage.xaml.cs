@@ -26,48 +26,18 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
         }
         LoadSessionInfo();
     }
-
+    
     private void LoadSessionInfo()
     {
         if (_appState.ActiveSession != null)
         {
-            var locker = _appState.GetLockerDetails(_appState.ActiveSession.LockerId);
+            var locker = _appState.GetLockerDetails(CompatibilityService.IntToStringId(_appState.ActiveSession.LockerId));
             if (locker != null)
             {
                 // Mettre à jour les informations du casier dans l'UI si nécessaire
                 Title = $"Déverrouiller {locker.Id}";
             }
         }
-    }
-
-    private async void RfidOption_Tapped(object sender, EventArgs e)
-    {
-        await SimulateUnlockProcess("RFID", "Approchez votre carte RFID du lecteur");
-    }
-
-    private async void FingerprintOption_Tapped(object sender, EventArgs e)
-    {
-        await SimulateUnlockProcess("Empreinte", "Placez votre doigt sur le lecteur d'empreinte");
-    }
-
-    private async void RemoteUnlock_Tapped(object sender, EventArgs e)
-    {
-        await SimulateUnlockProcess("À distance", "Déverrouillage à distance en cours");
-    }
-
-    private async void NeedHelp_Tapped(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("//HelpTutorialPage");
-    }
-
-    private async void CancelButton_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("..");
-    }
-
-    private async void BackButton_Clicked(object sender, EventArgs e)
-    {
-        await Shell.Current.GoToAsync("..");
     }
 
     private async Task SimulateUnlockProcess(string method, string instruction)
@@ -87,7 +57,7 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
             await DisplayAlert("Succès", "Casier déverrouillé ! Récupérez vos affaires.", "OK");
             
             // S'assurer que sessionId n'est pas null ou vide
-            var sessionId = !string.IsNullOrEmpty(_sessionId) ? _sessionId : _appState.ActiveSession?.Id;
+            var sessionId = !string.IsNullOrEmpty(_sessionId) ? _sessionId : CompatibilityService.IntToStringId(_appState.ActiveSession?.Id ?? 0);
             
             if (!string.IsNullOrEmpty(sessionId))
             {
@@ -105,7 +75,9 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
             // Processus normal (dépôt)
             if (_appState.ActiveSession != null)
             {
-                var success = await _appState.LockLockerAsync(_appState.ActiveSession.Id);
+                var session = await _appState.GetSessionAsync(CompatibilityService.IntToStringId(_appState.ActiveSession.Id));
+                var result = await _appState.EndSessionAsync(CompatibilityService.IntToStringId(session?.Id ?? 0));
+                var success = result.Success;
                 if (success)
                 {
                     await DisplayAlert("Succès", "Casier déverrouillé ! Déposez vos affaires et refermez la porte.", "OK");
@@ -122,4 +94,33 @@ public partial class UnlockInstructionsPage : ContentPage, IQueryAttributable
         }
     }
 
+    private async void BackButton_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("..");
+    }
+
+    private async void RfidOption_Tapped(object sender, EventArgs e)
+    {
+        await SimulateUnlockProcess("RFID", "Approchez votre badge RFID du lecteur");
+    }
+
+    private async void FingerprintOption_Tapped(object sender, EventArgs e)
+    {
+        await SimulateUnlockProcess("Empreinte", "Placez votre doigt sur le lecteur d'empreinte");
+    }
+
+    private async void RemoteUnlock_Tapped(object sender, EventArgs e)
+    {
+        await SimulateUnlockProcess("Ouverture à distance", "Ouverture du casier en cours...");
+    }
+
+    private async void NeedHelp_Tapped(object sender, EventArgs e)
+    {
+        await DisplayAlert("Aide", "Contactez le support au 01 23 45 67 89 pour obtenir de l'aide.", "OK");
+    }
+
+    private async void CancelButton_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//HomePage");
+    }
 }
