@@ -16,6 +16,31 @@ public class SmartLockerIntegratedService
         _apiService = apiService;
     }
 
+    /// <summary>
+    /// Assure qu'on est authentifié avec un token valide
+    /// </summary>
+    private async Task<bool> EnsureAuthenticatedAsync()
+    {
+        if (_isApiAvailable && _apiService.IsAuthenticated())
+        {
+            return true; // Déjà authentifié
+        }
+
+        System.Diagnostics.Debug.WriteLine("Authentification auto avec compte admin...");
+        var loginSuccess = await _apiService.LoginAsync("SaintMichel", "ITcampus");
+        
+        if (loginSuccess)
+        {
+            _isApiAvailable = true;
+            System.Diagnostics.Debug.WriteLine("Authentification auto réussie");
+            return true;
+        }
+
+        System.Diagnostics.Debug.WriteLine("Échec authentification auto");
+        _isApiAvailable = false;
+        return false;
+    }
+
     #region Authentification
 
     /// <summary>
@@ -63,12 +88,19 @@ public class SmartLockerIntegratedService
     {
         try
         {
+            // S'authentifier d'abord avec un compte admin
+            if (!await EnsureAuthenticatedAsync())
+            {
+                throw new Exception("Impossible de s'authentifier pour créer l'utilisateur");
+            }
+            
             // Essaie d'abord avec l'API
+            System.Diagnostics.Debug.WriteLine($"Création utilisateur API: {username} / {email}");
             var apiResponse = await _apiService.CreateUserAsync(username, password, email, name, role);
             
             if (apiResponse != null && apiResponse.success && apiResponse.user != null)
             {
-                _isApiAvailable = true;
+                System.Diagnostics.Debug.WriteLine($"Utilisateur créé avec succès: ID={apiResponse.user.id}");
                 
                 // Convertit le DTO en modèle
                 var user = new Models.User
@@ -84,6 +116,7 @@ public class SmartLockerIntegratedService
             else
             {
                 var errorMessage = apiResponse?.message ?? "Erreur inconnue lors de la création";
+                System.Diagnostics.Debug.WriteLine($"Échec création API: {errorMessage}");
                 return (false, $"Échec création API: {errorMessage}", null);
             }
         }
@@ -185,12 +218,19 @@ public class SmartLockerIntegratedService
     {
         try
         {
+            // S'authentifier d'abord
+            if (!await EnsureAuthenticatedAsync())
+            {
+                throw new Exception("Impossible de s'authentifier pour créer la session");
+            }
+            
             // Essaie d'abord avec l'API
+            System.Diagnostics.Debug.WriteLine($"Création session API: userId={userId}, lockerId={lockerId}");
             var apiResponse = await _apiService.CreateSessionAsync(userId, lockerId, startTime, endTime, cost);
             
             if (apiResponse != null && apiResponse.success && apiResponse.session != null)
             {
-                _isApiAvailable = true;
+                System.Diagnostics.Debug.WriteLine($"Session créée avec succès: ID={apiResponse.session.id}");
                 
                 // Convertit le DTO en modèle
                 var session = new Models.LockerSession
@@ -210,6 +250,7 @@ public class SmartLockerIntegratedService
             else
             {
                 var errorMessage = apiResponse?.message ?? "Erreur inconnue lors de la création";
+                System.Diagnostics.Debug.WriteLine($"Échec création session: {errorMessage}");
                 return (false, $"Échec création session API: {errorMessage}", null);
             }
         }

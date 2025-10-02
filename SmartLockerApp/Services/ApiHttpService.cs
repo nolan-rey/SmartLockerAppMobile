@@ -35,7 +35,6 @@ public class ApiHttpService
         _jwtToken = token;
         _httpClient.DefaultRequestHeaders.Clear();
         _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-        _httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
     }
 
     /// <summary>
@@ -78,20 +77,30 @@ public class ApiHttpService
         try
         {
             var json = JsonSerializer.Serialize(data, _jsonOptions);
+            System.Diagnostics.Debug.WriteLine($"POST {endpoint} - Request: {json}");
+            
             var content = new StringContent(json, Encoding.UTF8, "application/json");
+            
+            // Log des headers
+            var hasAuthHeader = _httpClient.DefaultRequestHeaders.Contains("Authorization");
+            System.Diagnostics.Debug.WriteLine($"POST {endpoint} - Has Auth Header: {hasAuthHeader}");
             
             var response = await _httpClient.PostAsync(endpoint, content);
             
+            var responseJson = await response.Content.ReadAsStringAsync();
+            System.Diagnostics.Debug.WriteLine($"POST {endpoint} - Status: {response.StatusCode}");
+            System.Diagnostics.Debug.WriteLine($"POST {endpoint} - Response: {responseJson}");
+            
             if (!response.IsSuccessStatusCode)
             {
-                throw new HttpRequestException($"POST {endpoint} failed: {response.StatusCode}");
+                throw new HttpRequestException($"POST {endpoint} failed: {response.StatusCode} - {responseJson}");
             }
 
-            var responseJson = await response.Content.ReadAsStringAsync();
             return JsonSerializer.Deserialize<TResponse>(responseJson, _jsonOptions);
         }
         catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"POST {endpoint} - Exception: {ex.Message}");
             throw new Exception($"Erreur POST {endpoint}: {ex.Message}", ex);
         }
     }
