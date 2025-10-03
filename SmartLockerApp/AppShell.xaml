@@ -111,10 +111,5 @@
         Title="UnlockInstructions"
         ContentTemplate="{DataTemplate views:UnlockInstructionsPage}"
         Route="UnlockInstructionsPage" />
-        
-    <ShellContent
-        Title="ApiTest"
-        ContentTemplate="{DataTemplate views:ApiTestPage}"
-        Route="ApiTestPage" />
 
 </Shell>

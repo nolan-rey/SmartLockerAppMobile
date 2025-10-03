@@ -5,6 +5,7 @@ namespace SmartLockerApp.Services;
 
 /// <summary>
 /// Service locator pour les ViewModels - facilite l'injection de dépendances
+/// Version locale sans API
 /// </summary>
 public class ViewModelLocator
 {
@@ -15,8 +16,7 @@ public class ViewModelLocator
 
     private ViewModelLocator()
     {
-        // Pour l'instant, utilise le service local
-        // Plus tard, on pourra basculer vers ApiDataService
+        // Utilise le service local
         _dataService = new LocalDataService();
     }
 
@@ -26,10 +26,4 @@ public class ViewModelLocator
     public DepositSetupViewModel DepositSetupViewModel => new(_dataService);
     public ActiveSessionViewModel ActiveSessionViewModel => new(new LocalDataService());
     public PaymentViewModel PaymentViewModel => new(_dataService);
-
-    // Méthode pour basculer vers l'API quand elle sera prête
-    public static void ConfigureForApi(IApiService apiService)
-    {
-        // _instance = new ViewModelLocator(new ApiDataService(apiService, new LocalDataService()));
-    }
 }

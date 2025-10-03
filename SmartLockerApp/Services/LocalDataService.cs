@@ -25,9 +25,12 @@ public class LocalDataService : IDataService
     private static User? ConvertToUser(UserAccount? userAccount) =>
         userAccount == null ? null : new User
         {
-            Id = CompatibilityService.StringToIntId(userAccount.Id),
-            Name = $"{userAccount.FirstName} {userAccount.LastName}".Trim(),
-            Email = userAccount.Email
+            id = CompatibilityService.StringToIntId(userAccount.Id),
+            name = $"{userAccount.FirstName} {userAccount.LastName}".Trim(),
+            email = userAccount.Email,
+            role = "user",
+            password_hash = "",
+            created_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
         };
 
     public async Task<User?> GetCurrentUserAsync() =>

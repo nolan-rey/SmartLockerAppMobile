@@ -18,7 +18,7 @@ public static class ServiceExtensions
     /// Extension pour obtenir le nom complet de l'utilisateur connecté
     /// </summary>
     public static string GetCurrentUserFullName(this AppStateService appState) =>
-        appState.CurrentUser?.FullName ?? "Utilisateur";
+        appState.CurrentUser?.name ?? "Utilisateur";
 
     /// <summary>
     /// Extension pour obtenir le nombre de sessions actives

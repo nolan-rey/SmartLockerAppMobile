@@ -58,7 +58,7 @@ public class HomeViewModel : BaseViewModel
         set => SetProperty(ref _totalSpent, value);
     }
 
-    public string WelcomeMessage => CurrentUser != null ? $"Bonjour, {CurrentUser.FirstName}" : "Bonjour";
+    public string WelcomeMessage => CurrentUser != null ? $"Bonjour, {CurrentUser.name.Split(' ')[0]}" : "Bonjour";
 
     // Commands
     public ICommand RefreshCommand { get; }

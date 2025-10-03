@@ -5,6 +5,7 @@ namespace SmartLockerApp.Services;
 
 /// <summary>
 /// Service global de gestion de l'état de l'application utilisant CommunityToolkit.Mvvm
+/// Version locale sans API
 /// </summary>
 public partial class AppStateService : ObservableObject
 {
@@ -13,14 +14,17 @@ public partial class AppStateService : ObservableObject
 
     private readonly AuthenticationService _auth = AuthenticationService.Instance;
     private readonly LockerManagementService _lockerService = LockerManagementService.Instance;
-    private readonly SmartLockerIntegratedService _smartLockerService = new SmartLockerIntegratedService(new SmartLockerApiService());
+    private readonly UserService _userService = UserService.Instance;
 
     // Propriétés observables avec génération automatique des notifications
     public User? CurrentUser => _auth.CurrentUser != null ? new User
     {
-        Id = int.TryParse(_auth.CurrentUser.Id, out int id) ? id : 0,
-        Name = $"{_auth.CurrentUser.FirstName} {_auth.CurrentUser.LastName}".Trim(),
-        Email = _auth.CurrentUser.Email
+        id = int.TryParse(_auth.CurrentUser.Id, out int id) ? id : 0,
+        name = $"{_auth.CurrentUser.FirstName} {_auth.CurrentUser.LastName}".Trim(),
+        email = _auth.CurrentUser.Email,
+        role = "user",
+        password_hash = "",
+        created_at = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
     } : null;
 
     public List<Locker> Lockers => _lockerService.Lockers;
@@ -35,86 +39,29 @@ public partial class AppStateService : ObservableObject
     }
 
     /// <summary>
-    /// Connexion utilisateur via l'API SmartLocker
+    /// Connexion utilisateur locale
     /// </summary>
     public async Task<bool> LoginAsync(string email, string password)
     {
-        try
+        var (success, message) = await _auth.LoginAsync(email, password);
+        if (success)
         {
-            // Essayer d'abord avec l'API
-            var username = email.Split('@')[0]; // Utiliser la partie avant @ comme username
-            var apiSuccess = await _smartLockerService.LoginAsync(username, password);
-            
-            if (apiSuccess)
-            {
-                // Connexion API réussie, créer/mettre à jour l'utilisateur local
-                var localResult = await _auth.LoginAsync(email, password);
-                NotifyStateChanged();
-                return true;
-            }
-            else
-            {
-                // Fallback : connexion locale
-                var (success, message) = await _auth.LoginAsync(email, password);
-                if (success)
-                {
-                    NotifyStateChanged();
-                }
-                return success;
-            }
+            NotifyStateChanged();
         }
-        catch (Exception ex)
-        {
-            // En cas d'erreur API, fallback vers connexion locale
-            System.Diagnostics.Debug.WriteLine($"Erreur connexion API: {ex.Message}");
-            var (success, message) = await _auth.LoginAsync(email, password);
-            if (success)
-            {
-                NotifyStateChanged();
-            }
-            return success;
-        }
+        return success;
     }
 
     /// <summary>
-    /// Création de compte via l'API SmartLocker
+    /// Création de compte locale
     /// </summary>
     public async Task<(bool Success, string Message)> CreateAccountAsync(string email, string password, string firstName, string lastName)
     {
-        try
+        var result = await _auth.CreateAccountAsync(email, password, firstName, lastName);
+        if (result.Success)
         {
-            // Générer un nom d'utilisateur basé sur l'email
-            var username = email.Split('@')[0];
-            var fullName = $"{firstName} {lastName}".Trim();
-            
-            System.Diagnostics.Debug.WriteLine($"📝 Création compte pour: {email}");
-            
-            // Créer l'utilisateur via l'API
-            var (success, message, user) = await _smartLockerService.CreateUserAsync(username, password, email, fullName);
-            
-            if (success && user != null)
-            {
-                System.Diagnostics.Debug.WriteLine($"✅ Utilisateur créé dans la BDD avec ID={user.Id}");
-                
-                // Créer aussi localement pour compatibilité avec l'ancien système
-                var localResult = await _auth.CreateAccountAsync(email, password, firstName, lastName);
-                
-                // Notifier les changements d'état
-                NotifyStateChanged();
-                
-                return (true, $"✅ {message}");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"❌ Échec création: {message}");
-                return (false, message);
-            }
+            NotifyStateChanged();
         }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"❌ Exception CreateAccount: {ex.Message}");
-            return (false, $"Erreur lors de la création: {ex.Message}");
-        }
+        return result;
     }
 
     /// <summary>
@@ -123,76 +70,28 @@ public partial class AppStateService : ObservableObject
     public async Task LogoutAsync()
     {
         await _auth.LogoutAsync();
-        _smartLockerService.Logout();
         NotifyStateChanged();
     }
 
     /// <summary>
-    /// Crée une nouvelle session de casier dans la BDD
+    /// Crée une nouvelle session de casier
     /// </summary>
     public async Task<(bool Success, string Message, LockerSession? Session)> CreateSessionAsync(string lockerId, DateTime startTime, DateTime endTime, decimal cost)
     {
-        try
+        if (CurrentUser == null)
         {
-            if (CurrentUser == null)
-            {
-                return (false, "Utilisateur non connecté", null);
-            }
+            return (false, "Utilisateur non connecté", null);
+        }
 
-            // Convertir l'ID du casier (A1 -> 1, B2 -> 2, etc.)
-            var numericLockerId = CompatibilityService.StringToIntId(lockerId);
-            
-            // Créer la session via l'API
-            var (success, message, session) = await _smartLockerService.CreateSessionAsync(
-                CurrentUser.Id, 
-                numericLockerId, 
-                startTime, 
-                endTime, 
-                cost
-            );
-            
-            if (success && session != null)
-            {
-                // Ajouter aussi à l'ancien système pour compatibilité
-                var durationHours = (int)(endTime - startTime).TotalHours;
-                await _lockerService.StartSessionAsync(lockerId, durationHours, new List<string>());
-                
-                // Notifier les changements
-                NotifyStateChanged();
-                
-                return (true, $"Session créée avec succès dans la BDD ! {message}", session);
-            }
-            else
-            {
-                // Fallback : création locale uniquement
-                var durationHours = (int)(endTime - startTime).TotalHours;
-                var localResult = await _lockerService.StartSessionAsync(lockerId, durationHours, new List<string>());
-                if (localResult.Success && localResult.Session != null)
-                {
-                    NotifyStateChanged();
-                    return (true, $"Session créée localement (API indisponible). {message}", localResult.Session);
-                }
-                else
-                {
-                    return (false, $"Échec de création de session: {message}", null);
-                }
-            }
-        }
-        catch (Exception ex)
+        var durationHours = Math.Max(1, (int)(endTime - startTime).TotalHours);
+        var result = await _lockerService.StartSessionAsync(lockerId, durationHours, new List<string>());
+        
+        if (result.Success)
         {
-            // En cas d'erreur, fallback vers création locale
-            var durationHours = (int)(endTime - startTime).TotalHours;
-            var localResult = await _lockerService.StartSessionAsync(lockerId, durationHours, new List<string>());
-            if (localResult.Success && localResult.Session != null)
-            {
-                NotifyStateChanged();
-                return (true, "Session créée localement (erreur API)", localResult.Session);
-            }
-            else
-            {
-                return (false, $"Erreur lors de la création de session: {ex.Message}", null);
-            }
+            NotifyStateChanged();
         }
+        
+        return result;
     }
 
     /// <summary>
@@ -241,7 +140,7 @@ public partial class AppStateService : ObservableObject
     {
         if (ActiveSession == null) return false;
 
-        var (success, message) = await _lockerService.EndSessionAsync(CompatibilityService.IntToStringId(ActiveSession.Id));
+        var (success, message) = await _lockerService.EndSessionAsync(ActiveSession.Id.ToString());
         if (success)
         {
             NotifyStateChanged();

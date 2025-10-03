@@ -138,18 +138,6 @@
                         </StackLayout>
                     </StackLayout>
                     
-                    <!-- Bouton de test API (développement) -->
-                    <Button Text="🧪 Tester l'API"
-                            FontSize="12"
-                            TextColor="#6B7280"
-                            BackgroundColor="Transparent"
-                            BorderWidth="1"
-                            BorderColor="#E5E7EB"
-                            CornerRadius="8"
-                            Padding="8"
-                            Clicked="TestApiButton_Clicked"
-                            Margin="0,10,0,0"/>
-                    
                 </StackLayout>
             </Border>
         </Grid>
