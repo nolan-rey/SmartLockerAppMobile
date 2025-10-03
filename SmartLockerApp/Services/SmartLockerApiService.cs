@@ -24,6 +24,8 @@ public class SmartLockerApiService
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine($"🔐 Tentative login API: {username}");
+            
             var request = new LoginRequestDto
             {
                 username = username,
@@ -34,16 +36,18 @@ public class SmartLockerApiService
             
             if (response != null && !string.IsNullOrEmpty(response.token))
             {
+                System.Diagnostics.Debug.WriteLine($"✅ Login réussi, token reçu: {response.token.Substring(0, Math.Min(20, response.token.Length))}...");
                 _httpService.SetJwtToken(response.token);
                 return true;
             }
 
+            System.Diagnostics.Debug.WriteLine("❌ Login échoué: pas de token dans la réponse");
             return false;
         }
         catch (Exception ex)
         {
-            // Log l'erreur si nécessaire
-            System.Diagnostics.Debug.WriteLine($"Erreur login: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Erreur login: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Stack: {ex.StackTrace}");
             return false;
         }
     }

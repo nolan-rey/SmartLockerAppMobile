@@ -87,45 +87,33 @@ public partial class AppStateService : ObservableObject
             var username = email.Split('@')[0];
             var fullName = $"{firstName} {lastName}".Trim();
             
+            System.Diagnostics.Debug.WriteLine($"📝 Création compte pour: {email}");
+            
             // Créer l'utilisateur via l'API
             var (success, message, user) = await _smartLockerService.CreateUserAsync(username, password, email, fullName);
             
             if (success && user != null)
             {
+                System.Diagnostics.Debug.WriteLine($"✅ Utilisateur créé dans la BDD avec ID={user.Id}");
+                
                 // Créer aussi localement pour compatibilité avec l'ancien système
                 var localResult = await _auth.CreateAccountAsync(email, password, firstName, lastName);
                 
                 // Notifier les changements d'état
                 NotifyStateChanged();
                 
-                return (true, $"Compte créé avec succès dans la BDD ! {message}");
+                return (true, $"✅ {message}");
             }
             else
             {
-                // Fallback : création locale uniquement
-                var localResult = await _auth.CreateAccountAsync(email, password, firstName, lastName);
-                if (localResult.Success)
-                {
-                    return (true, $"Compte créé localement (API indisponible). {message}");
-                }
-                else
-                {
-                    return (false, $"Échec de création: {message}");
-                }
+                System.Diagnostics.Debug.WriteLine($"❌ Échec création: {message}");
+                return (false, message);
             }
         }
         catch (Exception ex)
         {
-            // En cas d'erreur, fallback vers création locale
-            var localResult = await _auth.CreateAccountAsync(email, password, firstName, lastName);
-            if (localResult.Success)
-            {
-                return (true, "Compte créé localement (erreur API)");
-            }
-            else
-            {
-                return (false, $"Erreur lors de la création: {ex.Message}");
-            }
+            System.Diagnostics.Debug.WriteLine($"❌ Exception CreateAccount: {ex.Message}");
+            return (false, $"Erreur lors de la création: {ex.Message}");
         }
     }
 

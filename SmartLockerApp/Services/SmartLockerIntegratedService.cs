@@ -21,22 +21,25 @@ public class SmartLockerIntegratedService
     /// </summary>
     private async Task<bool> EnsureAuthenticatedAsync()
     {
+        System.Diagnostics.Debug.WriteLine($"🔐 EnsureAuthenticated - API disponible: {_isApiAvailable}, Authentifié: {_apiService.IsAuthenticated()}");
+        
         if (_isApiAvailable && _apiService.IsAuthenticated())
         {
-            return true; // Déjà authentifié
+            System.Diagnostics.Debug.WriteLine("✅ Déjà authentifié, token JWT présent");
+            return true;
         }
 
-        System.Diagnostics.Debug.WriteLine("Authentification auto avec compte admin...");
+        System.Diagnostics.Debug.WriteLine("🔑 Authentification auto avec compte admin SaintMichel...");
         var loginSuccess = await _apiService.LoginAsync("SaintMichel", "ITcampus");
         
         if (loginSuccess)
         {
             _isApiAvailable = true;
-            System.Diagnostics.Debug.WriteLine("Authentification auto réussie");
+            System.Diagnostics.Debug.WriteLine("✅ Authentification admin réussie, token JWT obtenu");
             return true;
         }
 
-        System.Diagnostics.Debug.WriteLine("Échec authentification auto");
+        System.Diagnostics.Debug.WriteLine("❌ ÉCHEC authentification admin - API indisponible");
         _isApiAvailable = false;
         return false;
     }
@@ -60,7 +63,7 @@ public class SmartLockerIntegratedService
             _isApiAvailable = false;
             
             // Fallback : connexion locale simulée
-            return username == "SaintMichel" && password == "ITcampus";
+            return username == "Smart" && password == "Locker";
         }
     }
 
@@ -122,19 +125,12 @@ public class SmartLockerIntegratedService
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Erreur création utilisateur API: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"⚠️ ERREUR création utilisateur API: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"⚠️ Stack trace: {ex.StackTrace}");
             _isApiAvailable = false;
             
-            // Fallback : création locale (simulation)
-            var localUser = new Models.User
-            {
-                Id = new Random().Next(1000, 9999), // ID temporaire
-                Name = name,
-                Email = email,
-                Role = role
-            };
-            
-            return (true, "Utilisateur créé localement (mode hors ligne)", localUser);
+            // ❌ NE PAS utiliser de fallback silencieux - informer l'utilisateur de l'échec
+            return (false, $"❌ Échec API: {ex.Message}. Vérifiez votre connexion.", null);
         }
     }
 

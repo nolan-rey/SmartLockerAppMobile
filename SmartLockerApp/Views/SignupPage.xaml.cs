@@ -77,4 +77,9 @@ public partial class SignupPage : ContentPage
         await AnimationService.ButtonPressAsync(LoginButton);
         await Shell.Current.GoToAsync("//LoginPage");
     }
+
+    private async void TestApiButton_Clicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync("//ApiTestPage");
+    }
 }
