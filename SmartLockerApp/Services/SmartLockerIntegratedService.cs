@@ -29,8 +29,8 @@ public class SmartLockerIntegratedService
             return true;
         }
 
-        System.Diagnostics.Debug.WriteLine("🔑 Authentification auto avec compte admin SaintMichel...");
-        var loginSuccess = await _apiService.LoginAsync("SaintMichel", "ITcampus");
+        System.Diagnostics.Debug.WriteLine("🔑 Authentification auto avec compte admin Smart...");
+        var loginSuccess = await _apiService.LoginAsync("Smart", "Locker");
         
         if (loginSuccess)
         {
