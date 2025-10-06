@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace SmartLockerApp.Models;
 
 /// <summary>
@@ -6,12 +8,30 @@ namespace SmartLockerApp.Models;
 /// </summary>
 public class Locker
 {
+    [JsonPropertyName("id")]
     public int Id { get; set; }
+    
+    [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
+    
+    [JsonPropertyName("status")]
     public string Status { get; set; } = "available";
-    public DateTime? CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
-    public DateTime? LastOpenedAt { get; set; }
+    
+    [JsonPropertyName("last_opened_at")]
+    public string? LastOpenedAt { get; set; }
+    
+    [JsonPropertyName("updated_at")]
+    public string? UpdatedAt { get; set; }
+    
+    // Propriété calculée pour la date de dernière ouverture
+    public DateTime? LastOpenedAtDate => string.IsNullOrEmpty(LastOpenedAt) || LastOpenedAt == "null" 
+        ? null 
+        : DateTime.TryParse(LastOpenedAt, out var date) ? date : null;
+    
+    // Propriété calculée pour la date de mise à jour
+    public DateTime? UpdatedAtDate => string.IsNullOrEmpty(UpdatedAt) 
+        ? null 
+        : DateTime.TryParse(UpdatedAt, out var date) ? date : null;
     
     // Propriétés calculées pour compatibilité avec l'ancien modèle
     public string Location => Name;
