@@ -7,9 +7,9 @@ L'application SmartLocker est maintenant **configurée pour utiliser l'API** !
 ### 📡 Informations API
 
 - **Base URL** : `https://reymond.alwaysdata.net/smartLockerApi`
-- **Credentials de test** : 
-  - Username : `SaintMichel`
-  - Password : `ITcampus`
+- **Credentials API** : 
+  - Username : `Smart`
+  - Password : `Locker`
 - **Authentification** : JWT (Bearer Token)
 - **Timeout** : 30 secondes
 

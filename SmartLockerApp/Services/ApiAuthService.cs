@@ -62,11 +62,15 @@ public class ApiAuthService
             var json = JsonSerializer.Serialize(loginData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
+            System.Diagnostics.Debug.WriteLine($"📤 POST URL: {_httpClient.BaseAddress}/login");
+            System.Diagnostics.Debug.WriteLine($"📤 Request body: {json}");
+
             var response = await _httpClient.PostAsync("/login", content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
             System.Diagnostics.Debug.WriteLine($"📥 Response status: {response.StatusCode}");
             System.Diagnostics.Debug.WriteLine($"📥 Response body: {responseBody}");
+            System.Diagnostics.Debug.WriteLine($"📥 Response headers: {response.Headers}");
 
             if (!response.IsSuccessStatusCode)
             {
