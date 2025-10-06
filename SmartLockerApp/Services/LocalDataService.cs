@@ -12,11 +12,11 @@ public class LocalDataService : IDataService
     private readonly LockerManagementService _lockerService;
     private readonly LocalStorageService _storageService;
 
-    public LocalDataService()
+    public LocalDataService(LocalStorageService storageService, AuthenticationService authService, LockerManagementService lockerService)
     {
-        _storageService = LocalStorageService.Instance;
-        _authService = AuthenticationService.Instance;
-        _lockerService = LockerManagementService.Instance;
+        _storageService = storageService;
+        _authService = authService;
+        _lockerService = lockerService;
     }
 
     /// <summary>

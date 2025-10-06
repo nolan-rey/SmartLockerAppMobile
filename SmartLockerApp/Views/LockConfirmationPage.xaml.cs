@@ -5,12 +5,13 @@ namespace SmartLockerApp.Views;
 [QueryProperty(nameof(SessionId), "sessionId")]
 public partial class LockConfirmationPage : ContentPage
 {
-    private readonly AppStateService _appState = AppStateService.Instance;
+    private readonly AppStateService _appState;
     public string SessionId { get; set; } = string.Empty;
 
-    public LockConfirmationPage()
+    public LockConfirmationPage(AppStateService appState)
     {
         InitializeComponent();
+        _appState = appState;
     }
 
     protected override async void OnAppearing()

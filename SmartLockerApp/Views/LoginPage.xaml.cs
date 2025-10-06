@@ -7,10 +7,10 @@ public partial class LoginPage : ContentPage
 {
     private LoginViewModel ViewModel => (LoginViewModel)BindingContext;
 
-    public LoginPage()
+    public LoginPage(ViewModelLocator viewModelLocator)
     {
         InitializeComponent();
-        BindingContext = ViewModelLocator.Instance.LoginViewModel;
+        BindingContext = viewModelLocator.LoginViewModel;
     }
 
     protected override void OnAppearing()

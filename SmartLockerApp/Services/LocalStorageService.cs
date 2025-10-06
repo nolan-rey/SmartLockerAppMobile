@@ -8,9 +8,6 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public partial class LocalStorageService : ObservableObject
 {
-    private static LocalStorageService? _instance;
-    public static LocalStorageService Instance => _instance ??= new LocalStorageService();
-
     private readonly string _dataPath;
 
     // Options JSON réutilisables pour de meilleures performances
@@ -20,7 +17,7 @@ public partial class LocalStorageService : ObservableObject
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
 
-    private LocalStorageService()
+    public LocalStorageService()
     {
         _dataPath = Path.Combine(FileSystem.AppDataDirectory, "SmartLockerData");
         Directory.CreateDirectory(_dataPath);

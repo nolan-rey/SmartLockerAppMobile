@@ -10,10 +10,7 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public partial class AuthenticationService : ObservableObject
 {
-    private static AuthenticationService? _instance;
-    public static AuthenticationService Instance => _instance ??= new AuthenticationService();
-
-    private readonly LocalStorageService _storage = LocalStorageService.Instance;
+    private readonly LocalStorageService _storage;
     private const string UsersKey = "users";
     private const string CurrentUserKey = "current_user";
 
@@ -24,8 +21,9 @@ public partial class AuthenticationService : ObservableObject
 
     public bool IsAuthenticated => CurrentUser != null;
 
-    private AuthenticationService()
+    public AuthenticationService(LocalStorageService storage)
     {
+        _storage = storage;
         _ = InitializeAsync();
     }
 

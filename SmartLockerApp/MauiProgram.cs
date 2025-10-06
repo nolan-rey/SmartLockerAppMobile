@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+using SmartLockerApp.Interfaces;
 using SmartLockerApp.Services;
 using SmartLockerApp.ViewModels;
 using SmartLockerApp.Views;
@@ -20,12 +21,14 @@ namespace SmartLockerApp
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
-            // Services
-            builder.Services.AddSingleton<AppStateService>();
+            // Services - ordre important pour l'injection de dépendances
             builder.Services.AddSingleton<LocalStorageService>();
             builder.Services.AddSingleton<AuthenticationService>();
             builder.Services.AddSingleton<LockerManagementService>();
             builder.Services.AddSingleton<UserService>();
+            builder.Services.AddSingleton<AppStateService>();
+            builder.Services.AddSingleton<IDataService, LocalDataService>();
+            builder.Services.AddSingleton<ViewModelLocator>();
             
             // API Services
             builder.Services.AddSingleton<ApiAuthService>();
@@ -51,6 +54,7 @@ namespace SmartLockerApp
 
             // Pages
             builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<SignupPage>();
             builder.Services.AddTransient<HomePage>();
             builder.Services.AddTransient<DepositSetupPage>();
             builder.Services.AddTransient<PaymentPage>();
@@ -61,6 +65,10 @@ namespace SmartLockerApp
             builder.Services.AddTransient<LockerOpenedPage>();
             builder.Services.AddTransient<UnlockInstructionsPage>();
             builder.Services.AddTransient<SplashScreenPage>();
+            builder.Services.AddTransient<LockInstructionsPage>();
+            builder.Services.AddTransient<LockConfirmationPage>();
+            builder.Services.AddTransient<DepositItemsPage>();
+            builder.Services.AddTransient<OpenLockerPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

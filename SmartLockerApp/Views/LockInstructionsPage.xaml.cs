@@ -5,12 +5,13 @@ namespace SmartLockerApp.Views;
 [QueryProperty(nameof(SessionId), "sessionId")]
 public partial class LockInstructionsPage : ContentPage
 {
-    private readonly AppStateService _appState = AppStateService.Instance;
+    private readonly AppStateService _appState;
     public string SessionId { get; set; } = string.Empty;
 
-    public LockInstructionsPage()
+    public LockInstructionsPage(AppStateService appState)
     {
         InitializeComponent();
+        _appState = appState;
     }
 
     private async void BackButton_Clicked(object sender, EventArgs e)

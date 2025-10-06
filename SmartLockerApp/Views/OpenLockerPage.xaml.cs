@@ -6,13 +6,14 @@ namespace SmartLockerApp.Views;
 [QueryProperty(nameof(Action), "action")]
 public partial class OpenLockerPage : ContentPage
 {
-    private readonly AppStateService _appState = AppStateService.Instance;
+    private readonly AppStateService _appState;
     public string SessionId { get; set; } = string.Empty;
     public string Action { get; set; } = string.Empty; // "retrieve" pour récupération
 
-    public OpenLockerPage()
+    public OpenLockerPage(AppStateService appState)
     {
         InitializeComponent();
+        _appState = appState;
     }
 
     protected override void OnAppearing()

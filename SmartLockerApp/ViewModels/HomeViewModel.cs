@@ -9,14 +9,16 @@ namespace SmartLockerApp.ViewModels;
 public class HomeViewModel : BaseViewModel
 {
     private readonly IDataService _dataService;
+    private readonly LockerManagementService _lockerService;
     private User? _currentUser;
     private LockerSession? _activeSession;
     private int _totalSessions;
     private decimal _totalSpent;
 
-    public HomeViewModel(IDataService dataService)
+    public HomeViewModel(IDataService dataService, LockerManagementService lockerService)
     {
         _dataService = dataService;
+        _lockerService = lockerService;
         Title = "Accueil";
         
         AvailableLockers = new ObservableCollection<LockerItemViewModel>();
@@ -95,8 +97,7 @@ public class HomeViewModel : BaseViewModel
             var availableLockers = await _dataService.GetAvailableLockersAsync();
             
             // Also get all lockers from the locker management service to include occupied ones
-            var lockerService = LockerManagementService.Instance;
-            var allLockers = lockerService.Lockers;
+            var allLockers = _lockerService.Lockers;
             
             System.Diagnostics.Debug.WriteLine($"Loading {allLockers.Count} lockers");
             

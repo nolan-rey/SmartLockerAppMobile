@@ -1,3 +1,4 @@
+using SmartLockerApp.Interfaces;
 using SmartLockerApp.Models;
 using SmartLockerApp.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -8,7 +9,7 @@ namespace SmartLockerApp.ViewModels;
 
 public class ActiveSessionViewModel : BaseViewModel
 {
-    private readonly LocalDataService _dataService;
+    private readonly IDataService _dataService;
     private LockerSession? _activeSession;
     private string _lockerDisplayId = string.Empty;
     private string _startTime = string.Empty;
@@ -17,7 +18,7 @@ public class ActiveSessionViewModel : BaseViewModel
     private string _remainingTime = string.Empty;
     private string _remainingTimeColor = "#F59E0B";
 
-    public ActiveSessionViewModel(LocalDataService dataService)
+    public ActiveSessionViewModel(IDataService dataService)
     {
         _dataService = dataService;
         Title = "Session Active";

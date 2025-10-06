@@ -4,11 +4,12 @@ namespace SmartLockerApp.Views;
 
 public partial class SignupPage : ContentPage
 {
-    private readonly AppStateService _appState = AppStateService.Instance;
+    private readonly AppStateService _appState;
 
-    public SignupPage()
+    public SignupPage(AppStateService appState)
     {
         InitializeComponent();
+        _appState = appState;
     }
 
     private async void SignupButton_Clicked(object sender, EventArgs e)

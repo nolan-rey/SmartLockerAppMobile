@@ -5,12 +5,13 @@ namespace SmartLockerApp.Views;
 public partial class DepositItemsPage : ContentPage, IQueryAttributable
 {
     private readonly List<CheckBox> _checkboxes = new();
-    private readonly AppStateService _appState = AppStateService.Instance;
+    private readonly AppStateService _appState;
     private string? _sessionId;
 
-    public DepositItemsPage()
+    public DepositItemsPage(AppStateService appState)
     {
         InitializeComponent();
+        _appState = appState;
         SetupCheckboxes();
     }
 

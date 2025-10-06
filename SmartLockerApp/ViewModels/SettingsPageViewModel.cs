@@ -10,6 +10,7 @@ namespace SmartLockerApp.ViewModels;
 public partial class SettingsPageViewModel : BaseViewModel
 {
     private readonly AppStateService _appState;
+    private readonly AuthenticationService _authService;
 
     #region Observable Properties
 
@@ -21,8 +22,9 @@ public partial class SettingsPageViewModel : BaseViewModel
 
     #endregion
 
-    public SettingsPageViewModel(AppStateService appState)
+    public SettingsPageViewModel(AppStateService appState, AuthenticationService authService)
     {
+        _authService = authService;
         _appState = appState;
         Title = "Paramètres";
         LoadUserInfo();
@@ -73,7 +75,7 @@ public partial class SettingsPageViewModel : BaseViewModel
         if (result)
         {
             // Déconnexion de l'utilisateur via le service d'authentification
-            await AuthenticationService.Instance.LogoutAsync();
+            await _authService.LogoutAsync();
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }

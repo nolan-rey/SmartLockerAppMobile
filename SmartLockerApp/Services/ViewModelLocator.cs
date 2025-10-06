@@ -9,21 +9,19 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ViewModelLocator
 {
-    private static ViewModelLocator? _instance;
     private readonly IDataService _dataService;
+    private readonly LockerManagementService _lockerService;
 
-    public static ViewModelLocator Instance => _instance ??= new ViewModelLocator();
-
-    private ViewModelLocator()
+    public ViewModelLocator(IDataService dataService, LockerManagementService lockerService)
     {
-        // Utilise le service local
-        _dataService = new LocalDataService();
+        _dataService = dataService;
+        _lockerService = lockerService;
     }
 
     // ViewModels
-    public HomeViewModel HomeViewModel => new(_dataService);
+    public HomeViewModel HomeViewModel => new(_dataService, _lockerService);
     public LoginViewModel LoginViewModel => new(_dataService);
     public DepositSetupViewModel DepositSetupViewModel => new(_dataService);
-    public ActiveSessionViewModel ActiveSessionViewModel => new(new LocalDataService());
+    public ActiveSessionViewModel ActiveSessionViewModel => new(_dataService);
     public PaymentViewModel PaymentViewModel => new(_dataService);
 }

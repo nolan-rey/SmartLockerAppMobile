@@ -10,16 +10,14 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class UserService
 {
-    private static UserService? _instance;
-    public static UserService Instance => _instance ??= new UserService();
-
-    private readonly LocalStorageService _storage = LocalStorageService.Instance;
+    private readonly LocalStorageService _storage;
     private const string USERS_KEY = "users";
     private List<User> _users = new();
     private int _nextId = 1;
 
-    private UserService()
+    public UserService(LocalStorageService storage)
     {
+        _storage = storage;
         _ = InitializeAsync();
     }
 

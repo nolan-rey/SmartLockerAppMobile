@@ -7,10 +7,10 @@ namespace SmartLockerApp.Views
     {
         private HomeViewModel ViewModel => (HomeViewModel)BindingContext;
 
-        public HomePage()
+        public HomePage(ViewModelLocator viewModelLocator)
         {
             InitializeComponent();
-            BindingContext = ViewModelLocator.Instance.HomeViewModel;
+            BindingContext = viewModelLocator.HomeViewModel;
         }
 
         protected override async void OnAppearing()

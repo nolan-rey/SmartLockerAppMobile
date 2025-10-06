@@ -8,11 +8,8 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class LockerManagementService : INotifyPropertyChanged
 {
-    private static LockerManagementService? _instance;
-    public static LockerManagementService Instance => _instance ??= new LockerManagementService();
-
-    private readonly LocalStorageService _storage = LocalStorageService.Instance;
-    private readonly AuthenticationService _auth = AuthenticationService.Instance;
+    private readonly LocalStorageService _storage;
+    private readonly AuthenticationService _auth;
     private const string LockersKey = "lockers";
     private const string SessionsKey = "sessions";
     private const string HistoryKey = "history";
@@ -29,8 +26,10 @@ public class LockerManagementService : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    private LockerManagementService()
+    public LockerManagementService(LocalStorageService storage, AuthenticationService auth)
     {
+        _storage = storage;
+        _auth = auth;
         InitializeLockers();
         _ = LoadDataAsync();
         StartSessionTimer();

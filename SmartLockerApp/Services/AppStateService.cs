@@ -9,12 +9,9 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public partial class AppStateService : ObservableObject
 {
-    private static AppStateService? _instance;
-    public static AppStateService Instance => _instance ??= new AppStateService();
-
-    private readonly AuthenticationService _auth = AuthenticationService.Instance;
-    private readonly LockerManagementService _lockerService = LockerManagementService.Instance;
-    private readonly UserService _userService = UserService.Instance;
+    private readonly AuthenticationService _auth;
+    private readonly LockerManagementService _lockerService;
+    private readonly UserService _userService;
 
     // Propriétés observables avec génération automatique des notifications
     public User? CurrentUser => _auth.CurrentUser != null ? new User
@@ -32,8 +29,12 @@ public partial class AppStateService : ObservableObject
     public LockerSession? ActiveSession => _lockerService.CurrentActiveSession;
     public bool IsLoggedIn => _auth.IsAuthenticated;
 
-    private AppStateService()
+    public AppStateService(AuthenticationService auth, LockerManagementService lockerService, UserService userService)
     {
+        _auth = auth;
+        _lockerService = lockerService;
+        _userService = userService;
+        
         // S'abonner aux changements des services pour propager les notifications
         _lockerService.PropertyChanged += (s, e) => OnPropertyChanged(e?.PropertyName);
     }
