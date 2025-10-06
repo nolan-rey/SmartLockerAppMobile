@@ -17,19 +17,17 @@
             
             <Grid MaximumWidthRequest="400" HorizontalOptions="Center" Margin="20,0">
                 <Button x:Name="BackButton" 
-                        HorizontalOptions="Start" 
                         BackgroundColor="Transparent"
                         BorderWidth="0"
                         Text="←"
                         FontSize="20"
                         TextColor="#64748B"
-                        Clicked="BackButton_Clicked"/>
+                        Command="{Binding NavigateBackCommand}"/>
                 
                 <Label Text="Déverrouillage" 
                        FontSize="20" 
                        FontAttributes="Bold" 
                        HorizontalOptions="Center" 
-                       VerticalOptions="Center" 
                        TextColor="#1E293B"/>
             </Grid>
         </Border>
@@ -79,7 +77,7 @@
                         <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                     </Border.Shadow>
                     <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="RfidOption_Tapped"/>
+                        <TapGestureRecognizer Command="{Binding SelectRfidCommand}"/>
                     </Border.GestureRecognizers>
                     
                     <StackLayout>
@@ -121,7 +119,7 @@
                         <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                     </Border.Shadow>
                     <Border.GestureRecognizers>
-                        <TapGestureRecognizer Tapped="FingerprintOption_Tapped"/>
+                        <TapGestureRecognizer Command="{Binding SelectFingerprintCommand}"/>
                     </Border.GestureRecognizers>
                     
                     <StackLayout>
@@ -174,7 +172,7 @@
                                 StrokeThickness="0"
                                 Padding="0,8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="RemoteUnlock_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding SelectRemoteUnlockCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="*,Auto">
@@ -188,7 +186,7 @@
                                 StrokeThickness="0"
                                 Padding="0,8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="NeedHelp_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding ShowHelpCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="*,Auto">
@@ -209,7 +207,7 @@
                         BorderWidth="1" 
                         BorderColor="#FEE2E2"
                         CornerRadius="8" 
-                        Clicked="CancelButton_Clicked"/>
+                        Command="{Binding CancelCommand}"/>
             </StackLayout>
         </ScrollView>
     </Grid>

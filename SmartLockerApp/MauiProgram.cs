@@ -1,5 +1,8 @@
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+using SmartLockerApp.Services;
+using SmartLockerApp.ViewModels;
+using SmartLockerApp.Views;
 
 namespace SmartLockerApp
 {
@@ -16,6 +19,48 @@ namespace SmartLockerApp
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
+
+            // Services
+            builder.Services.AddSingleton<AppStateService>();
+            builder.Services.AddSingleton<LocalStorageService>();
+            builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddSingleton<LockerManagementService>();
+            builder.Services.AddSingleton<UserService>();
+            
+            // API Services
+            builder.Services.AddSingleton<ApiAuthService>();
+            builder.Services.AddSingleton<ApiHttpClient>();
+            builder.Services.AddSingleton<ApiUserService>();
+            builder.Services.AddSingleton<ApiLockerService>();
+            builder.Services.AddSingleton<ApiSessionService>();
+            builder.Services.AddSingleton<ApiAuthMethodService>();
+            builder.Services.AddSingleton<ApiSessionAuthService>();
+
+            // ViewModels
+            builder.Services.AddTransient<LoginViewModel>();
+            builder.Services.AddTransient<HomeViewModel>();
+            builder.Services.AddTransient<DepositSetupPageViewModel>();
+            builder.Services.AddTransient<PaymentPageViewModel>();
+            builder.Services.AddTransient<ActiveSessionPageViewModel>();
+            builder.Services.AddTransient<HistoryPageViewModel>();
+            builder.Services.AddTransient<LockerDetailPageViewModel>();
+            builder.Services.AddTransient<SettingsPageViewModel>();
+            builder.Services.AddTransient<LockerOpenedPageViewModel>();
+            builder.Services.AddTransient<UnlockInstructionsPageViewModel>();
+            builder.Services.AddTransient<SplashScreenPageViewModel>();
+
+            // Pages
+            builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<HomePage>();
+            builder.Services.AddTransient<DepositSetupPage>();
+            builder.Services.AddTransient<PaymentPage>();
+            builder.Services.AddTransient<ActiveSessionPage>();
+            builder.Services.AddTransient<HistoryPage>();
+            builder.Services.AddTransient<LockerDetailPage>();
+            builder.Services.AddTransient<SettingsPage>();
+            builder.Services.AddTransient<LockerOpenedPage>();
+            builder.Services.AddTransient<UnlockInstructionsPage>();
+            builder.Services.AddTransient<SplashScreenPage>();
 
 #if DEBUG
     		builder.Logging.AddDebug();

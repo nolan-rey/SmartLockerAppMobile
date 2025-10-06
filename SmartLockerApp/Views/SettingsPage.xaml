@@ -2,6 +2,8 @@
 <ContentPage x:Class="SmartLockerApp.Views.SettingsPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:SmartLockerApp.ViewModels"
+             x:DataType="viewmodels:SettingsPageViewModel"
              Title="Paramètres"
              BackgroundColor="#F8FAFC">
 
@@ -12,7 +14,7 @@
                 <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
                     <Button x:Name="BackButton" 
                             Style="{StaticResource BackButton}"
-                            Clicked="BackButton_Clicked"/>
+                            Command="{Binding NavigateBackCommand}"/>
                     <Label Text="Paramètres" 
                            FontSize="18" 
                            FontAttributes="Bold" 
@@ -60,8 +62,8 @@
                             </Border>
                             
                             <StackLayout Grid.Column="1" VerticalOptions="Center">
-                                <Label Text="John Doe" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
-                                <Label Text="john.doe@example.com" FontSize="14" TextColor="#64748B"/>
+                                <Label Text="{Binding UserName}" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
+                                <Label Text="{Binding UserEmail}" FontSize="14" TextColor="#64748B"/>
                             </StackLayout>
                             
                             <Button Grid.Column="2" 
@@ -73,7 +75,7 @@
                                     BorderColor="#2563EB"
                                     CornerRadius="6" 
                                     Padding="12,6"
-                                    Clicked="EditProfileButton_Clicked"/>
+                                    Command="{Binding EditProfileCommand}"/>
                         </Grid>
                     </StackLayout>
                 </Border>
@@ -103,7 +105,7 @@
                                 <Label Text="Notifications push" FontSize="16" TextColor="#1E293B"/>
                                 <Label Text="Recevoir des alertes sur votre téléphone" FontSize="14" TextColor="#64748B"/>
                             </StackLayout>
-                            <Switch Grid.Column="1" x:Name="NotificationsSwitch" IsToggled="True" OnColor="#2563EB" VerticalOptions="Center"/>
+                            <Switch Grid.Column="1" IsToggled="{Binding NotificationsEnabled}" OnColor="#2563EB" VerticalOptions="Center"/>
                         </Grid>
                         
                         <!-- Email Notifications -->
@@ -112,7 +114,7 @@
                                 <Label Text="Notifications email" FontSize="16" TextColor="#1E293B"/>
                                 <Label Text="Recevoir des emails de confirmation" FontSize="14" TextColor="#64748B"/>
                             </StackLayout>
-                            <Switch Grid.Column="1" x:Name="EmailSwitch" IsToggled="False" OnColor="#2563EB" VerticalOptions="Center"/>
+                            <Switch Grid.Column="1" IsToggled="{Binding EmailNotificationsEnabled}" OnColor="#2563EB" VerticalOptions="Center"/>
                         </Grid>
                         
                         <!-- Auto-lock -->
@@ -121,7 +123,7 @@
                                 <Label Text="Verrouillage automatique" FontSize="16" TextColor="#1E293B"/>
                                 <Label Text="Verrouiller automatiquement après dépôt" FontSize="14" TextColor="#64748B"/>
                             </StackLayout>
-                            <Switch Grid.Column="1" x:Name="AutoLockSwitch" IsToggled="True" OnColor="#2563EB" VerticalOptions="Center"/>
+                            <Switch Grid.Column="1" IsToggled="{Binding AutoLockEnabled}" OnColor="#2563EB" VerticalOptions="Center"/>
                         </Grid>
                     </StackLayout>
                 </Border>
@@ -150,7 +152,7 @@
                                 StrokeThickness="0"
                                 Padding="0,12">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ChangePasswordButton_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding ChangePasswordCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="*,Auto">
@@ -165,7 +167,7 @@
                                 <Label Text="Authentification biométrique" FontSize="16" TextColor="#1E293B"/>
                                 <Label Text="Utiliser Touch ID ou Face ID" FontSize="14" TextColor="#64748B"/>
                             </StackLayout>
-                            <Switch Grid.Column="1" x:Name="BiometricSwitch" IsToggled="True" OnColor="#2563EB" VerticalOptions="Center"/>
+                            <Switch Grid.Column="1" IsToggled="{Binding BiometricEnabled}" OnColor="#2563EB" VerticalOptions="Center"/>
                         </Grid>
                     </StackLayout>
                 </Border>
@@ -195,7 +197,7 @@
                                 Padding="0,12"
                                 Margin="0,0,0,8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="HelpButton_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding ShowHelpCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="*,Auto">
@@ -210,7 +212,7 @@
                                 Padding="0,12"
                                 Margin="0,0,0,8">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="ContactButton_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding ContactSupportCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="*,Auto">
@@ -224,7 +226,7 @@
                                 StrokeThickness="0"
                                 Padding="0,12">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="AboutButton_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding ShowAboutCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="*,Auto">
@@ -236,8 +238,7 @@
                 </Border>
                 
                 <!-- Logout Button -->
-                <Button x:Name="LogoutButton" 
-                        Text="Se déconnecter"
+                <Button Text="Se déconnecter"
                         BackgroundColor="Transparent" 
                         TextColor="#EF4444" 
                         FontSize="16" 
@@ -246,7 +247,7 @@
                         BorderColor="#FEE2E2"
                         CornerRadius="8" 
                         Margin="0,0,0,20"
-                        Clicked="LogoutButton_Clicked"/>
+                        Command="{Binding LogoutCommand}"/>
                 
                 <!-- App Info Section -->
                 <Border BackgroundColor="White" 

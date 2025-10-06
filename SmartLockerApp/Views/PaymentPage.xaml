@@ -2,6 +2,8 @@
 <ContentPage x:Class="SmartLockerApp.Views.PaymentPage"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:SmartLockerApp.ViewModels"
+             x:DataType="viewmodels:PaymentPageViewModel"
              Title="Paiement"
              BackgroundColor="#F8FAFC">
 
@@ -12,7 +14,7 @@
                 <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
                     <Button x:Name="BackButton" 
                             Style="{StaticResource BackButton}"
-                            Clicked="BackButton_Clicked"/>
+                            Command="{Binding NavigateBackCommand}"/>
                     <Label Text="Paiement" 
                            FontSize="18" 
                            FontAttributes="Bold" 
@@ -48,16 +50,16 @@
                         <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="*,Auto">
                             
                             <Label Grid.Row="0" Grid.Column="0" Text="Casier :" FontSize="14" TextColor="#64748B"/>
-                            <Label Grid.Row="0" Grid.Column="1" x:Name="SessionLockerLabel" Text="A1" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
+                            <Label Grid.Row="0" Grid.Column="1" Text="{Binding LockerName}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B"/>
                             
                             <Label Grid.Row="1" Grid.Column="0" Text="Durée :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
-                            <Label Grid.Row="1" Grid.Column="1" x:Name="SessionDurationLabel" Text="2h" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Duration}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
                             
                             <Label Grid.Row="2" Grid.Column="0" Text="Heure de début :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
-                            <Label Grid.Row="2" Grid.Column="1" x:Name="SessionStartTimeLabel" Text="14:30" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="2" Grid.Column="1" Text="{Binding StartTime}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
                             
                             <Label Grid.Row="3" Grid.Column="0" Text="Heure de fin :" FontSize="14" TextColor="#64748B" Margin="0,8,0,0"/>
-                            <Label Grid.Row="3" Grid.Column="1" x:Name="SessionEndTimeLabel" Text="16:30" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
+                            <Label Grid.Row="3" Grid.Column="1" Text="{Binding EndTime}" FontSize="14" FontAttributes="Bold" TextColor="#1E293B" Margin="0,8,0,0"/>
                         </Grid>
                         
                         <Border BackgroundColor="#F8FAFC" 
@@ -70,7 +72,7 @@
                             
                             <Grid ColumnDefinitions="*,Auto">
                                 <Label Grid.Column="0" Text="Total à payer :" FontSize="16" FontAttributes="Bold" TextColor="#1E293B"/>
-                                <Label Grid.Column="1" x:Name="SessionTotalLabel" Text="€5.00" FontSize="18" FontAttributes="Bold" TextColor="#2563EB"/>
+                                <Label Grid.Column="1" Text="{Binding TotalCostFormatted}" FontSize="18" FontAttributes="Bold" TextColor="#2563EB"/>
                             </Grid>
                         </Border>
                     </StackLayout>
@@ -96,8 +98,7 @@
                                Margin="0,0,0,16"/>
                         
                         <!-- Credit Card Option -->
-                        <Border x:Name="CreditCardOption"
-                                BackgroundColor="#F8FAFC" 
+                        <Border BackgroundColor="#F8FAFC" 
                                 StrokeThickness="2"
                                 Stroke="#2563EB"
                                 Padding="16" 
@@ -106,7 +107,7 @@
                                 <RoundRectangle CornerRadius="8"/>
                             </Border.StrokeShape>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="PaymentMethod_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding SelectCreditCardCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="Auto,*,Auto">
@@ -132,8 +133,7 @@
                         </Border>
                         
                         <!-- PayPal Option -->
-                        <Border x:Name="PayPalOption"
-                                BackgroundColor="White" 
+                        <Border BackgroundColor="White" 
                                 StrokeThickness="1"
                                 Stroke="#E2E8F0"
                                 Padding="16" 
@@ -142,7 +142,7 @@
                                 <RoundRectangle CornerRadius="8"/>
                             </Border.StrokeShape>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="PaymentMethod_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding SelectPayPalCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="Auto,*,Auto">
@@ -169,8 +169,7 @@
                         </Border>
                         
                         <!-- Apple Pay Option -->
-                        <Border x:Name="ApplePayOption"
-                                BackgroundColor="White" 
+                        <Border BackgroundColor="White" 
                                 StrokeThickness="1"
                                 Stroke="#E2E8F0"
                                 Padding="16">
@@ -178,7 +177,7 @@
                                 <RoundRectangle CornerRadius="8"/>
                             </Border.StrokeShape>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="PaymentMethod_Tapped"/>
+                                <TapGestureRecognizer Command="{Binding SelectApplePayCommand}"/>
                             </Border.GestureRecognizers>
                             
                             <Grid ColumnDefinitions="Auto,*,Auto">
@@ -209,8 +208,7 @@
                 <!-- Actions -->
                 <StackLayout>
                     <!-- Pay Button -->
-                    <Button x:Name="PayButton" 
-                            Text="Payer €5.75"
+                    <Button Text="{Binding PayButtonText}"
                             BackgroundColor="#10B981" 
                             TextColor="White" 
                             FontSize="18" 
@@ -219,15 +217,14 @@
                             CornerRadius="12" 
                             BorderWidth="0" 
                             Margin="0,0,0,12" 
-                            Clicked="PayButton_Clicked">
+                            Command="{Binding ProcessPaymentCommand}">
                         <Button.Shadow>
                             <Shadow Brush="#10B981" Opacity="0.3" Radius="10" Offset="0,4"/>
                         </Button.Shadow>
                     </Button>
                     
                     <!-- Cancel Button -->
-                    <Button x:Name="CancelButton" 
-                            Text="Annuler"
+                    <Button Text="Annuler"
                             BackgroundColor="Transparent" 
                             TextColor="#EF4444" 
                             FontSize="16" 
@@ -235,7 +232,7 @@
                             BorderWidth="1" 
                             BorderColor="#FEE2E2"
                             CornerRadius="8" 
-                            Clicked="CancelButton_Clicked"/>
+                            Command="{Binding CancelCommand}"/>
                 </StackLayout>
             </StackLayout>
         </ScrollView>

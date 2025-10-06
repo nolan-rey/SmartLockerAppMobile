@@ -12,7 +12,7 @@
                 <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
                     <Button x:Name="BackButton" 
                             Style="{StaticResource BackButton}"
-                            Clicked="BackButton_Clicked"/>
+                            Command="{Binding NavigateBackCommand}"/>
                     <Label Text="Session active" 
                            FontSize="18" 
                            FontAttributes="Bold" 
@@ -116,7 +116,7 @@
                             CornerRadius="16" 
                             BorderWidth="0" 
                             HorizontalOptions="Fill"
-                            Clicked="EndSessionButton_Clicked">
+                            Command="{Binding EndSessionCommand}">
                         <Button.Shadow>
                             <Shadow Brush="#EF4444" Opacity="0.3" Radius="12" Offset="0,4"/>
                         </Button.Shadow>

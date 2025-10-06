@@ -13,7 +13,7 @@
                 <StackLayout Orientation="Horizontal" VerticalOptions="Center" Spacing="16">
                     <Button x:Name="BackButton" 
                             Style="{StaticResource BackButton}"
-                            Clicked="BackButton_Clicked"/>
+                            Command="{Binding NavigateBackCommand}"/>
                     <Label Text="Durée de dépôt" 
                            FontSize="18" 
                            FontAttributes="Bold" 
@@ -78,7 +78,7 @@
                                 <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                             </Border.Shadow>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnOption30MinTapped"/>
+                                <TapGestureRecognizer Command="{Binding Select30MinCommand}"/>
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 
@@ -116,7 +116,7 @@
                                 <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                             </Border.Shadow>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnOption1HourTapped"/>
+                                <TapGestureRecognizer Command="{Binding Select1HourCommand}"/>
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 
@@ -164,7 +164,7 @@
                                 <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                             </Border.Shadow>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnOption2HoursTapped"/>
+                                <TapGestureRecognizer Command="{Binding Select2HoursCommand}"/>
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 
@@ -202,7 +202,7 @@
                                 <Shadow Brush="Black" Opacity="0.05" Radius="10" Offset="0,2"/>
                             </Border.Shadow>
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Tapped="OnOption4HoursTapped"/>
+                                <TapGestureRecognizer Command="{Binding Select4HoursCommand}"/>
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="Auto,*,Auto">
                                 
@@ -255,14 +255,15 @@
                     
                     <!-- Confirm Button -->
                     <Button x:Name="ConfirmButton" 
-                            Text="Confirmer"
+                            Text="{Binding ConfirmButtonText}"
                             HeightRequest="48"
                             FontSize="16"
                             FontAttributes="Bold"
                             BackgroundColor="#2563EB"
                             TextColor="White"
                             CornerRadius="12"
-                            Clicked="ConfirmButton_Clicked">
+                            Command="{Binding ConfirmCommand}"
+                            IsEnabled="{Binding IsConfirmButtonEnabled}">
                         <Button.Shadow>
                             <Shadow Brush="#2563EB" Opacity="0.3" Radius="12" Offset="0,0"/>
                         </Button.Shadow>

@@ -1,21 +1,37 @@
-using SmartLockerApp.Services;
+using SmartLockerApp.ViewModels;
 
 namespace SmartLockerApp.Views;
 
 public partial class SplashScreenPage : ContentPage
 {
-    private readonly AppStateService _appState = AppStateService.Instance;
     private bool _animationsCompleted = false;
 
-    public SplashScreenPage()
+    public SplashScreenPage(SplashScreenPageViewModel viewModel)
     {
         InitializeComponent();
+        BindingContext = viewModel;
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await StartSplashSequence();
+        
+        // Démarrer les animations
+        await StartAnimations();
+        
+        if (BindingContext is SplashScreenPageViewModel viewModel)
+        {
+            await viewModel.StartSplashSequenceCommand.ExecuteAsync(null);
+        }
+    }
+
+    private async Task StartAnimations()
+    {
+        var logoAnimation = AnimateLogo();
+        var textAnimation = AnimateText();
+        _ = AnimateLoadingDots();
+        
+        await Task.WhenAll(logoAnimation, textAnimation);
     }
 
     private async Task StartSplashSequence()
