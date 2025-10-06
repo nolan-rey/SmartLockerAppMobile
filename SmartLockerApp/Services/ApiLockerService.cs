@@ -8,14 +8,11 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ApiLockerService
 {
-    private static ApiLockerService? _instance;
-    public static ApiLockerService Instance => _instance ??= new ApiLockerService();
-
     private readonly ApiHttpClient _apiClient;
 
-    private ApiLockerService()
+    public ApiLockerService(ApiHttpClient apiClient)
     {
-        _apiClient = ApiHttpClient.Instance;
+        _apiClient = apiClient;
     }
 
     #region GET - Récupération

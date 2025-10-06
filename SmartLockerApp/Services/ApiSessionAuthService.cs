@@ -7,14 +7,11 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ApiSessionAuthService
 {
-    private static ApiSessionAuthService? _instance;
-    public static ApiSessionAuthService Instance => _instance ??= new ApiSessionAuthService();
-
     private readonly ApiHttpClient _apiClient;
 
-    private ApiSessionAuthService()
+    public ApiSessionAuthService(ApiHttpClient apiClient)
     {
-        _apiClient = ApiHttpClient.Instance;
+        _apiClient = apiClient;
     }
 
     /// <summary>

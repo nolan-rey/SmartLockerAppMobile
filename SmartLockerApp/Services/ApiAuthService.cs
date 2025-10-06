@@ -8,9 +8,6 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ApiAuthService
 {
-    private static ApiAuthService? _instance;
-    public static ApiAuthService Instance => _instance ??= new ApiAuthService();
-
     private const string BASE_URL = "https://reymond.alwaysdata.net/smartLockerApi";
     private const string ADMIN_USERNAME = "Smart";
     private const string ADMIN_PASSWORD = "Locker";
@@ -20,7 +17,7 @@ public class ApiAuthService
     private string? _currentToken;
     private DateTime _tokenExpiration = DateTime.MinValue;
 
-    private ApiAuthService()
+    public ApiAuthService()
     {
         _httpClient = new HttpClient
         {

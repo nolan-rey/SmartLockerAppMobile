@@ -23,14 +23,8 @@ namespace SmartLockerApp
 
             // Services - ordre important pour l'injection de dépendances
             builder.Services.AddSingleton<LocalStorageService>();
-            builder.Services.AddSingleton<AuthenticationService>();
-            builder.Services.AddSingleton<LockerManagementService>();
-            builder.Services.AddSingleton<UserService>();
-            builder.Services.AddSingleton<AppStateService>();
-            builder.Services.AddSingleton<IDataService, LocalDataService>();
-            builder.Services.AddSingleton<ViewModelLocator>();
             
-            // API Services
+            // API Services (doivent être avant les services qui les utilisent)
             builder.Services.AddSingleton<ApiAuthService>();
             builder.Services.AddSingleton<ApiHttpClient>();
             builder.Services.AddSingleton<ApiUserService>();
@@ -38,6 +32,19 @@ namespace SmartLockerApp
             builder.Services.AddSingleton<ApiSessionService>();
             builder.Services.AddSingleton<ApiAuthMethodService>();
             builder.Services.AddSingleton<ApiSessionAuthService>();
+            
+            // Services locaux
+            builder.Services.AddSingleton<AuthenticationService>();
+            builder.Services.AddSingleton<LockerManagementService>();
+            builder.Services.AddSingleton<UserService>();
+            builder.Services.AddSingleton<AppStateService>();
+            
+            // Data Service - Utiliser ApiDataService pour l'API ou LocalDataService pour local
+            // Décommenter la ligne souhaitée :
+            builder.Services.AddSingleton<IDataService, ApiDataService>();  // ✅ Utilise l'API SmartLocker
+            // builder.Services.AddSingleton<IDataService, LocalDataService>();  // Utilise les données locales
+            
+            builder.Services.AddSingleton<ViewModelLocator>();
 
             // ViewModels
             builder.Services.AddTransient<LoginViewModel>();

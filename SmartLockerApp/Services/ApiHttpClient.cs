@@ -9,16 +9,13 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ApiHttpClient
 {
-    private static ApiHttpClient? _instance;
-    public static ApiHttpClient Instance => _instance ??= new ApiHttpClient();
-
     private const string BASE_URL = "https://reymond.alwaysdata.net/smartLockerApi";
     
     private readonly HttpClient _httpClient;
     private readonly ApiAuthService _authService;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    private ApiHttpClient()
+    public ApiHttpClient(ApiAuthService authService)
     {
         _httpClient = new HttpClient
         {
@@ -26,7 +23,7 @@ public class ApiHttpClient
             Timeout = TimeSpan.FromSeconds(30)
         };
 
-        _authService = ApiAuthService.Instance;
+        _authService = authService;
 
         _jsonOptions = new JsonSerializerOptions
         {
