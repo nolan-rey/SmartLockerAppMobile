@@ -9,7 +9,8 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ApiHttpClient
 {
-    private const string BASE_URL = "https://reymond.alwaysdata.net/smartLockerApi";
+    // ✅ IMPORTANT : Le slash final est obligatoire pour que HttpClient combine correctement les URLs
+    private const string BASE_URL = "https://reymond.alwaysdata.net/smartLockerApi/";
     
     private readonly HttpClient _httpClient;
     private readonly ApiAuthService _authService;
@@ -48,7 +49,7 @@ public class ApiHttpClient
         // Configurer le header Authorization avec Bearer Token
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         
-        System.Diagnostics.Debug.WriteLine($"✅ Header Authorization configuré avec Bearer Token");
+        System.Diagnostics.Debug.WriteLine($"✅ Header Authorization configuré: Bearer {token.Substring(0, Math.Min(20, token.Length))}...");
         
         return true;
     }
@@ -100,16 +101,21 @@ public class ApiHttpClient
             System.Diagnostics.Debug.WriteLine($"📤 POST {endpoint}");
 
             var json = JsonSerializer.Serialize(data, _jsonOptions);
+            System.Diagnostics.Debug.WriteLine($"📤 Request body JSON: {json}");
+            
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await _httpClient.PostAsync(endpoint, content);
             var responseContent = await response.Content.ReadAsStringAsync();
 
-            System.Diagnostics.Debug.WriteLine($"📥 Response: {response.StatusCode}");
+            System.Diagnostics.Debug.WriteLine($"📥 Response status: {response.StatusCode} ({(int)response.StatusCode})");
+            System.Diagnostics.Debug.WriteLine($"📥 Response body: {responseContent}");
 
             if (!response.IsSuccessStatusCode)
             {
-                System.Diagnostics.Debug.WriteLine($"❌ Erreur: {responseContent}");
+                System.Diagnostics.Debug.WriteLine($"❌ Erreur HTTP: {response.StatusCode}");
+                System.Diagnostics.Debug.WriteLine($"❌ Raison: {response.ReasonPhrase}");
+                System.Diagnostics.Debug.WriteLine($"❌ Contenu de l'erreur: {responseContent}");
                 return default;
             }
 
@@ -118,6 +124,7 @@ public class ApiHttpClient
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"❌ Erreur POST {endpoint}: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Stack trace: {ex.StackTrace}");
             return default;
         }
     }

@@ -26,7 +26,7 @@ public class ApiUserService
         {
             System.Diagnostics.Debug.WriteLine("📋 Récupération de tous les utilisateurs...");
             
-            var users = await _apiClient.GetAsync<List<User>>("/users");
+            var users = await _apiClient.GetAsync<List<User>>("users");
             
             if (users != null)
             {
@@ -55,7 +55,7 @@ public class ApiUserService
         {
             System.Diagnostics.Debug.WriteLine($"🔍 Récupération utilisateur ID={userId}...");
             
-            var user = await _apiClient.GetAsync<User>($"/users/{userId}");
+            var user = await _apiClient.GetAsync<User>($"users/{userId}");
             
             if (user != null)
             {
@@ -71,6 +71,38 @@ public class ApiUserService
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"❌ Erreur GetUserById: {ex.Message}");
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Récupère un utilisateur par email (cherche dans tous les utilisateurs)
+    /// </summary>
+    public async Task<User?> GetUserByEmailAsync(string email)
+    {
+        try
+        {
+            System.Diagnostics.Debug.WriteLine($"🔍 Recherche utilisateur par email: {email}...");
+            
+            var allUsers = await GetAllUsersAsync();
+            
+            if (allUsers != null)
+            {
+                var user = allUsers.FirstOrDefault(u => u.email.Equals(email, StringComparison.OrdinalIgnoreCase));
+                
+                if (user != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"✅ Utilisateur trouvé: {user.name}");
+                    return user;
+                }
+            }
+            
+            System.Diagnostics.Debug.WriteLine("⚠️ Utilisateur non trouvé");
+            return null;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Erreur GetUserByEmail: {ex.Message}");
             return null;
         }
     }
@@ -100,7 +132,13 @@ public class ApiUserService
                 role = role
             };
 
-            var createdUser = await _apiClient.PostAsync<object, User>("/users", userData);
+            System.Diagnostics.Debug.WriteLine($"📤 Données envoyées:");
+            System.Diagnostics.Debug.WriteLine($"   - name: {name}");
+            System.Diagnostics.Debug.WriteLine($"   - email: {email}");
+            System.Diagnostics.Debug.WriteLine($"   - password_hash: {passwordHash}");
+            System.Diagnostics.Debug.WriteLine($"   - role: {role}");
+
+            var createdUser = await _apiClient.PostAsync<object, User>("users", userData);
 
             if (createdUser != null)
             {
@@ -109,13 +147,14 @@ public class ApiUserService
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("❌ Échec création utilisateur");
+                System.Diagnostics.Debug.WriteLine("❌ Échec création utilisateur - Réponse null");
                 return (false, "Échec de la création de l'utilisateur", null);
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"❌ Erreur CreateUser: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Stack trace: {ex.StackTrace}");
             return (false, $"Erreur: {ex.Message}", null);
         }
     }
@@ -144,7 +183,7 @@ public class ApiUserService
                 role = role
             };
 
-            var updatedUser = await _apiClient.PutAsync<object, User>($"/users/{userId}", updateData);
+            var updatedUser = await _apiClient.PutAsync<object, User>($"users/{userId}", updateData);
 
             if (updatedUser != null)
             {
@@ -177,7 +216,7 @@ public class ApiUserService
         {
             System.Diagnostics.Debug.WriteLine($"🗑️ Suppression utilisateur ID={userId}...");
 
-            var success = await _apiClient.DeleteAsync($"/users/{userId}");
+            var success = await _apiClient.DeleteAsync($"users/{userId}");
 
             if (success)
             {

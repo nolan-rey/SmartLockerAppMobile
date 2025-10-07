@@ -8,7 +8,8 @@ namespace SmartLockerApp.Services;
 /// </summary>
 public class ApiAuthService
 {
-    private const string BASE_URL = "https://reymond.alwaysdata.net/smartLockerApi";
+    // ✅ IMPORTANT : Le slash final est obligatoire pour que HttpClient combine correctement les URLs
+    private const string BASE_URL = "https://reymond.alwaysdata.net/smartLockerApi/";
     private const string ADMIN_USERNAME = "Smart";
     private const string ADMIN_PASSWORD = "Locker";
     private const int TOKEN_VALIDITY_MINUTES = 60; // 1 heure
@@ -62,19 +63,22 @@ public class ApiAuthService
             var json = JsonSerializer.Serialize(loginData);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            System.Diagnostics.Debug.WriteLine($"📤 POST URL: {_httpClient.BaseAddress}/login");
+            var fullUrl = $"{_httpClient.BaseAddress}login";
+            System.Diagnostics.Debug.WriteLine($"📤 POST URL complète: {fullUrl}");
             System.Diagnostics.Debug.WriteLine($"📤 Request body: {json}");
+            System.Diagnostics.Debug.WriteLine($"📤 Content-Type: application/json");
 
-            var response = await _httpClient.PostAsync("/login", content);
+            var response = await _httpClient.PostAsync("login", content);
             var responseBody = await response.Content.ReadAsStringAsync();
 
-            System.Diagnostics.Debug.WriteLine($"📥 Response status: {response.StatusCode}");
+            System.Diagnostics.Debug.WriteLine($"📥 Response status: {response.StatusCode} ({(int)response.StatusCode})");
             System.Diagnostics.Debug.WriteLine($"📥 Response body: {responseBody}");
             System.Diagnostics.Debug.WriteLine($"📥 Response headers: {response.Headers}");
 
             if (!response.IsSuccessStatusCode)
             {
                 System.Diagnostics.Debug.WriteLine($"❌ Login échoué: {response.StatusCode}");
+                System.Diagnostics.Debug.WriteLine($"❌ Raison: {response.ReasonPhrase}");
                 return null;
             }
 

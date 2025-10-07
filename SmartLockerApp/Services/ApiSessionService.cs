@@ -26,7 +26,7 @@ public class ApiSessionService
         {
             System.Diagnostics.Debug.WriteLine("📋 Récupération de toutes les sessions...");
             
-            var sessions = await _apiClient.GetAsync<List<Session>>("/sessions");
+            var sessions = await _apiClient.GetAsync<List<Session>>("sessions");
             
             if (sessions != null)
             {
@@ -59,7 +59,7 @@ public class ApiSessionService
         {
             System.Diagnostics.Debug.WriteLine($"🔍 Récupération session ID={sessionId}...");
             
-            var session = await _apiClient.GetAsync<Session>($"/sessions/{sessionId}");
+            var session = await _apiClient.GetAsync<Session>($"sessions/{sessionId}");
             
             if (session != null)
             {
@@ -88,7 +88,7 @@ public class ApiSessionService
         {
             System.Diagnostics.Debug.WriteLine("📋 Récupération des sessions actives de l'utilisateur...");
             
-            var sessions = await _apiClient.GetAsync<List<Session>>("/me/sessions?status=active");
+            var sessions = await _apiClient.GetAsync<List<Session>>("me/sessions?status=active");
             
             if (sessions != null)
             {
@@ -144,7 +144,7 @@ public class ApiSessionService
                 payment_status = paymentStatus
             };
 
-            var response = await _apiClient.PostAsync<object, SuccessResponse>("/sessions", sessionData);
+            var response = await _apiClient.PostAsync<object, SuccessResponse>("sessions", sessionData);
 
             if (response?.success == true)
             {
@@ -217,7 +217,7 @@ public class ApiSessionService
                 payment_status = paymentStatus
             };
 
-            var response = await _apiClient.PutAsync<object, SuccessResponse>($"/sessions/{sessionId}", updateData);
+            var response = await _apiClient.PutAsync<object, SuccessResponse>($"sessions/{sessionId}", updateData);
 
             if (response?.success == true)
             {
@@ -261,7 +261,7 @@ public class ApiSessionService
         {
             System.Diagnostics.Debug.WriteLine($"🗑️ Suppression session ID={sessionId}...");
 
-            var success = await _apiClient.DeleteAsync($"/sessions/{sessionId}");
+            var success = await _apiClient.DeleteAsync($"sessions/{sessionId}");
 
             if (success)
             {
@@ -303,7 +303,7 @@ public class ApiSessionService
                 payment_status = paymentStatus
             };
 
-            var success = await _apiClient.PostAsync($"/sessions/{sessionId}/close", closeData);
+            var success = await _apiClient.PostAsync($"sessions/{sessionId}/close", closeData);
 
             if (success)
             {

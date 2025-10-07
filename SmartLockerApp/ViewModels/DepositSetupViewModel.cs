@@ -69,7 +69,7 @@ public class DepositSetupViewModel : BaseViewModel
         }
     }
 
-    public string DisplayLockerId => SelectedLocker != null ? CompatibilityService.IntToStringId(SelectedLocker.Id) : LockerId;
+    public string DisplayLockerId => SelectedLocker?.Name ?? "Chargement...";
     public string LocationText => SelectedLocker?.Location ?? "Chargement...";
 
     // Commands
@@ -90,8 +90,19 @@ public class DepositSetupViewModel : BaseViewModel
         if (string.IsNullOrEmpty(LockerId))
             return;
 
-        var serviceId = MapDisplayIdToServiceId(LockerId);
-        SelectedLocker = await _dataService.GetLockerByIdAsync(serviceId);
+        System.Diagnostics.Debug.WriteLine($"🔍 Chargement des détails du casier: {LockerId}");
+        
+        // LockerId est maintenant l'ID de l'API (int converti en string)
+        SelectedLocker = await _dataService.GetLockerByIdAsync(LockerId);
+        
+        if (SelectedLocker != null)
+        {
+            System.Diagnostics.Debug.WriteLine($"✅ Casier chargé: {SelectedLocker.Name} ({SelectedLocker.Status})");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine($"❌ Casier non trouvé: {LockerId}");
+        }
         
         OnPropertyChanged(nameof(DisplayLockerId));
         OnPropertyChanged(nameof(LocationText));
@@ -123,18 +134,52 @@ public class DepositSetupViewModel : BaseViewModel
         if (SelectedDuration == null || SelectedLocker == null)
             return;
 
-        var serviceId = MapDisplayIdToServiceId(LockerId);
+        // Vérifier que l'utilisateur est bien connecté
+        var currentUser = await _dataService.GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            System.Diagnostics.Debug.WriteLine("❌ Utilisateur non connecté lors de la confirmation");
+            
+            if (Application.Current?.Windows?.Count > 0)
+            {
+                var mainPage = Application.Current.Windows[0].Page;
+                if (mainPage != null)
+                {
+                    await mainPage.DisplayAlert(
+                        "Erreur", 
+                        "Vous devez être connecté pour réserver un casier. Veuillez vous reconnecter.", 
+                        "OK");
+                    
+                    // Rediriger vers la page de connexion
+                    await Shell.Current.GoToAsync("//LoginPage");
+                }
+            }
+            return;
+        }
+
+        System.Diagnostics.Debug.WriteLine($"✅ Utilisateur connecté: {currentUser.name} (ID: {currentUser.id})");
+        System.Diagnostics.Debug.WriteLine($"✅ Confirmation de la session:");
+        System.Diagnostics.Debug.WriteLine($"   - Casier: {SelectedLocker.Name} (ID: {SelectedLocker.Id})");
+        System.Diagnostics.Debug.WriteLine($"   - Durée: {SelectedDuration.Hours} heure(s)");
+        System.Diagnostics.Debug.WriteLine($"   - Prix: {SelectedDuration.Price:C}");
+
+        // Utiliser l'ID du casier directement (int → string)
+        var lockerIdString = SelectedLocker.Id.ToString();
+        
         var result = await _dataService.CreateSessionAsync(
-            serviceId, 
+            lockerIdString, 
             (int)SelectedDuration.Hours, 
             new List<string>());
 
         if (result.Success && result.Session != null)
         {
+            System.Diagnostics.Debug.WriteLine($"✅ Session créée avec succès: ID {result.Session.Id}");
             await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={result.Session.Id}");
         }
         else
         {
+            System.Diagnostics.Debug.WriteLine($"❌ Échec création session: {result.Message}");
+            
             if (Application.Current?.Windows?.Count > 0)
             {
                 var mainPage = Application.Current.Windows[0].Page;
@@ -150,26 +195,6 @@ public class DepositSetupViewModel : BaseViewModel
     private async Task GoBackAsync()
     {
         await Shell.Current.GoToAsync("..");
-    }
-
-    private string MapServiceIdToDisplayId(string serviceId)
-    {
-        return serviceId switch
-        {
-            "L001" => "A1",
-            "L002" => "B2",
-            _ => serviceId
-        };
-    }
-
-    private string MapDisplayIdToServiceId(string displayId)
-    {
-        return displayId switch
-        {
-            "A1" => "L001",
-            "B2" => "L002",
-            _ => "L001"
-        };
     }
 }
 

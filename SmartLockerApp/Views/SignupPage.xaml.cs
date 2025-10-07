@@ -1,15 +1,16 @@
 using SmartLockerApp.Services;
+using SmartLockerApp.Interfaces;
 
 namespace SmartLockerApp.Views;
 
 public partial class SignupPage : ContentPage
 {
-    private readonly AppStateService _appState;
+    private readonly IDataService _dataService;
 
-    public SignupPage(AppStateService appState)
+    public SignupPage(IDataService dataService)
     {
         InitializeComponent();
-        _appState = appState;
+        _dataService = dataService;
     }
 
     private async void SignupButton_Clicked(object sender, EventArgs e)
@@ -43,27 +44,34 @@ public partial class SignupPage : ContentPage
 
         try
         {
-            var (success, message) = await _appState.CreateAccountAsync(
-                EmailEntry.Text.Trim(),
-                PasswordEntry.Text,
+            System.Diagnostics.Debug.WriteLine($"📝 Début création de compte pour: {EmailEntry.Text.Trim()}");
+            
+            var (success, user, message) = await _dataService.CreateAccountAsync(
                 firstName,
-                lastName
+                lastName,
+                EmailEntry.Text.Trim(),
+                PasswordEntry.Text
             );
 
             if (success)
             {
+                System.Diagnostics.Debug.WriteLine($"✅ Compte créé avec succès: {user?.name} (ID: {user?.id})");
+                
                 SignupButton.Text = "✓ Compte créé";
                 await AnimationService.SuccessCheckmarkAsync(SignupButton);
-                await DisplayAlert("Succès", "Votre compte a été créé avec succès !", "OK");
+                await DisplayAlert("Succès", message ?? "Votre compte a été créé avec succès !", "OK");
                 await Shell.Current.GoToAsync("//LoginPage");
             }
             else
             {
-                await DisplayAlert("Erreur", message, "OK");
+                System.Diagnostics.Debug.WriteLine($"❌ Échec création de compte: {message}");
+                await DisplayAlert("Erreur", message ?? "Une erreur s'est produite", "OK");
             }
         }
         catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"❌ Exception lors de la création de compte: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Stack trace: {ex.StackTrace}");
             await DisplayAlert("Erreur", $"Une erreur s'est produite : {ex.Message}", "OK");
         }
         finally

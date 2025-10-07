@@ -1,46 +1,61 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SmartLockerApp.Services;
+using SmartLockerApp.Interfaces;
 
 namespace SmartLockerApp.ViewModels;
 
-[QueryProperty(nameof(SessionId), "sessionId")]
+[QueryProperty(nameof(LockerId), "lockerId")]
+[QueryProperty(nameof(DurationHours), "durationHours")]
+[QueryProperty(nameof(Price), "price")]
 public partial class LockerOpenedPageViewModel : BaseViewModel
 {
-    private readonly AppStateService _appState;
+    private readonly IDataService _dataService;
 
     [ObservableProperty]
-    private string sessionId = string.Empty;
+    private string lockerId = string.Empty;
 
     [ObservableProperty]
-    private string lockerIdText = "A1";
+    private string durationHours = string.Empty;
+
+    [ObservableProperty]
+    private string price = string.Empty;
+
+    [ObservableProperty]
+    private string lockerIdText = "Chargement...";
 
     [ObservableProperty]
     private string durationText = "N/A";
 
-    public LockerOpenedPageViewModel(AppStateService appState)
+    public LockerOpenedPageViewModel(IDataService dataService)
     {
-        _appState = appState;
+        _dataService = dataService;
         Title = "Casier Ouvert";
     }
 
     [RelayCommand]
     private async Task LoadData()
     {
-        if (string.IsNullOrEmpty(SessionId)) return;
+        if (string.IsNullOrEmpty(LockerId)) return;
 
-        var session = await _appState.GetSessionAsync(SessionId);
-        if (session != null)
+        System.Diagnostics.Debug.WriteLine($"🔓 Page Casier Ouvert:");
+        System.Diagnostics.Debug.WriteLine($"   - Casier ID: {LockerId}");
+        System.Diagnostics.Debug.WriteLine($"   - Durée: {DurationHours}h");
+        System.Diagnostics.Debug.WriteLine($"   - Prix: {Price}€");
+
+        // Charger les détails du casier pour affichage
+        var locker = await _dataService.GetLockerByIdAsync(LockerId);
+        if (locker != null)
         {
-            var displayId = CompatibilityService.IntToStringId(session.LockerId);
-            LockerIdText = displayId;
-            DurationText = $"{session.DurationHours}h";
+            LockerIdText = locker.Name;
+            DurationText = $"{DurationHours}h";
         }
     }
 
     [RelayCommand]
     private async Task Continue()
     {
-        await Shell.Current.GoToAsync($"//LockInstructionsPage?sessionId={SessionId}");
+        System.Diagnostics.Debug.WriteLine("➡️ Navigation vers LockInstructionsPage");
+        // Passer tous les paramètres à la page suivante
+        await Shell.Current.GoToAsync($"//LockInstructionsPage?lockerId={LockerId}&durationHours={DurationHours}&price={Price}");
     }
 }

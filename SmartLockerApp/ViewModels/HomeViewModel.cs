@@ -74,7 +74,19 @@ public class HomeViewModel : BaseViewModel
     {
         await ExecuteAsync(async () =>
         {
+            System.Diagnostics.Debug.WriteLine("🔄 Initialisation de HomeViewModel...");
+            
             CurrentUser = await _dataService.GetCurrentUserAsync();
+            
+            if (CurrentUser != null)
+            {
+                System.Diagnostics.Debug.WriteLine($"✅ Utilisateur chargé dans HomeViewModel: {CurrentUser.name} (ID: {CurrentUser.id})");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Aucun utilisateur chargé dans HomeViewModel");
+            }
+            
             await LoadDataAsync();
         });
     }
@@ -90,29 +102,42 @@ public class HomeViewModel : BaseViewModel
         ActiveSession = await _dataService.GetActiveSessionAsync();
         OnPropertyChanged(nameof(HasActiveSession));
 
-        // Load all lockers (available and occupied) - we only have 2 now
+        // Load all lockers from API
         try
         {
-            // Get all lockers from the data service
-            var availableLockers = await _dataService.GetAvailableLockersAsync();
+            System.Diagnostics.Debug.WriteLine("🔄 Chargement des casiers depuis l'API...");
             
-            // Also get all lockers from the locker management service to include occupied ones
-            var allLockers = _lockerService.Lockers;
+            // Get ALL lockers from the API (not just available ones)
+            var allLockers = await _dataService.GetAvailableLockersAsync();
             
-            System.Diagnostics.Debug.WriteLine($"Loading {allLockers.Count} lockers");
-            
-            AvailableLockers.Clear();
-            foreach (var locker in allLockers)
+            if (allLockers != null && allLockers.Count > 0)
             {
-                System.Diagnostics.Debug.WriteLine($"Adding locker: {locker.Id} - {locker.Location} - {locker.Status}");
-                AvailableLockers.Add(new LockerItemViewModel(locker));
+                System.Diagnostics.Debug.WriteLine($"✅ {allLockers.Count} casiers récupérés depuis l'API");
+                
+                AvailableLockers.Clear();
+                foreach (var locker in allLockers)
+                {
+                    System.Diagnostics.Debug.WriteLine($"   - Casier {locker.Id}: {locker.Name} - {locker.Status}");
+                    AvailableLockers.Add(new LockerItemViewModel(locker));
+                }
+                
+                System.Diagnostics.Debug.WriteLine($"✅ {AvailableLockers.Count} casiers affichés");
             }
-            
-            System.Diagnostics.Debug.WriteLine($"AvailableLockers collection now has {AvailableLockers.Count} items");
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("⚠️ Aucun casier récupéré depuis l'API");
+                
+                // Fallback: afficher un message si aucun casier n'est disponible
+                if (allLockers != null && allLockers.Count == 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("ℹ️ Aucun casier disponible pour le moment");
+                }
+            }
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"Error loading lockers: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Erreur chargement casiers: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Stack trace: {ex.StackTrace}");
         }
 
         // Load statistics
@@ -151,16 +176,6 @@ public class HomeViewModel : BaseViewModel
     {
         await Shell.Current.GoToAsync("//SettingsPage");
     }
-
-    private string MapServiceIdToDisplayId(string serviceId)
-    {
-        return serviceId switch
-        {
-            "L001" => "A1",
-            "L002" => "B2",
-            _ => serviceId
-        };
-    }
 }
 
 public class LockerItemViewModel : BaseViewModel
@@ -172,20 +187,17 @@ public class LockerItemViewModel : BaseViewModel
 
     public Locker Locker { get; }
 
-    public string DisplayId => CompatibilityService.IntToStringId(Locker.Id);
+    public string DisplayId => Locker.Name; // Utilise le nom directement de l'API (ex: "Casier A1")
     public string Location => Locker.Location;
     public string Size => Locker.Size.ToString();
-    public bool IsAvailable => CompatibilityService.CompareStatus(Locker.Status, LockerStatus.Available);
+    public bool IsAvailable => Locker.IsAvailable; // Utilise la propriété IsAvailable du modèle
     public string StatusColor => IsAvailable ? "#10B981" : "#EF4444";
-    public string StatusText => IsAvailable ? "Disponible" : "Occupé";
-
-    private string MapServiceIdToDisplayId(string serviceId)
+    public string StatusText => Locker.Status switch
     {
-        return serviceId switch
-        {
-            "L001" => "A1",
-            "L002" => "B2",
-            _ => serviceId
-        };
-    }
+        "available" => "Disponible",
+        "occupied" => "Occupé",
+        "maintenance" => "Maintenance",
+        "out_of_order" => "Hors service",
+        _ => "Inconnu"
+    };
 }

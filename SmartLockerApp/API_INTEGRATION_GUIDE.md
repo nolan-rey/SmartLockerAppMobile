@@ -24,7 +24,7 @@
 
 ### Configuration
 - **Base URL** : `https://reymond.alwaysdata.net/smartLockerApi/`
-- **Credentials test** : `SaintMichel` / `ITcampus`
+- **Credentials JWT** : `Smart` / `Locker` (pour l'authentification JWT de l'API)
 - **Injection de dépendances** : configurée dans `MauiProgram.cs`
 
 ## 🚀 Comment utiliser l'API dans tes ViewModels

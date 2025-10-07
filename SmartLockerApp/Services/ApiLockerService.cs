@@ -26,7 +26,7 @@ public class ApiLockerService
         {
             System.Diagnostics.Debug.WriteLine("📋 Récupération de tous les casiers...");
             
-            var lockers = await _apiClient.GetAsync<List<Locker>>("/lockers");
+            var lockers = await _apiClient.GetAsync<List<Locker>>("lockers");
             
             if (lockers != null)
             {
@@ -59,7 +59,7 @@ public class ApiLockerService
         {
             System.Diagnostics.Debug.WriteLine($"🔍 Récupération casier ID={lockerId}...");
             
-            var locker = await _apiClient.GetAsync<Locker>($"/lockers/{lockerId}");
+            var locker = await _apiClient.GetAsync<Locker>($"lockers/{lockerId}");
             
             if (locker != null)
             {
@@ -88,7 +88,7 @@ public class ApiLockerService
         {
             System.Diagnostics.Debug.WriteLine("📋 Récupération des casiers disponibles...");
             
-            var lockers = await _apiClient.GetAsync<List<Locker>>("/lockers/available");
+            var lockers = await _apiClient.GetAsync<List<Locker>>("lockers/available");
             
             if (lockers != null)
             {
@@ -134,7 +134,7 @@ public class ApiLockerService
                 status = status
             };
 
-            var response = await _apiClient.PostAsync<object, SuccessResponse>("/lockers", lockerData);
+            var response = await _apiClient.PostAsync<object, SuccessResponse>("lockers", lockerData);
 
             if (response?.success == true)
             {
@@ -177,7 +177,7 @@ public class ApiLockerService
                 status = status
             };
 
-            var response = await _apiClient.PutAsync<object, SuccessResponse>($"/lockers/{lockerId}", updateData);
+            var response = await _apiClient.PutAsync<object, SuccessResponse>($"lockers/{lockerId}", updateData);
 
             if (response?.success == true)
             {
@@ -244,7 +244,7 @@ public class ApiLockerService
         {
             System.Diagnostics.Debug.WriteLine($"🗑️ Suppression casier ID={lockerId}...");
 
-            var success = await _apiClient.DeleteAsync($"/lockers/{lockerId}");
+            var success = await _apiClient.DeleteAsync($"lockers/{lockerId}");
 
             if (success)
             {
@@ -277,7 +277,7 @@ public class ApiLockerService
         {
             System.Diagnostics.Debug.WriteLine($"🔓 Ouverture casier ID={lockerId}...");
 
-            var success = await _apiClient.PostAsync($"/lockers/{lockerId}/open", new { });
+            var success = await _apiClient.PostAsync($"lockers/{lockerId}/open", new { });
 
             if (success)
             {
