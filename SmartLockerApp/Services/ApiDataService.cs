@@ -286,7 +286,20 @@ public class ApiDataService : IDataService
             System.Diagnostics.Debug.WriteLine($"   - Fin prévue: {plannedEndAtStr}");
             System.Diagnostics.Debug.WriteLine($"   - Montant: {amountDue:F2}€");
 
-            // Créer la session via l'API
+            // 🔒 ÉTAPE 1 : Marquer le casier comme occupé AVANT de créer la session
+            System.Diagnostics.Debug.WriteLine($"🔒 ÉTAPE 1/2 : Mise à jour du statut du casier {lockerIdInt} en 'occupied'...");
+            var (lockerUpdateSuccess, lockerUpdateMessage) = await _lockerService.SetLockerOccupiedAsync(lockerIdInt);
+            
+            if (!lockerUpdateSuccess)
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Impossible de réserver le casier: {lockerUpdateMessage}");
+                return (false, null, $"Le casier n'est pas disponible: {lockerUpdateMessage}");
+            }
+            
+            System.Diagnostics.Debug.WriteLine($"✅ Casier {lockerIdInt} marqué comme occupé");
+
+            // 🎯 ÉTAPE 2 : Créer la session via l'API
+            System.Diagnostics.Debug.WriteLine($"🎯 ÉTAPE 2/2 : Création de la session dans l'API...");
             var (success, message, session) = await _sessionService.CreateSessionAsync(
                 user.id, 
                 lockerIdInt, 
@@ -299,26 +312,19 @@ public class ApiDataService : IDataService
             if (success && session != null)
             {
                 System.Diagnostics.Debug.WriteLine($"✅ Session créée avec succès: ID {session.Id}");
-                
-                // 🔒 Mettre à jour le statut du casier en "occupied"
-                System.Diagnostics.Debug.WriteLine($"🔒 Mise à jour du statut du casier {lockerIdInt} en 'occupied'...");
-                var (lockerUpdateSuccess, lockerUpdateMessage) = await _lockerService.SetLockerOccupiedAsync(lockerIdInt);
-                
-                if (lockerUpdateSuccess)
-                {
-                    System.Diagnostics.Debug.WriteLine($"✅ Casier {lockerIdInt} marqué comme occupé");
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"⚠️ Impossible de mettre à jour le casier: {lockerUpdateMessage}");
-                    // On continue quand même car la session est créée
-                }
+                System.Diagnostics.Debug.WriteLine($"✅ TRANSACTION COMPLÈTE : Casier {lockerIdInt} occupé + Session {session.Id} active");
                 
                 return (true, session.ToLockerSession(), message);
             }
             else
             {
+                // ⚠️ ROLLBACK : La session n'a pas pu être créée, libérer le casier
                 System.Diagnostics.Debug.WriteLine($"❌ Échec création session: {message}");
+                System.Diagnostics.Debug.WriteLine($"🔄 ROLLBACK : Libération du casier {lockerIdInt}...");
+                
+                await _lockerService.SetLockerAvailableAsync(lockerIdInt);
+                System.Diagnostics.Debug.WriteLine($"✅ Casier {lockerIdInt} libéré (rollback)");
+                
                 return (false, null, message ?? "Erreur lors de la création de la session");
             }
         }

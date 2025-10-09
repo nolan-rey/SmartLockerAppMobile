@@ -19,22 +19,38 @@
 ```csharp
 // Dans ApiDataService.CreateSessionAsync()
 
-// 1. Créer la session dans l'API
+// 🔒 ÉTAPE 1 : Marquer le casier comme occupé AVANT de créer la session
+var (lockerUpdateSuccess, lockerUpdateMessage) = 
+    await _lockerService.SetLockerOccupiedAsync(lockerIdInt);
+
+if (!lockerUpdateSuccess)
+{
+    return (false, null, "Le casier n'est pas disponible");
+}
+
+// 🎯 ÉTAPE 2 : Créer la session via l'API
 var (success, message, session) = await _sessionService.CreateSessionAsync(...);
 
-// 2. Mettre à jour le statut du casier
 if (success && session != null)
 {
-    await _lockerService.SetLockerOccupiedAsync(lockerIdInt);
-    // Casier maintenant en "occupied"
+    // ✅ Transaction complète
+    return (true, session.ToLockerSession(), message);
+}
+else
+{
+    // ⚠️ ROLLBACK : Libérer le casier si la session échoue
+    await _lockerService.SetLockerAvailableAsync(lockerIdInt);
+    return (false, null, message);
 }
 ```
 
 **Logs attendus** :
 ```
-✅ Session créée avec succès: ID 123
-🔒 Mise à jour du statut du casier 1 en 'occupied'...
+🔒 ÉTAPE 1/2 : Mise à jour du statut du casier 1 en 'occupied'...
 ✅ Casier 1 marqué comme occupé
+🎯 ÉTAPE 2/2 : Création de la session dans l'API...
+✅ Session créée avec succès: ID 123
+✅ TRANSACTION COMPLÈTE : Casier 1 occupé + Session 123 active
 ```
 
 ### 3️⃣ **Fin de session** → Casier disponible (`"available"`)
