@@ -2,11 +2,17 @@ using SmartLockerApp.Services;
 
 namespace SmartLockerApp.Views;
 
+[QueryProperty(nameof(LockerId), "lockerId")]
+[QueryProperty(nameof(DurationHours), "durationHours")]
+[QueryProperty(nameof(Price), "price")]
 [QueryProperty(nameof(SessionId), "sessionId")]
 [QueryProperty(nameof(Action), "action")]
 public partial class OpenLockerPage : ContentPage
 {
     private readonly AppStateService _appState;
+    public string LockerId { get; set; } = string.Empty;
+    public string DurationHours { get; set; } = string.Empty;
+    public string Price { get; set; } = string.Empty;
     public string SessionId { get; set; } = string.Empty;
     public string Action { get; set; } = string.Empty; // "retrieve" pour récupération
 
@@ -19,6 +25,12 @@ public partial class OpenLockerPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
+        
+        System.Diagnostics.Debug.WriteLine("🔓 OpenLockerPage - Simulation ouverture casier...");
+        System.Diagnostics.Debug.WriteLine($"   - Casier: {LockerId}");
+        System.Diagnostics.Debug.WriteLine($"   - Durée: {DurationHours}h");
+        System.Diagnostics.Debug.WriteLine($"   - Prix: {Price}€");
+        
         StartOpeningProcess();
     }
 
@@ -79,16 +91,9 @@ public partial class OpenLockerPage : ContentPage
         }
         else
         {
-            // Pour le dépôt initial, naviguer directement vers la page de casier ouvert
-            if (!string.IsNullOrEmpty(SessionId))
-            {
-                await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={SessionId}");
-            }
-            else
-            {
-                await DisplayAlert("Erreur", "Session introuvable", "OK");
-                await Shell.Current.GoToAsync("//HomePage");
-            }
+            // Pour le dépôt initial, naviguer vers LockInstructionsPage avec les paramètres
+            System.Diagnostics.Debug.WriteLine("✅ Navigation vers LockInstructionsPage avec paramètres");
+            await Shell.Current.GoToAsync($"//LockInstructionsPage?lockerId={LockerId}&durationHours={DurationHours}&price={Price}");
         }
     }
 

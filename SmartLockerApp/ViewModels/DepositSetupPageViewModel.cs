@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SmartLockerApp.Services;
+using SmartLockerApp.Interfaces;
 
 namespace SmartLockerApp.ViewModels;
 
@@ -10,7 +11,7 @@ namespace SmartLockerApp.ViewModels;
 [QueryProperty(nameof(LockerId), "lockerId")]
 public partial class DepositSetupPageViewModel : BaseViewModel
 {
-    private readonly AppStateService _appState;
+    private readonly IDataService _dataService;
 
     #region Observable Properties
 
@@ -58,9 +59,9 @@ public partial class DepositSetupPageViewModel : BaseViewModel
 
     #endregion
 
-    public DepositSetupPageViewModel(AppStateService appState)
+    public DepositSetupPageViewModel(IDataService dataService)
     {
-        _appState = appState;
+        _dataService = dataService;
         Title = "Configuration";
         
         // Initialiser avec 1 heure par défaut
@@ -72,8 +73,23 @@ public partial class DepositSetupPageViewModel : BaseViewModel
     [RelayCommand]
     private async Task LoadData()
     {
+        System.Diagnostics.Debug.WriteLine("🔄 Chargement DepositSetupPage...");
+        
+        // Vérifier que l'utilisateur est connecté
+        var currentUser = await _dataService.GetCurrentUserAsync();
+        if (currentUser == null)
+        {
+            System.Diagnostics.Debug.WriteLine("❌ Utilisateur non connecté sur DepositSetupPage");
+            await Shell.Current.DisplayAlert("Erreur", "Vous devez être connecté pour continuer", "OK");
+            await Shell.Current.GoToAsync("//LoginPage");
+            return;
+        }
+        
+        System.Diagnostics.Debug.WriteLine($"✅ Utilisateur connecté: {currentUser.name} (ID: {currentUser.id})");
+        
         if (!string.IsNullOrEmpty(LockerId))
         {
+            System.Diagnostics.Debug.WriteLine($"✅ Casier sélectionné: {LockerId}");
             LoadLockerDetails();
         }
         UpdatePricing();
@@ -117,30 +133,36 @@ public partial class DepositSetupPageViewModel : BaseViewModel
         if (IsBusy) return;
 
         IsBusy = true;
-        ConfirmButtonText = "Création en cours...";
+        ConfirmButtonText = "Vérification...";
         IsConfirmButtonEnabled = false;
 
         try
         {
-            var selectedLockerId = MapLockerIdToServiceId(LockerId);
-            var result = await _appState.StartSessionWithItemsAsync(
-                selectedLockerId, 
-                (int)SelectedHours, 
-                new List<string>()
-            );
-
-            if (result.Success && result.Session != null)
+            System.Diagnostics.Debug.WriteLine("✅ Confirmation de la durée de dépôt");
+            
+            // Vérifier que l'utilisateur est toujours connecté
+            var currentUser = await _dataService.GetCurrentUserAsync();
+            if (currentUser == null)
             {
-                ConfirmButtonText = "✓ Session créée";
-                await Shell.Current.GoToAsync($"//LockerOpenedPage?sessionId={result.Session.Id}");
+                System.Diagnostics.Debug.WriteLine("❌ Utilisateur non connecté");
+                await Shell.Current.DisplayAlert("Erreur", "Vous devez être connecté pour continuer", "OK");
+                await Shell.Current.GoToAsync("//LoginPage");
+                return;
             }
-            else
-            {
-                await Shell.Current.DisplayAlert("Erreur", result.Message ?? "Impossible de créer la session", "OK");
-            }
+            
+            System.Diagnostics.Debug.WriteLine($"✅ Utilisateur: {currentUser.name} (ID: {currentUser.id})");
+            System.Diagnostics.Debug.WriteLine($"✅ Casier: {LockerId}");
+            System.Diagnostics.Debug.WriteLine($"✅ Durée: {SelectedHours} heure(s)");
+            System.Diagnostics.Debug.WriteLine($"✅ Prix: {SelectedPrice}");
+            
+            ConfirmButtonText = "✓ Confirmé";
+            
+            // Naviguer vers OpenLockerPage avec les paramètres (PAS de création de session ici)
+            await Shell.Current.GoToAsync($"//OpenLockerPage?lockerId={LockerId}&durationHours={SelectedHours}&price={SelectedPrice.Replace(" €", "")}");
         }
         catch (Exception ex)
         {
+            System.Diagnostics.Debug.WriteLine($"❌ Erreur: {ex.Message}");
             await Shell.Current.DisplayAlert("Erreur", $"Une erreur s'est produite : {ex.Message}", "OK");
         }
         finally
