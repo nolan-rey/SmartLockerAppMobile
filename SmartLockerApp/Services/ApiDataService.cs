@@ -299,6 +299,21 @@ public class ApiDataService : IDataService
             if (success && session != null)
             {
                 System.Diagnostics.Debug.WriteLine($"✅ Session créée avec succès: ID {session.Id}");
+                
+                // 🔒 Mettre à jour le statut du casier en "occupied"
+                System.Diagnostics.Debug.WriteLine($"🔒 Mise à jour du statut du casier {lockerIdInt} en 'occupied'...");
+                var (lockerUpdateSuccess, lockerUpdateMessage) = await _lockerService.SetLockerOccupiedAsync(lockerIdInt);
+                
+                if (lockerUpdateSuccess)
+                {
+                    System.Diagnostics.Debug.WriteLine($"✅ Casier {lockerIdInt} marqué comme occupé");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"⚠️ Impossible de mettre à jour le casier: {lockerUpdateMessage}");
+                    // On continue quand même car la session est créée
+                }
+                
                 return (true, session.ToLockerSession(), message);
             }
             else
@@ -374,21 +389,58 @@ public class ApiDataService : IDataService
     {
         try
         {
+            System.Diagnostics.Debug.WriteLine($"🔚 Fin de session: {sessionId}");
+            
             if (!int.TryParse(sessionId, out int id))
             {
+                System.Diagnostics.Debug.WriteLine("❌ ID session invalide");
                 return false;
             }
 
+            // Récupérer la session pour obtenir le locker_id
             var session = await _sessionService.GetSessionByIdAsync(id);
-            if (session == null) return false;
+            if (session == null)
+            {
+                System.Diagnostics.Debug.WriteLine("❌ Session introuvable");
+                return false;
+            }
 
+            System.Diagnostics.Debug.WriteLine($"✅ Session trouvée: Casier {session.LockerId}");
+
+            // Terminer la session
             var endedAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var (success, message) = await _sessionService.UpdateSessionAsync(id, "finished", endedAt);
-            return success;
+            
+            if (success)
+            {
+                System.Diagnostics.Debug.WriteLine($"✅ Session {id} terminée");
+                
+                // 🔓 Libérer le casier (mettre en "available")
+                System.Diagnostics.Debug.WriteLine($"🔓 Libération du casier {session.LockerId}...");
+                var (lockerUpdateSuccess, lockerUpdateMessage) = await _lockerService.SetLockerAvailableAsync(session.LockerId);
+                
+                if (lockerUpdateSuccess)
+                {
+                    System.Diagnostics.Debug.WriteLine($"✅ Casier {session.LockerId} marqué comme disponible");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"⚠️ Impossible de libérer le casier: {lockerUpdateMessage}");
+                    // On continue quand même car la session est terminée
+                }
+                
+                return true;
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"❌ Échec fin session: {message}");
+                return false;
+            }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"❌ Erreur fin session: {ex.Message}");
+            System.Diagnostics.Debug.WriteLine($"❌ Stack trace: {ex.StackTrace}");
             return false;
         }
     }
