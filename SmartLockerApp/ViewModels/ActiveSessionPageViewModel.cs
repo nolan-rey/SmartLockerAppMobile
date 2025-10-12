@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SmartLockerApp.Models;
 using SmartLockerApp.Services;
 
 namespace SmartLockerApp.ViewModels;
@@ -10,6 +11,8 @@ namespace SmartLockerApp.ViewModels;
 public partial class ActiveSessionPageViewModel : BaseViewModel
 {
     private readonly AppStateService _appState;
+    private readonly AuthenticationService _authService;
+    private readonly HybridSessionService _hybridSessionService;
 
     #region Observable Properties
 
@@ -31,11 +34,19 @@ public partial class ActiveSessionPageViewModel : BaseViewModel
     [ObservableProperty]
     private Color remainingTimeColor = Color.FromArgb("#F59E0B");
 
+    // Stocker l'ID de la session pour éviter les problèmes de null
+    private int? _currentSessionId;
+
     #endregion
 
-    public ActiveSessionPageViewModel(AppStateService appState)
+    public ActiveSessionPageViewModel(
+        AppStateService appState, 
+        AuthenticationService authService,
+        HybridSessionService hybridSessionService)
     {
         _appState = appState;
+        _authService = authService;
+        _hybridSessionService = hybridSessionService;
         Title = "Session Active";
     }
 
@@ -56,9 +67,33 @@ public partial class ActiveSessionPageViewModel : BaseViewModel
     [RelayCommand]
     private async Task EndSession()
     {
-        if (_appState.ActiveSession != null)
+        DebugLogger.Section("END SESSION - CLÔTURE");
+        
+        // Utiliser l'ID stocké, sinon récupérer depuis l'API
+        int sessionId = _currentSessionId ?? 0;
+        
+        if (sessionId == 0)
         {
-            await Shell.Current.GoToAsync($"//UnlockInstructionsPage?sessionId={_appState.ActiveSession.Id}&action=close");
+            DebugLogger.Warning("SessionId non stocké, récupération depuis l'API...");
+            var apiSession = await _hybridSessionService.GetMyActiveSessionAsync(forceRefresh: true);
+            
+            if (apiSession != null)
+            {
+                sessionId = apiSession.Id;
+                DebugLogger.Success($"Session récupérée: ID={sessionId}");
+            }
+        }
+        
+        if (sessionId > 0)
+        {
+            DebugLogger.Success($"Navigation vers UnlockInstructionsPage (sessionId={sessionId})");
+            await Shell.Current.GoToAsync($"//UnlockInstructionsPage?sessionId={sessionId}&action=close");
+        }
+        else
+        {
+            DebugLogger.Error("Aucune session trouvée");
+            await Shell.Current.DisplayAlert("Info", "Vous n'avez pas de session active", "OK");
+            await Shell.Current.GoToAsync("//HomePage");
         }
     }
 
@@ -68,12 +103,32 @@ public partial class ActiveSessionPageViewModel : BaseViewModel
 
     private async Task LoadSessionData()
     {
-        if (_appState.ActiveSession == null)
+        DebugLogger.Section("LOAD SESSION DATA - DÉBUT");
+        
+        // Récupérer directement la session depuis l'API (pas besoin de vérifier CurrentUser)
+        // L'utilisateur est déjà authentifié via JWT pour accéder à cette page
+        var apiSession = await _hybridSessionService.GetMyActiveSessionAsync(forceRefresh: true);
+        
+        if (apiSession == null)
         {
+            DebugLogger.Warning("Aucune session active trouvée");
+            await Shell.Current.DisplayAlert("Info", "Vous n'avez pas de session active", "OK");
+            await Shell.Current.GoToAsync("//HomePage");
             return;
         }
-
-        var session = _appState.ActiveSession;
+        
+        // Convertir en LockerSession pour compatibilité
+        var session = _hybridSessionService.ConvertToLockerSession(apiSession);
+        
+        if (session == null)
+        {
+            DebugLogger.Error("ERREUR DE CONVERSION DE LA SESSION");
+            return;
+        }
+        
+        // Stocker l'ID de la session
+        _currentSessionId = session.Id;
+        DebugLogger.Success($"Session chargée: ID={_currentSessionId}, Locker={session.LockerId}");
 
         // Mapper l'ID du casier pour l'affichage
         var displayLockerId = CompatibilityService.IntToStringId(session.LockerId);

@@ -111,5 +111,10 @@
         Title="UnlockInstructions"
         ContentTemplate="{DataTemplate views:UnlockInstructionsPage}"
         Route="UnlockInstructionsPage" />
+        
+    <ShellContent
+        Title="SessionClosed"
+        ContentTemplate="{DataTemplate views:SessionClosedPage}"
+        Route="SessionClosedPage" />
 
 </Shell>

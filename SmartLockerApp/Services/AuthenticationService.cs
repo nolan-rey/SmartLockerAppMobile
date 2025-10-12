@@ -21,9 +21,13 @@ public partial class AuthenticationService : ObservableObject
 
     public bool IsAuthenticated => CurrentUser != null;
 
+    private bool _isInitialized = false;
+    private readonly SemaphoreSlim _initLock = new SemaphoreSlim(1, 1);
+
     public AuthenticationService(LocalStorageService storage)
     {
         _storage = storage;
+        // Lancer l'initialisation en arrière-plan (ne pas bloquer)
         _ = InitializeAsync();
     }
 
@@ -32,8 +36,32 @@ public partial class AuthenticationService : ObservableObject
     /// </summary>
     private async Task InitializeAsync()
     {
-        await LoadUsersAsync();
-        await CreateDefaultUserIfNeededAsync();
+        await _initLock.WaitAsync();
+        try
+        {
+            if (_isInitialized) return;
+            
+            DebugLogger.Section("AUTHENTICATION SERVICE - INITIALIZATION");
+            await LoadUsersAsync();
+            await CreateDefaultUserIfNeededAsync();
+            _isInitialized = true;
+            DebugLogger.Success("AuthenticationService initialisé");
+        }
+        finally
+        {
+            _initLock.Release();
+        }
+    }
+    
+    /// <summary>
+    /// S'assure que le service est initialisé avant toute opération
+    /// </summary>
+    private async Task EnsureInitializedAsync()
+    {
+        if (!_isInitialized)
+        {
+            await InitializeAsync();
+        }
     }
 
     /// <summary>
@@ -68,11 +96,28 @@ public partial class AuthenticationService : ObservableObject
     /// </summary>
     private async Task LoadUsersAsync()
     {
+        DebugLogger.Section("LOAD USERS ASYNC");
         _users = await _storage.LoadAsync<List<UserAccount>>(UsersKey) ?? new List<UserAccount>();
+        DebugLogger.Info($"Nombre d'utilisateurs chargés: {_users.Count}");
+        
         var currentUserId = await _storage.LoadAsync<string>(CurrentUserKey);
+        DebugLogger.Info($"CurrentUserId stocké: {currentUserId ?? "NULL"}");
+        
         if (!string.IsNullOrEmpty(currentUserId))
         {
             CurrentUser = _users.FirstOrDefault(u => u.Id == currentUserId);
+            if (CurrentUser != null)
+            {
+                DebugLogger.Success($"CurrentUser chargé: {CurrentUser.FirstName} {CurrentUser.LastName} (ID: {CurrentUser.Id})");
+            }
+            else
+            {
+                DebugLogger.Error($"CurrentUser NOT FOUND pour ID: {currentUserId}");
+            }
+        }
+        else
+        {
+            DebugLogger.Warning("Aucun CurrentUserId stocké - Utilisateur non connecté");
         }
     }
 
@@ -123,6 +168,11 @@ public partial class AuthenticationService : ObservableObject
     {
         try
         {
+            await EnsureInitializedAsync();
+            
+            DebugLogger.Section("LOGIN ASYNC");
+            DebugLogger.Info($"Tentative de connexion: {email}");
+            
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
                 return (false, "Email et mot de passe requis");
 
@@ -130,30 +180,117 @@ public partial class AuthenticationService : ObservableObject
                 u.Email.Equals(email, StringComparison.OrdinalIgnoreCase) && u.IsActive);
 
             if (user == null)
+            {
+                DebugLogger.Error($"Utilisateur non trouvé: {email}");
                 return (false, "Email ou mot de passe incorrect");
+            }
 
             if (!VerifyPassword(password, user.PasswordHash))
+            {
+                DebugLogger.Error("Mot de passe incorrect");
                 return (false, "Email ou mot de passe incorrect");
+            }
 
+            // Mettre à jour CurrentUser
             CurrentUser = user;
             user.LastLoginAt = DateTime.Now;
             
+            // Sauvegarder immédiatement
             await _storage.SaveAsync(UsersKey, _users);
             await _storage.SaveAsync(CurrentUserKey, user.Id);
 
+            DebugLogger.Success($"Connexion réussie: {user.FirstName} {user.LastName} (ID: {user.Id})");
+            DebugLogger.Info($"CurrentUser.Id sauvegardé: {user.Id}");
+            DebugLogger.Info($"IsAuthenticated: {IsAuthenticated}");
+            
+            // Vérifier immédiatement que la sauvegarde a fonctionné
+            var savedId = await _storage.LoadAsync<string>(CurrentUserKey);
+            DebugLogger.Info($"Vérification: ID rechargé = {savedId}");
+            
             return (true, "Connexion réussie");
         }
         catch (Exception ex)
         {
+            DebugLogger.Error($"Erreur de connexion: {ex.Message}");
             return (false, $"Erreur de connexion: {ex.Message}");
         }
     }
 
     /// <summary>
+    /// Force le rechargement de l'utilisateur depuis le stockage
+    /// </summary>
+    public async Task<bool> ReloadCurrentUserAsync()
+    {
+        try
+        {
+            DebugLogger.Section("RELOAD CURRENT USER");
+            var currentUserId = await _storage.LoadAsync<string>(CurrentUserKey);
+            DebugLogger.Info($"CurrentUserId stocké: {currentUserId ?? "NULL"}");
+            
+            if (!string.IsNullOrEmpty(currentUserId))
+            {
+                // Recharger la liste des utilisateurs
+                _users = await _storage.LoadAsync<List<UserAccount>>(UsersKey) ?? new List<UserAccount>();
+                DebugLogger.Info($"Nombre d'utilisateurs rechargés: {_users.Count}");
+                
+                CurrentUser = _users.FirstOrDefault(u => u.Id == currentUserId);
+                if (CurrentUser != null)
+                {
+                    DebugLogger.Success($"CurrentUser rechargé: {CurrentUser.FirstName} {CurrentUser.LastName} (ID: {CurrentUser.Id})");
+                    return true;
+                }
+                else
+                {
+                    DebugLogger.Error($"CurrentUser NOT FOUND pour ID: {currentUserId}");
+                }
+            }
+            else
+            {
+                DebugLogger.Warning("Aucun CurrentUserId stocké");
+            }
+            
+            return false;
+        }
+        catch (Exception ex)
+        {
+            DebugLogger.Error($"Erreur ReloadCurrentUser: {ex.Message}");
+            return false;
+        }
+    }
+    
+    /// <summary>
+    /// Vérifie et garantit que l'utilisateur est connecté
+    /// Recharge automatiquement si nécessaire
+    /// </summary>
+    public async Task<bool> EnsureAuthenticatedAsync()
+    {
+        DebugLogger.Section("ENSURE AUTHENTICATED");
+        
+        if (CurrentUser != null)
+        {
+            DebugLogger.Success($"Utilisateur déjà connecté: {CurrentUser.FirstName} {CurrentUser.LastName}");
+            return true;
+        }
+        
+        DebugLogger.Warning("CurrentUser est NULL - Tentative de rechargement...");
+        var reloaded = await ReloadCurrentUserAsync();
+        
+        if (reloaded && CurrentUser != null)
+        {
+            DebugLogger.Success($"Utilisateur rechargé avec succès: {CurrentUser.FirstName} {CurrentUser.LastName}");
+            return true;
+        }
+        
+        DebugLogger.Error("ÉCHEC - Impossible de charger l'utilisateur");
+        return false;
+    }
+    
+    /// <summary>
     /// Déconnexion
     /// </summary>
     public async Task LogoutAsync()
     {
+        DebugLogger.Section("LOGOUT");
         CurrentUser = null;
         _storage.Delete(CurrentUserKey);
         await Task.CompletedTask;

@@ -39,6 +39,9 @@ namespace SmartLockerApp
             builder.Services.AddSingleton<UserService>();
             builder.Services.AddSingleton<AppStateService>();
             
+            // Service hybride (authentification locale + sessions API)
+            builder.Services.AddSingleton<HybridSessionService>();
+            
             // Data Service - Utiliser ApiDataService pour l'API ou LocalDataService pour local
             // Décommenter la ligne souhaitée :
             builder.Services.AddSingleton<IDataService, ApiDataService>();  // ✅ Utilise l'API SmartLocker

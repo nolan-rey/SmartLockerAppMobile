@@ -187,7 +187,9 @@ public class LockerItemViewModel : BaseViewModel
 
     public Locker Locker { get; }
 
-    public string DisplayId => Locker.Name; // Utilise le nom directement de l'API (ex: "Casier A1")
+    // Affiche "Casier 1", "Casier 2", etc. basé sur l'ID du locker dans la BDD
+    public string DisplayId => $"Casier {Locker.Id}";
+    
     public string Location => Locker.Location;
     public string Size => Locker.Size.ToString();
     public bool IsAvailable => Locker.IsAvailable; // Utilise la propriété IsAvailable du modèle

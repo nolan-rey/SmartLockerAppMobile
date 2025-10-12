@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SmartLockerApp.Services;
+using SmartLockerApp.Interfaces;
+using SmartLockerApp.Models;
 
 namespace SmartLockerApp.ViewModels;
 
@@ -9,6 +11,9 @@ namespace SmartLockerApp.ViewModels;
 public partial class UnlockInstructionsPageViewModel : BaseViewModel
 {
     private readonly AppStateService _appState;
+    private readonly IDataService _dataService;
+    private readonly ApiSessionAuthService _sessionAuthService;
+    private readonly ApiAuthMethodService _authMethodService;
 
     [ObservableProperty]
     private string sessionId = string.Empty;
@@ -16,23 +21,132 @@ public partial class UnlockInstructionsPageViewModel : BaseViewModel
     [ObservableProperty]
     private string action = string.Empty;
 
-    public UnlockInstructionsPageViewModel(AppStateService appState)
+    [ObservableProperty]
+    private string authMethodType = string.Empty; // "rfid" ou "fingerprint"
+
+    [ObservableProperty]
+    private bool showRfidButton = false;
+
+    [ObservableProperty]
+    private bool showFingerprintButton = false;
+
+    [ObservableProperty]
+    private bool showRemoteButton = true; // Toujours disponible
+
+    public UnlockInstructionsPageViewModel(
+        AppStateService appState, 
+        IDataService dataService,
+        ApiSessionAuthService sessionAuthService,
+        ApiAuthMethodService authMethodService)
     {
         _appState = appState;
+        _dataService = dataService;
+        _sessionAuthService = sessionAuthService;
+        _authMethodService = authMethodService;
         Title = "Déverrouiller";
     }
 
     [RelayCommand]
     private async Task LoadData()
     {
-        if (_appState.ActiveSession != null)
+        DebugLogger.Section("UNLOCK INSTRUCTIONS - LOAD DATA");
+        DebugLogger.Info($"SessionId: {SessionId}");
+        DebugLogger.Info($"Action: {Action}");
+
+        // Récupérer la méthode d'authentification utilisée lors de la création de la session
+        if (Action == "close" && !string.IsNullOrEmpty(SessionId))
         {
-            var locker = _appState.GetLockerDetails(CompatibilityService.IntToStringId(_appState.ActiveSession.LockerId));
-            if (locker != null)
+            DebugLogger.Info("Mode: Clôture de session - Chargement de la méthode d'auth");
+            await LoadAuthMethodForSession();
+        }
+        else
+        {
+            DebugLogger.Info("Mode: Ouverture - Affichage de toutes les méthodes");
+            // Si ce n'est pas une clôture, afficher toutes les méthodes
+            ShowRfidButton = true;
+            ShowFingerprintButton = true;
+            ShowRemoteButton = true;
+        }
+    }
+
+    private async Task LoadAuthMethodForSession()
+    {
+        try
+        {
+            int sessionIdInt = int.Parse(SessionId);
+            DebugLogger.Info($"Récupération méthode d'auth pour session {sessionIdInt}");
+
+            // Récupérer les liaisons session_auth
+            var sessionAuths = await _sessionAuthService.GetSessionAuthsBySessionIdAsync(sessionIdInt);
+            
+            if (sessionAuths != null && sessionAuths.Any())
             {
-                Title = $"Déverrouiller {locker.Id}";
+                var sessionAuth = sessionAuths.First();
+                DebugLogger.Success($"Liaison trouvée: AuthMethodId = {sessionAuth.AuthMethodId}");
+
+                // Récupérer la méthode d'authentification
+                var authMethod = await _authMethodService.GetAuthMethodByIdAsync(sessionAuth.AuthMethodId);
+                
+                if (authMethod != null)
+                {
+                    AuthMethodType = authMethod.Type.ToLower();
+                    DebugLogger.Success($"Méthode d'auth: {AuthMethodType}");
+
+                    // Afficher uniquement le bouton correspondant
+                    ShowRfidButton = AuthMethodType == "rfid";
+                    ShowFingerprintButton = AuthMethodType == "fingerprint";
+                    ShowRemoteButton = true; // Toujours disponible
+                    
+                    DebugLogger.Info($"Boutons affichés: RFID={ShowRfidButton}, Fingerprint={ShowFingerprintButton}, Remote={ShowRemoteButton}");
+                }
+                else
+                {
+                    DebugLogger.Warning("Méthode d'auth non trouvée - Affichage de toutes les méthodes");
+                    ShowRfidButton = true;
+                    ShowFingerprintButton = true;
+                    ShowRemoteButton = true;
+                }
+            }
+            else
+            {
+                DebugLogger.Warning("Aucune liaison session_auth trouvée - Affichage de toutes les méthodes");
+                ShowRfidButton = true;
+                ShowFingerprintButton = true;
+                ShowRemoteButton = true;
             }
         }
+        catch (Exception ex)
+        {
+            DebugLogger.Error($"Erreur LoadAuthMethodForSession: {ex.Message}");
+            // En cas d'erreur, afficher toutes les méthodes
+            ShowRfidButton = true;
+            ShowFingerprintButton = true;
+            ShowRemoteButton = true;
+        }
+    }
+
+    [RelayCommand]
+    private async Task SelectRfid()
+    {
+        await UnlockWithRfid();
+    }
+
+    [RelayCommand]
+    private async Task SelectFingerprint()
+    {
+        await UnlockWithFingerprint();
+    }
+
+    [RelayCommand]
+    private async Task SelectRemoteUnlock()
+    {
+        await UnlockRemotely();
+    }
+
+    [RelayCommand]
+    private async Task ShowHelp()
+    {
+        await GetHelp();
     }
 
     [RelayCommand]

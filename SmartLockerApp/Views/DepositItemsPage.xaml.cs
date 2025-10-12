@@ -2,11 +2,16 @@ using SmartLockerApp.Services;
 
 namespace SmartLockerApp.Views;
 
-public partial class DepositItemsPage : ContentPage, IQueryAttributable
+[QueryProperty(nameof(LockerId), "lockerId")]
+[QueryProperty(nameof(DurationHours), "durationHours")]
+[QueryProperty(nameof(Price), "price")]
+public partial class DepositItemsPage : ContentPage
 {
-    private readonly List<CheckBox> _checkboxes = new();
     private readonly AppStateService _appState;
-    private string? _sessionId;
+    
+    public string LockerId { get; set; } = string.Empty;
+    public string DurationHours { get; set; } = string.Empty;
+    public string Price { get; set; } = string.Empty;
 
     public DepositItemsPage(AppStateService appState)
     {
@@ -15,12 +20,13 @@ public partial class DepositItemsPage : ContentPage, IQueryAttributable
         SetupCheckboxes();
     }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    protected override void OnAppearing()
     {
-        if (query.ContainsKey("sessionId"))
-        {
-            _sessionId = query["sessionId"].ToString();
-        }
+        base.OnAppearing();
+        System.Diagnostics.Debug.WriteLine($"📦 Page Dépôt d'Objets:");
+        System.Diagnostics.Debug.WriteLine($"   - Casier ID: {LockerId}");
+        System.Diagnostics.Debug.WriteLine($"   - Durée: {DurationHours}h");
+        System.Diagnostics.Debug.WriteLine($"   - Prix: {Price}€");
     }
 
     private void SetupCheckboxes()
@@ -60,23 +66,13 @@ public partial class DepositItemsPage : ContentPage, IQueryAttributable
 
         try
         {
-            var selectedItems = new List<string> { "Objets personnels" };
-
-            // Mettre à jour la session avec les items sélectionnés
-            if (!string.IsNullOrEmpty(_sessionId))
-            {
-                await _appState.UpdateSessionItemsAsync(_sessionId, selectedItems);
-                
-                ConfirmDepositButton.Text = "✓ Dépôt confirmé";
-                await AnimationService.SuccessCheckmarkAsync(ConfirmDepositButton);
-                
-                // Naviguer vers UnlockInstructionsPage
-                await Shell.Current.GoToAsync($"//UnlockInstructionsPage?sessionId={_sessionId}");
-            }
-            else
-            {
-                await DisplayAlert("Erreur", "Session non trouvée", "OK");
-            }
+            System.Diagnostics.Debug.WriteLine("✅ Dépôt confirmé, navigation vers LockInstructionsPage");
+            
+            ConfirmDepositButton.Text = "✓ Dépôt confirmé";
+            await AnimationService.SuccessCheckmarkAsync(ConfirmDepositButton);
+            
+            // ✅ CORRECTION: Naviguer vers LockInstructionsPage avec tous les paramètres
+            await Shell.Current.GoToAsync($"//LockInstructionsPage?lockerId={LockerId}&durationHours={DurationHours}&price={Price}");
         }
         catch (Exception ex)
         {
@@ -84,7 +80,7 @@ public partial class DepositItemsPage : ContentPage, IQueryAttributable
         }
         finally
         {
-            ConfirmDepositButton.Text = "Confirmer le dépôt";
+            ConfirmDepositButton.Text = "Continuer";
             ConfirmDepositButton.IsEnabled = true;
         }
     }

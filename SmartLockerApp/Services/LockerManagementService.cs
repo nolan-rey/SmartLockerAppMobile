@@ -20,7 +20,34 @@ public class LockerManagementService : INotifyPropertyChanged
     private Timer? _sessionTimer;
 
     public List<Locker> Lockers => _lockers;
-    public List<LockerSession> ActiveSessions => _activeSessions.Where(s => CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? "")).ToList();
+    
+    public List<LockerSession> ActiveSessions
+    {
+        get
+        {
+            var currentUserId = _auth.CurrentUser?.Id ?? "";
+            DebugLogger.Info($"[ActiveSessions] Filtrage avec UserId: '{currentUserId}'");
+            DebugLogger.Info($"[ActiveSessions] Nombre total de sessions: {_activeSessions.Count}");
+            
+            // Si pas d'utilisateur connecté, retourner toutes les sessions actives
+            if (string.IsNullOrEmpty(currentUserId))
+            {
+                DebugLogger.Warning("[ActiveSessions] AUCUN utilisateur connecté - Retour de TOUTES les sessions");
+                return _activeSessions.ToList();
+            }
+            
+            var filtered = _activeSessions.Where(s =>
+            {
+                var match = CompatibilityService.CompareIds(s.UserId, currentUserId);
+                DebugLogger.Info($"  → Session {s.Id}: UserId={s.UserId}, Match={match}");
+                return match;
+            }).ToList();
+            
+            DebugLogger.Info($"[ActiveSessions] Sessions filtrées: {filtered.Count}");
+            return filtered;
+        }
+    }
+    
     public List<LockerSession> SessionHistory => _sessionHistory.Where(s => CompatibilityService.CompareIds(s.UserId, _auth.CurrentUser?.Id ?? "")).ToList();
     public LockerSession? CurrentActiveSession => ActiveSessions.FirstOrDefault();
 

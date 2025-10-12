@@ -10,16 +10,19 @@ namespace SmartLockerApp.Views;
 public partial class OpenLockerPage : ContentPage
 {
     private readonly AppStateService _appState;
+    private readonly HybridSessionService _hybridSessionService;
+    
     public string LockerId { get; set; } = string.Empty;
     public string DurationHours { get; set; } = string.Empty;
     public string Price { get; set; } = string.Empty;
     public string SessionId { get; set; } = string.Empty;
     public string Action { get; set; } = string.Empty; // "retrieve" pour récupération
 
-    public OpenLockerPage(AppStateService appState)
+    public OpenLockerPage(AppStateService appState, HybridSessionService hybridSessionService)
     {
         InitializeComponent();
         _appState = appState;
+        _hybridSessionService = hybridSessionService;
     }
 
     protected override void OnAppearing()
@@ -69,18 +72,43 @@ public partial class OpenLockerPage : ContentPage
     {
         if (Action == "retrieve")
         {
-            // Terminer la session et naviguer vers le reçu de paiement
+            // Clôturer la session via l'API
             if (!string.IsNullOrEmpty(SessionId))
             {
-                var result = await _appState.EndSessionAsync(SessionId);
-                if (result.Success)
+                DebugLogger.Section("CLÔTURE DE SESSION");
+                DebugLogger.Info($"SessionId: {SessionId}");
+                
+                // Afficher un indicateur de chargement
+                LoadingIndicator.IsRunning = true;
+                ProgressContainer.IsVisible = true;
+                ActionContainer.IsVisible = false;
+                StatusMessage.Text = "Clôture de la session en cours...";
+                
+                try
                 {
-                    // Naviguer vers PaymentPage avec action=receipt pour afficher le reçu
-                    await Shell.Current.GoToAsync($"//PaymentPage?sessionId={SessionId}&action=receipt");
+                    int sessionIdInt = int.Parse(SessionId);
+                    var result = await _hybridSessionService.CloseSessionAsync(sessionIdInt);
+                    
+                    if (result.Success)
+                    {
+                        DebugLogger.Success("Session clôturée avec succès");
+                        
+                        // Navigation vers SessionClosedPage (page de confirmation simple)
+                        DebugLogger.Info("Navigation vers SessionClosedPage");
+                        await Shell.Current.GoToAsync("//SessionClosedPage");
+                    }
+                    else
+                    {
+                        DebugLogger.Error($"Échec clôture: {result.Message}");
+                        await DisplayAlert("Erreur", $"Impossible de clôturer la session: {result.Message}", "OK");
+                        await Shell.Current.GoToAsync("//HomePage");
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    await DisplayAlert("Erreur", result.Message, "OK");
+                    DebugLogger.Error($"Exception: {ex.Message}");
+                    await DisplayAlert("Erreur", "Une erreur est survenue lors de la clôture", "OK");
+                    await Shell.Current.GoToAsync("//HomePage");
                 }
             }
             else
@@ -92,7 +120,7 @@ public partial class OpenLockerPage : ContentPage
         else
         {
             // Pour le dépôt initial, naviguer vers LockInstructionsPage avec les paramètres
-            System.Diagnostics.Debug.WriteLine("✅ Navigation vers LockInstructionsPage avec paramètres");
+            DebugLogger.Info("Navigation vers LockInstructionsPage");
             await Shell.Current.GoToAsync($"//LockInstructionsPage?lockerId={LockerId}&durationHours={DurationHours}&price={Price}");
         }
     }

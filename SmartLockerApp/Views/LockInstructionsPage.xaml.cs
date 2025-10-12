@@ -4,7 +4,6 @@ using SmartLockerApp.Interfaces;
 namespace SmartLockerApp.Views;
 
 [QueryProperty(nameof(LockerId), "lockerId")]
-[QueryProperty(nameof(SessionId), "sessionId")]
 [QueryProperty(nameof(DurationHours), "durationHours")]
 [QueryProperty(nameof(Price), "price")]
 public partial class LockInstructionsPage : ContentPage
@@ -12,7 +11,6 @@ public partial class LockInstructionsPage : ContentPage
     private readonly AppStateService _appState;
     private readonly IDataService _dataService;
     
-    public string SessionId { get; set; } = string.Empty;
     public string LockerId { get; set; } = string.Empty;
     public string DurationHours { get; set; } = string.Empty;
     public string Price { get; set; } = string.Empty;
@@ -45,8 +43,8 @@ public partial class LockInstructionsPage : ContentPage
         
         System.Diagnostics.Debug.WriteLine("🎫 Méthode d'authentification: RFID");
         
-        // Navigate to confirmation page with all parameters
-        await Shell.Current.GoToAsync($"//LockConfirmationPage?lockerId={LockerId}&sessionId={SessionId}&durationHours={DurationHours}&price={Price}&authMethod=rfid");
+        // ✅ CORRECTION: Navigate to confirmation page WITHOUT sessionId (session not created yet)
+        await Shell.Current.GoToAsync($"//LockConfirmationPage?lockerId={LockerId}&durationHours={DurationHours}&price={Price}&authMethod=rfid");
     }
 
     private async void FingerprintButton_Clicked(object sender, EventArgs e)
@@ -56,7 +54,7 @@ public partial class LockInstructionsPage : ContentPage
         
         System.Diagnostics.Debug.WriteLine("👆 Méthode d'authentification: Fingerprint");
         
-        // Navigate to confirmation page with all parameters
-        await Shell.Current.GoToAsync($"//LockConfirmationPage?lockerId={LockerId}&sessionId={SessionId}&durationHours={DurationHours}&price={Price}&authMethod=fingerprint");
+        // ✅ CORRECTION: Navigate to confirmation page WITHOUT sessionId (session not created yet)
+        await Shell.Current.GoToAsync($"//LockConfirmationPage?lockerId={LockerId}&durationHours={DurationHours}&price={Price}&authMethod=fingerprint");
     }
 }

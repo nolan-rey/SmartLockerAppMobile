@@ -205,6 +205,67 @@ public partial class AppStateService : ObservableObject
     }
 
     /// <summary>
+    /// Obtenir la session active de l'utilisateur
+    /// </summary>
+    public async Task<LockerSession?> GetActiveSessionAsync()
+    {
+        DebugLogger.Section("GET ACTIVE SESSION ASYNC");
+        DebugLogger.Info($"CurrentUser: {CurrentUser?.name ?? "NULL"}");
+        DebugLogger.Info($"CurrentUser ID: {CurrentUser?.id ?? 0}");
+        DebugLogger.Info($"Auth.CurrentUser: {(_auth.CurrentUser != null ? "EXISTS" : "NULL")}");
+        DebugLogger.Info($"Auth.CurrentUser.Id: {_auth.CurrentUser?.Id ?? "NULL"}");
+        DebugLogger.Info($"Auth.IsAuthenticated: {_auth.IsAuthenticated}");
+        
+        // IMPORTANT: Vérifier toutes les sessions sans filtrage
+        DebugLogger.Warning("Vérification de TOUTES les sessions (sans filtrage):");
+        var allRawSessions = _lockerService.GetType()
+            .GetField("_activeSessions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
+            .GetValue(_lockerService) as List<LockerSession>;
+        
+        if (allRawSessions != null)
+        {
+            DebugLogger.Info($"Nombre TOTAL de sessions (brutes): {allRawSessions.Count}");
+            foreach (var s in allRawSessions)
+            {
+                DebugLogger.Info($"  → Session {s.Id}: UserId={s.UserId}, Status={s.Status}");
+            }
+        }
+        
+        var session = ActiveSession;
+        
+        if (session != null)
+        {
+            DebugLogger.Success($"Session active trouvée: ID={session.Id}, UserId={session.UserId}");
+        }
+        else
+        {
+            DebugLogger.Error("ActiveSession est NULL");
+            
+            // Debug: Afficher toutes les sessions actives (sans filtrage)
+            var allActiveSessions = _lockerService.ActiveSessions;
+            DebugLogger.Warning($"Nombre de sessions actives (filtrées par user): {allActiveSessions.Count}");
+            
+            if (allActiveSessions.Count == 0)
+            {
+                DebugLogger.Error("AUCUNE session active trouvée pour cet utilisateur");
+                
+                // Vérifier les sessions brutes (non filtrées)
+                var rawSessions = _lockerService.Lockers;
+                DebugLogger.Info($"Nombre total de casiers: {rawSessions.Count}");
+            }
+            else
+            {
+                foreach (var s in allActiveSessions)
+                {
+                    DebugLogger.Info($"  → Session ID={s.Id}, UserId={s.UserId}, Status={s.Status}");
+                }
+            }
+        }
+        
+        return await Task.FromResult(session);
+    }
+
+    /// <summary>
     /// Vérifier si l'utilisateur est connecté
     /// </summary>
     public bool IsUserLoggedIn()

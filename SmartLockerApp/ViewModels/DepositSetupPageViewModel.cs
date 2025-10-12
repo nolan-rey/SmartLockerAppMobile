@@ -157,8 +157,8 @@ public partial class DepositSetupPageViewModel : BaseViewModel
             
             ConfirmButtonText = "✓ Confirmé";
             
-            // Naviguer vers OpenLockerPage avec les paramètres (PAS de création de session ici)
-            await Shell.Current.GoToAsync($"//OpenLockerPage?lockerId={LockerId}&durationHours={SelectedHours}&price={SelectedPrice.Replace(" €", "")}");
+            // ✅ CORRECTION: Naviguer vers DepositItemsPage au lieu de OpenLockerPage
+            await Shell.Current.GoToAsync($"//DepositItemsPage?lockerId={LockerId}&durationHours={SelectedHours}&price={SelectedPrice.Replace(" €", "")}");
         }
         catch (Exception ex)
         {

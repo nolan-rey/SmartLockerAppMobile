@@ -226,10 +226,10 @@
                                             
                                             <!-- Locker Info -->
                                             <StackLayout Grid.Column="1" Margin="12,0,0,0" VerticalOptions="Center" Spacing="4">
-                                                <Label Text="{Binding DisplayId, StringFormat='Casier {0}'}" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
+                                                <Label Text="{Binding DisplayId}" FontSize="16" FontAttributes="Bold" TextColor="Black"/>
                                                 <StackLayout Orientation="Horizontal" Spacing="4">
                                                     <Label Text="📍" FontSize="12"/>
-                                                    <Label Text="{Binding Location}" FontSize="12" TextColor="Gray"/>
+                                                    <Label Text="{Binding Size}" FontSize="12" TextColor="Gray"/>
                                                 </StackLayout>
                                             </StackLayout>
                                         

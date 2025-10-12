@@ -171,17 +171,25 @@ public class ApiLockerService
         {
             System.Diagnostics.Debug.WriteLine($"✏️ Mise à jour casier ID={lockerId}...");
 
-            var updateData = new
+            // Construire l'objet de mise à jour en n'incluant que les champs non-null
+            var updateData = new Dictionary<string, object>();
+            
+            if (!string.IsNullOrEmpty(name))
             {
-                name = name,
-                status = status
-            };
+                updateData["name"] = name;
+            }
+            
+            if (!string.IsNullOrEmpty(status))
+            {
+                updateData["status"] = status;
+                System.Diagnostics.Debug.WriteLine($"📝 Nouveau statut: {status}");
+            }
 
             var response = await _apiClient.PutAsync<object, SuccessResponse>($"lockers/{lockerId}", updateData);
 
             if (response?.success == true)
             {
-                System.Diagnostics.Debug.WriteLine($"✅ Casier mis à jour: {name ?? "N/A"}");
+                System.Diagnostics.Debug.WriteLine($"✅ Casier mis à jour: status={status ?? "N/A"}");
                 return (true, "Casier mis à jour avec succès");
             }
             else

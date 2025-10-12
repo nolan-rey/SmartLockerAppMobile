@@ -13,6 +13,7 @@ namespace SmartLockerApp.ViewModels;
 public partial class PaymentPageViewModel : BaseViewModel
 {
     private readonly AppStateService _appState;
+    private readonly ApiSessionService _apiSessionService;
 
     #region Observable Properties
 
@@ -62,9 +63,10 @@ public partial class PaymentPageViewModel : BaseViewModel
 
     #endregion
 
-    public PaymentPageViewModel(AppStateService appState)
+    public PaymentPageViewModel(AppStateService appState, ApiSessionService apiSessionService)
     {
         _appState = appState;
+        _apiSessionService = apiSessionService;
         Title = "Paiement";
     }
 
@@ -73,8 +75,13 @@ public partial class PaymentPageViewModel : BaseViewModel
     [RelayCommand]
     private async Task LoadData()
     {
+        DebugLogger.Section("PAYMENT PAGE - LOAD DATA");
+        DebugLogger.Info($"SessionId: {SessionId}");
+        DebugLogger.Info($"Action: {Action}");
+        
         if (string.IsNullOrEmpty(SessionId))
         {
+            DebugLogger.Error("SessionId est vide");
             await Shell.Current.DisplayAlert("Erreur", "Session introuvable", "OK");
             await Shell.Current.GoToAsync("//HomePage");
             return;
@@ -82,22 +89,53 @@ public partial class PaymentPageViewModel : BaseViewModel
 
         if (Action == "receipt")
         {
+            DebugLogger.Info("Mode: Reçu");
             await UpdateUIForReceipt();
         }
         else
         {
+            DebugLogger.Info("Mode: Paiement");
             Title = "Paiement";
             IsPayButtonVisible = true;
             IsCancelButtonVisible = true;
 
-            var session = await _appState.GetSessionAsync(SessionId);
-            if (session != null)
+            // Récupérer la session depuis l'API (elle est maintenant "finished")
+            try
             {
-                UpdateSessionDisplay(session);
+                int sessionIdInt = int.Parse(SessionId);
+                DebugLogger.Info($"Récupération session {sessionIdInt} depuis l'API...");
+                
+                var apiSession = await _apiSessionService.GetSessionByIdAsync(sessionIdInt);
+                
+                if (apiSession != null)
+                {
+                    DebugLogger.Success($"Session trouvée: Status={apiSession.Status}, Locker={apiSession.LockerId}, Montant={apiSession.AmountDue}");
+                    
+                    // Convertir en LockerSession pour l'affichage
+                    var session = new LockerSession
+                    {
+                        Id = apiSession.Id,
+                        LockerId = apiSession.LockerId,
+                        StartedAt = apiSession.StartedAtDate,
+                        PlannedEndAt = apiSession.PlannedEndAtDate,
+                        EndedAt = apiSession.EndedAtDate,
+                        AmountDue = apiSession.AmountDueDecimal,
+                        Status = apiSession.Status
+                    };
+                    
+                    UpdateSessionDisplay(session);
+                }
+                else
+                {
+                    DebugLogger.Error("Session non trouvée dans l'API");
+                    await Shell.Current.DisplayAlert("Erreur", "Session introuvable", "OK");
+                    await Shell.Current.GoToAsync("//HomePage");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                await Shell.Current.DisplayAlert("Erreur", "Session introuvable", "OK");
+                DebugLogger.Error($"Erreur chargement session: {ex.Message}");
+                await Shell.Current.DisplayAlert("Erreur", "Impossible de charger la session", "OK");
                 await Shell.Current.GoToAsync("//HomePage");
             }
         }

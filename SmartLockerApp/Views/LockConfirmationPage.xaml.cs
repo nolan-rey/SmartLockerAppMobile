@@ -11,17 +11,19 @@ public partial class LockConfirmationPage : ContentPage
 {
     private readonly AppStateService _appState;
     private readonly IDataService _dataService;
+    private readonly HybridSessionService _hybridSessionService;
     
     public string LockerId { get; set; } = string.Empty;
     public string DurationHours { get; set; } = string.Empty;
     public string Price { get; set; } = string.Empty;
     public string AuthMethod { get; set; } = string.Empty;
 
-    public LockConfirmationPage(AppStateService appState, IDataService dataService)
+    public LockConfirmationPage(AppStateService appState, IDataService dataService, HybridSessionService hybridSessionService)
     {
         InitializeComponent();
         _appState = appState;
         _dataService = dataService;
+        _hybridSessionService = hybridSessionService;
     }
 
     protected override async void OnAppearing()
@@ -53,22 +55,28 @@ public partial class LockConfirmationPage : ContentPage
                 return;
             }
 
-            // Parser la durée
+            // Parser la durée et l'ID du locker
             if (!int.TryParse(DurationHours, out int duration))
             {
                 await DisplayAlert("Erreur", "Durée invalide", "OK");
                 return;
             }
+            
+            if (!int.TryParse(LockerId, out int lockerIdInt))
+            {
+                await DisplayAlert("Erreur", "ID casier invalide", "OK");
+                return;
+            }
 
             System.Diagnostics.Debug.WriteLine($"✅ Utilisateur: {currentUser.name} (ID: {currentUser.id})");
-            System.Diagnostics.Debug.WriteLine($"✅ Casier: {LockerId}");
+            System.Diagnostics.Debug.WriteLine($"✅ Casier: {lockerIdInt}");
             System.Diagnostics.Debug.WriteLine($"✅ Durée: {duration} heure(s)");
 
-            // Créer la session via l'API
-            var result = await _dataService.CreateSessionAsync(
-                LockerId, 
+            // Créer la session via HybridSessionService (qui gère automatiquement le statut du locker)
+            var result = await _hybridSessionService.CreateSessionAsync(
+                lockerIdInt, 
                 duration, 
-                new List<string>()); // Items vides pour l'instant
+                2.50m); // Prix par heure
 
             if (result.Success && result.Session != null)
             {
@@ -76,9 +84,6 @@ public partial class LockConfirmationPage : ContentPage
                 System.Diagnostics.Debug.WriteLine($"   - User ID: {result.Session.UserId}");
                 System.Diagnostics.Debug.WriteLine($"   - Locker ID: {result.Session.LockerId}");
                 System.Diagnostics.Debug.WriteLine($"   - Status: {result.Session.Status}");
-                System.Diagnostics.Debug.WriteLine($"   - Start: {result.Session.StartedAt}");
-                System.Diagnostics.Debug.WriteLine($"   - Planned End: {result.Session.PlannedEndAt}");
-                System.Diagnostics.Debug.WriteLine($"   - Amount: {result.Session.AmountDue}€");
             }
             else
             {

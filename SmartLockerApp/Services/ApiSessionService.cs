@@ -80,7 +80,46 @@ public class ApiSessionService
     }
 
     /// <summary>
-    /// GET /me/sessions?status=active - Récupère les sessions actives de l'utilisateur connecté
+    /// GET /sessions?user_id={userId}&status={status} - Récupère les sessions d'un utilisateur par son ID
+    /// </summary>
+    public async Task<List<Session>?> GetSessionsByUserIdAsync(int userId, string? status = null)
+    {
+        try
+        {
+            var endpoint = $"sessions?user_id={userId}";
+            if (!string.IsNullOrEmpty(status))
+            {
+                endpoint += $"&status={status}";
+            }
+            
+            DebugLogger.Info($"Récupération sessions pour User {userId} (status={status ?? "all"})");
+            
+            var sessions = await _apiClient.GetAsync<List<Session>>(endpoint);
+            
+            if (sessions != null)
+            {
+                DebugLogger.Success($"{sessions.Count} session(s) trouvée(s)");
+                foreach (var session in sessions.Take(5))
+                {
+                    DebugLogger.Info($"  - Session #{session.Id}: Locker {session.LockerId} ({session.Status})");
+                }
+            }
+            else
+            {
+                DebugLogger.Warning("Aucune session trouvée");
+            }
+            
+            return sessions;
+        }
+        catch (Exception ex)
+        {
+            DebugLogger.Error($"Erreur GetSessionsByUserId: {ex.Message}");
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// GET /me/sessions?status=active - Récupère les sessions actives de l'utilisateur connecté (via JWT)
     /// </summary>
     public async Task<List<Session>?> GetMyActiveSessionsAsync()
     {

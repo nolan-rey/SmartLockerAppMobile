@@ -39,13 +39,16 @@
   - `durationHours` : Durée en heures (ex: "2")
   - `price` : Prix calculé (ex: "7,00")
 - **⚠️ PAS DE CRÉATION DE SESSION ICI**
-- **Navigation** : → `OpenLockerPage?lockerId=1&durationHours=2&price=7,00`
+- **Navigation** : → `DepositItemsPage?lockerId=1&durationHours=2&price=7,00`
 
 ---
 
-#### 5️⃣ **OpenLockerPage** → Simulation d'ouverture du casier
-- **Action** : Simulation de 3 secondes d'ouverture du casier
-- **Affichage** : "Casier ouvert ! Vous pouvez maintenant déposer vos affaires"
+#### 5️⃣ **DepositItemsPage** → Dépôt des affaires dans le casier
+- **Action** : L'utilisateur confirme avoir déposé ses affaires
+- **Vérifications** :
+  - ✅ Tous mes objets sont dans le casier
+  - ✅ La porte du casier est fermée
+  - ✅ Je confirme le dépôt de mes objets
 - **Paramètres transmis** : Tous les paramètres reçus sont passés à la page suivante
 - **⚠️ PAS DE CRÉATION DE SESSION ICI**
 - **Navigation** : → `LockInstructionsPage?lockerId=1&durationHours=2&price=7,00`
@@ -112,7 +115,7 @@ LockerDetailPage
   ↓ lockerId=1
 DepositSetupPage [VÉRIF USER]
   ↓ lockerId=1, durationHours=2, price=7.00
-OpenLockerPage
+DepositItemsPage
   ↓ lockerId=1, durationHours=2, price=7.00
 LockInstructionsPage
   ↓ lockerId=1, durationHours=2, price=7.00, authMethod=rfid
@@ -152,6 +155,73 @@ HomePage (session active)
 - ❌ **Avant** : Paramètres perdus entre les pages
 - ✅ **Après** : Tous les paramètres transmis proprement via QueryProperty
 
+- ❌ **Avant** : Navigation incorrecte (DepositSetupPage → OpenLockerPage)
+- ✅ **Après** : Navigation corrigée (DepositSetupPage → DepositItemsPage → LockInstructionsPage)
+
+- ❌ **Avant** : DepositItemsPage naviguait vers UnlockInstructionsPage
+- ✅ **Après** : DepositItemsPage navigue correctement vers LockInstructionsPage
+
 ---
 
-**Dernière mise à jour** : 07/10/2025
+## 🔓 Parcours de Clôture de Session
+
+### Flux Complet de Récupération
+1. **HomePage** → Clic sur session active
+2. **ActiveSessionPage** → Clic sur "Terminer la Session"
+3. **UnlockInstructionsPage** → Affichage de la méthode d'auth enregistrée + Choix de la méthode
+4. **OpenLockerPage** → Simulation ouverture + Récupération des affaires
+5. **UnlockConfirmationPage** → **CLÔTURE SESSION API** + Confirmation
+
+### Détails du Parcours de Clôture
+
+#### 1️⃣ **HomePage** → Session active visible
+- **Affichage** : Session active avec temps restant
+- **Action** : Clic sur la session active
+- **Navigation** : → `ActiveSessionPage`
+
+---
+
+#### 2️⃣ **ActiveSessionPage** → Détails de la session
+- **Affichage** : Informations de la session (casier, durée, temps restant)
+- **Action** : Clic sur "Terminer la Session"
+- **Navigation** : → `UnlockInstructionsPage?sessionId={sessionId}&action=close`
+
+---
+
+#### 3️⃣ **UnlockInstructionsPage** → Choix de la méthode de déverrouillage
+- **✅ Récupération de la méthode d'authentification** :
+  - Récupération via `ApiSessionAuthService.GetSessionAuthsBySessionIdAsync()`
+  - Récupération de la méthode via `ApiAuthMethodService.GetAuthMethodByIdAsync()`
+  - Affichage **UNIQUEMENT** de la méthode enregistrée lors de la création
+- **Options affichées** :
+  - 📱 **Badge RFID** (si méthode = "rfid")
+  - 👆 **Empreinte digitale** (si méthode = "fingerprint")
+  - 🌐 **Ouverture à distance** (toujours disponible)
+- **Action** : Choix de la méthode
+- **Navigation** : → `OpenLockerPage?sessionId={sessionId}&action=retrieve`
+
+---
+
+#### 4️⃣ **OpenLockerPage** → Simulation d'ouverture et récupération
+- **Action** : Simulation de 3 secondes d'ouverture du casier
+- **Affichage** : "Casier ouvert ! Récupérez vos affaires et fermez le casier"
+- **Action utilisateur** : Récupération des affaires
+- **Navigation** : → `UnlockConfirmationPage?sessionId={sessionId}&action=close`
+
+---
+
+#### 5️⃣ **UnlockConfirmationPage** → Clôture de session 🎯 **CLÔTURE API**
+- **✅ CLÔTURE DE LA SESSION DANS L'API** :
+  ```csharp
+  var result = await _appState.EndSessionAsync(sessionId);
+  ```
+- **Backend API** :
+  - `PUT /sessions/{id}` avec :
+    - `status` : "finished"
+    - `ended_at` : Date/heure actuelle
+- **Affichage** : "Votre session a été clôturée avec succès"
+- **Navigation** : → `HomePage` ou `PaymentPage` (selon configuration)
+
+---
+
+**Dernière mise à jour** : 12/10/2025
